@@ -1,3 +1,106 @@
-<h1>
-	hello
-</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solenoid Force Calculator</title>
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+          crossorigin="anonymous"
+    />
+</head>
+<body onload="renderPage();" style="margin-bottom: 5%;">
+    <div id="header" class="container" style="margin-bottom: 5%; margin-top: 2%;">
+        <h2 id="page-header" style="text-align: center;">Solenoid Force Calculator</h2>
+    </div>
+    <div id="link-equation-flex-container"
+         class="container d-flex p-2 bd-highlight justify-content-between"
+         style="margin-top: 5%; margin-bottom: 2%;"
+         >
+            <div id="link-instructions-container" class="d-flex p-2 bd-highlight flex-column" style="width: 50%;">
+                <h5>Usage Instructions</h5>
+                <div id="instructions-container">
+                    <ol>
+                       <li>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+                       </li>
+                       <li>
+                        ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+                       </li>
+                       <li>
+                        laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
+                       </li>
+                       <li>
+                        velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+                       </li>
+                       <li>
+                        culpa qui officia deserunt mollit anim id est laborum.
+                       </li>
+                    </ol>
+                </div>
+            </div>
+            <div id="equation-container" class="d-flex align-items-center flex-column" style="width: 35%; text-align: center;">
+                <h5 style="margin-bottom: 5%;">Equation Applied</h5>
+                <img src="resources/equation_22.png" class="img-fluid" alt="Calculation applied by application">
+                <a
+                    href="https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.428.9647&rep=rep1&type=pdf"
+                    style="margin-top: 5%;"
+                    target="_blank"
+                >
+                    Additional Info and Proof
+                </a>
+            </div>
+    </div>
+    <div id="calc-graph-container"
+         class="container d-flex justify-content-between border-bottom" 
+         style="margin-bottom: 5%; padding-bottom: 7%;"
+    >
+        <div id="calc-container" style="width: 30%;">
+            <form
+                id="input-submit-form"
+                onsubmit="displayInputs()"
+            >
+            </form>
+        </div>
+        <div id="graph-container" style="width: 65%;">
+                <h3>IFRAME GOES HERE</h3>
+                <img src="resources/graph.gif" class="img-fluid" alt="Calculation applied by application">
+                <form
+                    id="graph-trace"
+                    style="margin-top: 20%;"
+                    onchange="updateTraceValue()"
+                >
+                <div id="graph-trace-slider-container" class="form-group">
+                    <label for="formControlRange">
+                            Graph Trace Slider
+                            <output
+                                id="graph-trace-value"
+                                name="graph-trace-value"
+                                value="">
+                            </output>
+                    </label>
+                    <input
+                        type="range"
+                        class="form-control-range"
+                        id="graph-trace-slider"
+                        name="graph-trace-slider"
+                        min="0"
+                        max="1000"
+                        default='0'
+                    >
+                  </div>
+                </form>
+        </div>
+    </div>
+    <div id="awg-container" class="container" style="text-align: center;">
+        <h3 style="margin-bottom: 6%;">American Wire Guage Size Chart</h3>
+        <div id="awg-table-container"></div>
+    </div>
+    <div style="margin-top: 5%; text-align: center;">
+        <p>This calculator was made by some cold ass cats b</p>
+    </div>
+</body>
+<script src="table.js" type="text/javascript"></script>
+<script src="main.js" type="text/javascript"></script>
+</html>
