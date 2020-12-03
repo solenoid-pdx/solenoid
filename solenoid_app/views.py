@@ -7,8 +7,5 @@ import time
 # Create your views here.
 
 
-def index(request):
+def indexView(request):
     return render(request, 'index.html')
-
-
-
