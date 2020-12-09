@@ -102,7 +102,7 @@ def mainSolver(volts, length, r0, rA, gauge, location, force):
     eq3 = np.e**(-(a/(l / 1000)) * (x / 1000))
 
     ## Unsure of this part
-    originEq = eq1 * eq2 * eq3 * a
+    originEq = (eq1 * eq2 * eq3 * a) - f
 
     ##      Performing series of substitution depend on the missing variable      ##
     ##      NOTICE: using sympy.subs will directly simplify the equation          ##
@@ -155,6 +155,11 @@ def mainSolver(volts, length, r0, rA, gauge, location, force):
         originEq = originEq.subs(l,length)
         result = solve(originEq,f)
 
+    if len(result) == 2:
+        return result[1]
+    else:
+        return result[0]
+
 def main():
     start = perf_counter()
     print("\n-------- Force Calculated from Function 22 --------")
@@ -173,3 +178,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
