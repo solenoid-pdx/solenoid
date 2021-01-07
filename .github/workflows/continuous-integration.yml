@@ -12,15 +12,21 @@ jobs:
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: '3.x'
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
+<<<<<<< HEAD:.github/workflows/blank.yml
       - name: Set up Python
         uses: actions/setup-python@2
         with:
           python-version: '3.x'
+=======
+>>>>>>> [DPN-14] - Continuous Integration:.github/workflows/continuous-integration.yml
       - name: Install dependencies
         run: |
           python3 -m pip3 install --upgrade pip3
