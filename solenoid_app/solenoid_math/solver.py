@@ -1,10 +1,11 @@
 from sympy import symbols, solve
 import numpy as np
 from time import perf_counter
+from .exceptions import TooManyVariables, IncorrectDataType
 
 # Wire Gauge constants for copper
 # Resistance per unit length and cross-sectional area
-AWGdata = {
+AWG_DATA = {
     #        mili Ohms / meter     milimeters^2
     "0000": {"resistance": 0.1608, "area": 107},
     "000":  {"resistance": 0.2028, "area": 85.0},
@@ -54,8 +55,8 @@ AWGdata = {
 
 # Permeability constants
 # TODO: allow variable relative permeabilities to allow users to match their core
-permFree = 1.257 * (10**-6)
-permRelative = 350
+PERM_FREE = 1.257 * (10**-6)
+PERM_RELATIVE = 350
 
 """
 Solves for a single missing variable within the solenoid force equation.
@@ -75,93 +76,86 @@ Parameters:
 Returns:
     result (float): The solved value of specified variable
 """
-def solenoidSolve(volts, length, r0, rA, gauge, location, force):
+def solenoid_solve(volts, length, r0, rA, gauge, location, force):
     
     # verify only 1 argument is being solved for
-    noneCount = 0
-    for arg in [volts, length, r0, rA, gauge, location, force]:
-        if arg is None:
-            noneCount += 1
-    
-    if noneCount > 1:
+    none_count = sum(isinstance(arg, type(None)) for arg in [volts, length, r0, rA, gauge, location, force])
+    if none_count > 1:
         raise TooManyVariables
+    
+    for arg in ['volts', 'length', 'r0', 'rA', 'location', 'force']:
+        if not isinstance(locals()[arg], (type(None), int, float)):
+            raise IncorrectDataType(type(arg).__name__, arg)
+        
+    if type(gauge) is not str:
+        raise IncorrectDataType(type(gauge).__name__, "gauge")
 
     result = None
-    a = np.log(permRelative) 
+    a = np.log(PERM_RELATIVE) 
     f,v,l,R0,RA,x = symbols('f v l R0 RA x')
 
     # Generalized equation
-    eq1 = ((v ** 2) * permRelative * permFree) / (
-                    8 * np.pi * ((AWGdata[gauge]["resistance"] / 1000) ** 2) * (
+    eq1 = ((v ** 2) * PERM_RELATIVE* PERM_FREE) / (
+                    8 * np.pi * ((AWG_DATA[gauge]["resistance"] / 1000) ** 2) * (
                     (l / 1000) ** 2))
     eq2 = ((R0/1000)**2 / (RA/1000)**2)
     eq3 = np.e**(-(a/(l / 1000)) * (x / 1000))
 
     # Set equation equal to 0
-    originEq = (eq1 * eq2 * eq3 * a) - f
+    origin_eq = (eq1 * eq2 * eq3 * a) - f
 
     # Solve for specified variable
 
     if volts is None:
-        originEq = originEq.subs(l,length) 
-        originEq = originEq.subs(R0, r0)
-        originEq = originEq.subs(RA,rA)
-        originEq = originEq.subs(x,location)
-        originEq = originEq.subs(f,force)
-        result = solve(originEq, v)
+        origin_eq = origin_eq.subs(l,length) 
+        origin_eq = origin_eq.subs(R0, r0)
+        origin_eq = origin_eq.subs(RA,rA)
+        origin_eq = origin_eq.subs(x,location)
+        origin_eq = origin_eq.subs(f,force)
+        result = solve(origin_eq, v)
 
     elif length is None:
-        originEq = originEq.subs(v,volts)
-        originEq = originEq.subs(R0,r0) 
-        originEq = originEq.subs(RA,rA)
-        originEq = originEq.subs(x,location) 
-        originEq = originEq.subs(f,force)
-        result = solve(originEq,l)
+        origin_eq = origin_eq.subs(v,volts)
+        origin_eq = origin_eq.subs(R0,r0) 
+        origin_eq = origin_eq.subs(RA,rA)
+        origin_eq = origin_eq.subs(x,location) 
+        origin_eq = origin_eq.subs(f,force)
+        result = solve(origin_eq,l)
 
     elif r0 is None:
-        originEq = originEq.subs(v,volts)
-        originEq = originEq.subs(RA,rA)
-        originEq = originEq.subs(l,length)
-        originEq = originEq.subs(x,location)
-        originEq = originEq.subs(f,force)
-        result = solve(originEq,R0)
+        origin_eq = origin_eq.subs(v,volts)
+        origin_eq = origin_eq.subs(RA,rA)
+        origin_eq = origin_eq.subs(l,length)
+        origin_eq = origin_eq.subs(x,location)
+        origin_eq = origin_eq.subs(f,force)
+        result = solve(origin_eq,R0)
 
     elif rA is None:
-        originEq = originEq.subs(v,volts)
-        originEq = originEq.subs(R0,r0)
-        originEq = originEq.subs(l,length)
-        originEq = originEq.subs(x,location) 
-        originEq = originEq.subs(f,force)
-        result = solve(originEq,RA)
+        origin_eq = origin_eq.subs(v,volts)
+        origin_eq = origin_eq.subs(R0,r0)
+        origin_eq = origin_eq.subs(l,length)
+        origin_eq = origin_eq.subs(x,location) 
+        origin_eq = origin_eq.subs(f,force)
+        result = solve(origin_eq,RA)
 
     elif location is None: 
-        originEq = originEq.subs(v,volts)
-        originEq = originEq.subs(R0,r0)
-        originEq = originEq.subs(RA,rA)
-        originEq = originEq.subs(l,length)
-        originEq = originEq.subs(f,force)
-        result = solve(originEq,l)
+        origin_eq = origin_eq.subs(v,volts)
+        origin_eq = origin_eq.subs(R0,r0)
+        origin_eq = origin_eq.subs(RA,rA)
+        origin_eq = origin_eq.subs(l,length)
+        origin_eq = origin_eq.subs(f,force)
+        result = solve(origin_eq,l)
     
     elif force is None:  
-        originEq = originEq.subs(v,volts)
-        originEq = originEq.subs(R0,r0)
-        originEq = originEq.subs(RA,rA)
-        originEq = originEq.subs(x,location)
-        originEq = originEq.subs(l,length)
-        result = solve(originEq,f)
+        origin_eq = origin_eq.subs(v,volts)
+        origin_eq = origin_eq.subs(R0,r0)
+        origin_eq = origin_eq.subs(RA,rA)
+        origin_eq = origin_eq.subs(x,location)
+        origin_eq = origin_eq.subs(l,length)
+        result = solve(origin_eq,f)
 
     # Return the correctly signed value due to solving squares in function
     if len(result) == 2:
         return result[1]
     else:
         return result[0]
-
-class TooManyVariables(Exception):
-    """Exception raised when too many variables are inputted
-
-    Attributes:
-        message -- Too many variables to solve for. Only one variable can be None
-    """
-    def __init__(self):
-        self.message = "Too many variables to solve for. Only one variable can be None"
-        super().__init__(self.message)
