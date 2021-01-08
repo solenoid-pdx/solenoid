@@ -33,4 +33,4 @@ class TestUrls(SimpleTestCase):
         "Assert 200 response code on base '/' url request"
         client = Client()
         response = client.get('')
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)

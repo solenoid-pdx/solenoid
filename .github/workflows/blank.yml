@@ -26,8 +26,10 @@ jobs:
       - name: Install dependencies
         run: |
           python3 -m pip install --upgrade pip
-          pip install -r requirements.txt
+          python3 -m pip install -r requirements.txt
+      - name: Make Migrations
+        run: python3 manage.py migrate
 
       # Execute test suite (unit & integration tests)
       - name: Unit/Integration Test Execution
-        run: ./manage.py test tests/
+        run: python3 manage.py test tests/
