@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -78,7 +79,10 @@
         </div>
         <div id="graph-container" style="width: 65%;">
                 <h3>IFRAME GOES HERE</h3>
-                <img src="resources/graph.gif" class="img-fluid" alt="Calculation applied by application">
+                <div>
+                    {% include 'line_chart.html' %}
+                </div>
+                <img src="/resources/graph.gif" class="img-fluid" alt="Calculation applied by application">
                 <form
                     id="graph-trace"
                     style="margin-top: 20%;"
