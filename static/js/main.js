@@ -4,6 +4,7 @@ const renderPage = () => {
 
 const mountInputs = () => {
     let input_form = document.getElementById("input-submit-form");
+    console.log(input_form);
     let inputs = createInputs();
     let submit_button = '<input class="btn btn-outline-primary" type="submit" value="Calculate">'
     inputs.forEach(input => {
@@ -17,33 +18,34 @@ const createInputs = () => {
     let alpha = '\u03B1';
     let gamma = '\u03B3';
     let inputs = [
-        { 'Symbol': 'V', 'Unit': 'volts', 'InputElement': '' },
-        { 'Symbol': 'L', 'Unit': 'mm', 'InputElement': '' },
-        { 'Symbol': 'N', 'Unit': 'turns', 'InputElement': '' },
-        { 'Symbol': alpha, 'Unit': 'units', 'InputElement': '' },
-        { 'Symbol': gamma, 'Unit': 'units', 'InputElement': '' },
-        { 'Symbol': 'r sub not', 'Unit': 'mm', 'InputElement': '' },
-        { 'Symbol': 'r sub a', 'Unit': 'mm', 'InputElement': '' },
-        { 'Symbol': 'x', 'Unit': 'units', 'InputElement': '' },
-        { 'Symbol': 'F', 'Unit': 'N', 'InputElement': '' },
+        { 'Symbol': 'V', 'unit': 'volts', 'InputElement': '' },
+        { 'Symbol': 'L', 'unit': 'mm', 'InputElement': '' },
+        { 'Symbol': 'N', 'unit': 'turns', 'InputElement': '' },
+        { 'Symbol': alpha, 'unit': 'units', 'InputElement': '' },
+        { 'Symbol': gamma, 'unit': 'units', 'InputElement': '' },
+        { 'Symbol': 'r sub not', 'unit': 'mm', 'InputElement': '' },
+        { 'Symbol': 'r sub a', 'unit': 'mm', 'InputElement': '' },
+        { 'Symbol': 'x', 'unit': 'units', 'InputElement': '' },
+        { 'Symbol': 'F', 'unit': 'N', 'InputElement': '' },
     ];
     inputs.forEach( (element,index) => {
         // console.log(element, index+1);
         element['InputElement'] = 
         `<div id="input-${index}" class="input-group mb-3">
         <div class="input-group-prepend">
-          <span class="input-group-text">${checkInput(element['Symbol'])}</span>
+          <span class="input-group-text">${formatR(element['Symbol'])}</span>
           <div class="input-group-text">
             <input type="radio" aria-label="Radio button for following text input" name="radAnswer">
           </div>
         </div>
         <input type="text"
+               id="input-text-${index}"
                class="form-control"
                aria-label="Text input with radio button"
                placeholder="Enter ${element['Symbol']}"
          >
         <div class="input-group-append">
-            <span class="input-group-text">${element['Unit']}</span>
+            <span class="input-group-text">${element['unit']}</span>
           </div>
         </div>
       `
@@ -51,7 +53,7 @@ const createInputs = () => {
     return inputs;
 };
 
-const checkInput = unit => {
+const formatR = unit => {
   if (unit == 'r sub not')
     return 'r<sub>0</sub>';
   if (unit == 'r sub a')
@@ -59,18 +61,9 @@ const checkInput = unit => {
   return unit;
 }
 
-// const show_HideAWG = () => {
-//   let table = document.getElementById('awg-table-container');
-//   console.log(table);
-//   table.classList.replace('contains', 'show');
-// }
-
-const displayInputs = () => {
-};
-
-const updateTraceValue = () => {
-  let range = document.getElementById('graph-trace-slider');
-  let display = document.getElementById('graph-trace-value');
+const updateTracevalue = () => {
+  let range = $('#graph-trace-slider');
+  let display = $('#graph-trace-value');
   console.log(range.value);
   display.innerHTML = range.value;
 };

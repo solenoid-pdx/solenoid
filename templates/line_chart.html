@@ -4,7 +4,6 @@
         <div style="width:500px; height:400px;">
         <canvas id="myChart" style="width:500px; height:400; overflow: hidden;"></canvas>
         </div>
-        <!--<script type="text/javascript" src="http://code.jquery.com/jquery-1.10.0.min.js"></script>-->
         <script type="text/javascript" src="{% static 'js/Chart.min.js' %}"></script>
         <script type="text/javascript">
             $.get('{% url "line_chart_json" %}', function(data) {
