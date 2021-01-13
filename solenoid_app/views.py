@@ -49,6 +49,7 @@ def calculate(request):
             force = form.cleaned_data['F']
 
             print (voltage, len, turns, alpha, gamma, r_not, r_a, x, force)
-            testFunc()
-
-        return render(request, 'index.html', {'form': form})
+            # testFunc()
+            res = request.POST
+            print(res)
+        return JsonResponse(res, safe=False)

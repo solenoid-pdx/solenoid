@@ -88,31 +88,6 @@
                 <div>
                     {% include 'line_chart.html' %}
                 </div>
-                <form
-                    id="graph-trace"
-                    style="margin-top: 20%;"
-                    onchange="updateTraceValue()"
-                >
-                <div id="graph-trace-slider-container" class="form-group">
-                    <label for="formControlRange">
-                            Graph Trace Slider
-                            <output
-                                id="graph-trace-value"
-                                name="graph-trace-value"
-                                value="">
-                            </output>
-                    </label>
-                    <input
-                        type="range"
-                        class="form-control-range"
-                        id="graph-trace-slider"
-                        name="graph-trace-slider"
-                        min="0"
-                        max="1000"
-                        default='0'
-                    >
-                  </div>
-                </form>
         </div>
     </div>
     <div id="awg-container" class="container" style="text-align: center;">

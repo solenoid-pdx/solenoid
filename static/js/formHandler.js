@@ -34,8 +34,9 @@ const formSubmitHandler = () => {
             F: inputs[8].value,
             csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
           },
-            success: () => {
-                console.log('success!');
+            success: e => {
+                console.log(e);
+                alert('sent!');
             }
         });
 };
