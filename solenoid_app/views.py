@@ -6,7 +6,7 @@ from subprocess import check_output
 from django.views.generic import TemplateView
 from chartjs.views.lines import BaseLineChartView
 from .forms import DataSetForm
-from solenoid_app.middlewares.test import testFunc
+from solenoid_app.solenoid_math.solver import solenoid_solve
 import os
 import time
 # Create your views here.
@@ -34,22 +34,42 @@ class LineChartJSONView(BaseLineChartView):
 line_chart = TemplateView.as_view(template_name='line_chart.html')
 line_chart_json = LineChartJSONView.as_view()
 
-def calculate(request):
+def formHandle(request):
+    data = {
+        'voltage': '',
+        'length': '',
+        'turns': '',
+        'alpha': '',
+        'gamma': '',
+        'r_not': '',
+        'r_a': '',
+        'x': '',
+        'force': '',
+        'awg': '',
+        'compute': ''
+    }
+
     if (request.method == "POST"):
         form = DataSetForm(request.POST)
         if form.is_valid():
-            voltage = form.cleaned_data['V']
-            len = form.cleaned_data['L']
-            turns = form.cleaned_data['N']
-            alpha = form.cleaned_data['ALPHA']
-            gamma = form.cleaned_data['GAMMA']
-            r_not = form.cleaned_data['R0']
-            r_a = form.cleaned_data['Ra']
-            x = form.cleaned_data['X']
-            force = form.cleaned_data['F']
+            data['voltage'] = form.cleaned_data['voltage']
+            data['length'] = form.cleaned_data['length']
+            data['turns'] = form.cleaned_data['turns']
+            data['alpha'] = form.cleaned_data['alpha']
+            data['gamma'] = form.cleaned_data['gamma']
+            data['r_not'] = form.cleaned_data['r_not']
+            data['r_a'] = form.cleaned_data['r_a']
+            data['x'] = form.cleaned_data['x']
+            data['force'] = form.cleaned_data['force']
+            data['awg'] = form.cleaned_data['awg']
+            data['compute'] = form.cleaned_data['compute']
+            compute = data['compute']
 
-            print (voltage, len, turns, alpha, gamma, r_not, r_a, x, force)
-            # testFunc()
-            res = request.POST
-            print(res)
-        return JsonResponse(res, safe=False)
+            data[compute] = None
+            data[compute] = solenoid_solve(data['voltage'], data['length'], data['r_not'],
+                                           data['r_a'], data['awg'], data['x'], data['force'])
+
+            for k, v in data.items():
+                data[k] = str(v)
+
+            return JsonResponse(data, safe=False)

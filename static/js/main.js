@@ -3,49 +3,48 @@ const renderPage = () => {
 };
 
 const mountInputs = () => {
-    let input_form = document.getElementById("input-submit-form");
-    console.log(input_form);
+    let form = document.getElementById("input-submit-form");
     let inputs = createInputs();
     let submit_button = '<input class="btn btn-outline-primary" type="submit" value="Calculate">'
     inputs.forEach(input => {
-        // console.log(input);
-        input_form.insertAdjacentHTML('beforeend', input['InputElement']);
+        form.insertAdjacentHTML('beforeend', input['html']);
     });
-    input_form.insertAdjacentHTML('beforeend', submit_button);
+    form.insertAdjacentHTML('beforeend', submit_button);
 };
 
 const createInputs = () => {
     let alpha = '\u03B1';
     let gamma = '\u03B3';
     let inputs = [
-        { 'Symbol': 'V', 'unit': 'volts', 'InputElement': '' },
-        { 'Symbol': 'L', 'unit': 'mm', 'InputElement': '' },
-        { 'Symbol': 'N', 'unit': 'turns', 'InputElement': '' },
-        { 'Symbol': alpha, 'unit': 'units', 'InputElement': '' },
-        { 'Symbol': gamma, 'unit': 'units', 'InputElement': '' },
-        { 'Symbol': 'r sub not', 'unit': 'mm', 'InputElement': '' },
-        { 'Symbol': 'r sub a', 'unit': 'mm', 'InputElement': '' },
-        { 'Symbol': 'x', 'unit': 'units', 'InputElement': '' },
-        { 'Symbol': 'F', 'unit': 'N', 'InputElement': '' },
+        { 'name': 'voltage', 'symbol': 'V', 'unit': 'volts', 'html': '' },
+        { 'name': 'length', 'symbol': 'L', 'unit': 'mm', 'html': '' },
+        { 'name': 'turns', 'symbol': 'N', 'unit': 'turns', 'html': '' },
+        { 'name': 'alpha', 'symbol': alpha, 'unit': 'units', 'html': '' },
+        { 'name': 'gamma', 'symbol': gamma, 'unit': 'units', 'html': '' },
+        { 'name': 'r_not', 'symbol': 'r sub not', 'unit': 'mm', 'html': '' },
+        { 'name': 'r_a', 'symbol': 'r sub a', 'unit': 'mm', 'html': '' },
+        { 'name': 'x', 'symbol': 'x', 'unit': 'mm', 'html': '' },
+        { 'name': 'force', 'symbol': 'F', 'unit': 'N', 'html': '' },
+        { 'name': 'awg', 'symbol': 'AWG', 'unit': 'guage', 'html': '' },
     ];
-    inputs.forEach( (element,index) => {
-        // console.log(element, index+1);
-        element['InputElement'] = 
-        `<div id="input-${index}" class="input-group mb-3">
+    inputs.forEach( element => {
+        // console.log(html, index+1);
+        element.html = 
+        `<div id="input-${element.name}" class="input-group mb-3">
         <div class="input-group-prepend">
-          <span class="input-group-text">${formatR(element['Symbol'])}</span>
+          <span class="input-group-text">${formatR(element.symbol)}</span>
           <div class="input-group-text">
             <input type="radio" aria-label="Radio button for following text input" name="radAnswer">
           </div>
         </div>
         <input type="text"
-               id="input-text-${index}"
+               id="input-text-${element.name}"
                class="form-control"
                aria-label="Text input with radio button"
-               placeholder="Enter ${element['Symbol']}"
+               placeholder="Enter ${element.symbol}"
          >
         <div class="input-group-append">
-            <span class="input-group-text">${element['unit']}</span>
+            <span class="input-group-text">${element.unit}</span>
           </div>
         </div>
       `
@@ -60,10 +59,3 @@ const formatR = unit => {
     return 'r<sub>a</sub>';
   return unit;
 }
-
-const updateTracevalue = () => {
-  let range = $('#graph-trace-slider');
-  let display = $('#graph-trace-value');
-  console.log(range.value);
-  display.innerHTML = range.value;
-};

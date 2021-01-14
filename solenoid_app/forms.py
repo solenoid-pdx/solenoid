@@ -1,12 +1,14 @@
 from django import forms
 
 class DataSetForm(forms.Form):
-    V = forms.DecimalField()
-    L = forms.DecimalField()
-    N = forms.DecimalField()
-    ALPHA = forms.DecimalField()
-    GAMMA = forms.DecimalField()
-    R0 = forms.DecimalField()
-    Ra = forms.DecimalField()
-    X = forms.DecimalField()
-    F = forms.DecimalField()
+    voltage = forms.FloatField()
+    length = forms.FloatField()
+    turns = forms.FloatField()
+    alpha = forms.FloatField()
+    gamma = forms.FloatField()
+    r_not = forms.FloatField()
+    r_a = forms.FloatField()
+    x = forms.FloatField()
+    force = forms.FloatField()
+    awg = forms.CharField()
+    compute = forms.CharField()
