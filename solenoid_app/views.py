@@ -38,9 +38,6 @@ def formHandle(request):
     data = {
         'voltage': '',
         'length': '',
-        'turns': '',
-        'alpha': '',
-        'gamma': '',
         'r_not': '',
         'r_a': '',
         'x': '',
@@ -54,9 +51,6 @@ def formHandle(request):
         if form.is_valid():
             data['voltage'] = form.cleaned_data['voltage']
             data['length'] = form.cleaned_data['length']
-            data['turns'] = form.cleaned_data['turns']
-            data['alpha'] = form.cleaned_data['alpha']
-            data['gamma'] = form.cleaned_data['gamma']
             data['r_not'] = form.cleaned_data['r_not']
             data['r_a'] = form.cleaned_data['r_a']
             data['x'] = form.cleaned_data['x']

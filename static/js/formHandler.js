@@ -3,9 +3,6 @@ const formSubmitHandler = () => {
         let inputs = [
           { 'name': 'voltage', 'value': '' },
           { 'name': 'length', 'value': '' },
-          { 'name': 'turns', 'value': '' },
-          { 'name': 'alpha', 'value': '' },
-          { 'name': 'gamma', 'value': '' },
           { 'name': 'r_not', 'value': '' },
           { 'name': 'r_a', 'value': '' },
           { 'name': 'x', 'value': '' },
@@ -44,9 +41,6 @@ const formSubmitHandler = () => {
           data: {
             voltage: inputs[0].value,
             length: inputs[1].value,
-            turns: inputs[2].value,
-            alpha: inputs[3].value,
-            gamma: inputs[4].value,
             r_not: inputs[5].value,
             r_a: inputs[6].value,
             x: inputs[7].value,

@@ -13,14 +13,9 @@ const mountInputs = () => {
 };
 
 const createInputs = () => {
-    let alpha = '\u03B1';
-    let gamma = '\u03B3';
     let inputs = [
         { 'name': 'voltage', 'symbol': 'V', 'unit': 'volts', 'html': '' },
         { 'name': 'length', 'symbol': 'L', 'unit': 'mm', 'html': '' },
-        { 'name': 'turns', 'symbol': 'N', 'unit': 'turns', 'html': '' },
-        { 'name': 'alpha', 'symbol': alpha, 'unit': 'units', 'html': '' },
-        { 'name': 'gamma', 'symbol': gamma, 'unit': 'units', 'html': '' },
         { 'name': 'r_not', 'symbol': 'r sub not', 'unit': 'mm', 'html': '' },
         { 'name': 'r_a', 'symbol': 'r sub a', 'unit': 'mm', 'html': '' },
         { 'name': 'x', 'symbol': 'x', 'unit': 'mm', 'html': '' },

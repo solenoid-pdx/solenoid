@@ -9,7 +9,13 @@
             $.get('{% url "line_chart_json" %}', function(data) {
                 var ctx = $("#myChart").get(0).getContext("2d");
                 new Chart(ctx, {
-                    type: 'line', data: data
+                    type: 'line', data: data,
+                    options: {
+                        scales: {
+                            xAxes: [{ display: true, scaleLabel: { display: true, labelString: 'Selected Value'}}],
+                            yAxes: [{ display: true, scaleLabel: { display: true, labelString: 'Force'}}]
+                        }
+                    } 
                 });
             });
         </script>
