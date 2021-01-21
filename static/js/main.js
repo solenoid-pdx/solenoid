@@ -14,13 +14,13 @@ const mountInputs = () => {
 
 const createInputs = () => {
     let inputs = [
-        { 'name': 'voltage', 'symbol': 'V', 'unit': 'volts', 'html': '' },
-        { 'name': 'length', 'symbol': 'L', 'unit': 'mm', 'html': '' },
-        { 'name': 'r_not', 'symbol': 'r sub not', 'unit': 'mm', 'html': '' },
-        { 'name': 'r_a', 'symbol': 'r sub a', 'unit': 'mm', 'html': '' },
-        { 'name': 'x', 'symbol': 'x', 'unit': 'mm', 'html': '' },
-        { 'name': 'force', 'symbol': 'F', 'unit': 'N', 'html': '' },
-        { 'name': 'awg', 'symbol': 'AWG', 'unit': 'guage', 'html': '' },
+        { 'name': 'voltage', 'symbol': 'V', 'unit': 'volts', 'html': '' , 'value': '5'},
+        { 'name': 'length', 'symbol': 'L', 'unit': 'mm', 'html': '', 'value': '27' },
+        { 'name': 'r_not', 'symbol': 'r sub not', 'unit': 'mm', 'html': '', 'value': '2.3'},
+        { 'name': 'r_a', 'symbol': 'r sub a', 'unit': 'mm', 'html': '', 'value': '4.5'},
+        { 'name': 'x', 'symbol': 'x', 'unit': 'mm', 'html': '', 'value': '0'},
+        { 'name': 'force', 'symbol': 'F', 'unit': 'N', 'html': '', 'value': ''},
+        { 'name': 'awg', 'symbol': 'AWG', 'unit': 'guage', 'html': '', 'value': '30'},
     ];
     inputs.forEach( element => {
         // console.log(html, index+1);
@@ -37,6 +37,7 @@ const createInputs = () => {
                class="form-control"
                aria-label="Text input with radio button"
                placeholder="Enter ${element.symbol}"
+               value="${element.value}"
          >
         <div class="input-group-append">
             <span class="input-group-text">${element.unit}</span>

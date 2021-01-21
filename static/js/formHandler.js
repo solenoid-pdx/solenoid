@@ -25,6 +25,15 @@ const formSubmitHandler = () => {
           else input.value = element.value;
         });
 
+        if(to_compute !== 'force' && inputs['x'] !== 0) {
+          alert('X MUST BE 0.');
+          inputs[4].value = 0;
+        }
+        if(to_compute === 'x') {
+          alert('X CANNOT BE SOLVED FOR.');
+          return;
+        }
+
         if(blank_counter > 1) {
           alert('PLEASE FILL OUT ALL FIELDS');
           return;
@@ -33,7 +42,7 @@ const formSubmitHandler = () => {
           alert('PLEASE LEAVE A VALUE TO SOLVE FOR BLANK');
           return;
         } 
-        
+        voltageChartAjax(inputs)
         $.ajax({
           type: 'POST',
           url: 'formHandle',
@@ -41,11 +50,11 @@ const formSubmitHandler = () => {
           data: {
             voltage: inputs[0].value,
             length: inputs[1].value,
-            r_not: inputs[5].value,
-            r_a: inputs[6].value,
-            x: inputs[7].value,
-            force: inputs[8].value,
-            awg: inputs[9].value,
+            r_not: inputs[2].value,
+            r_a: inputs[3].value,
+            x: inputs[4].value,
+            force: inputs[5].value,
+            awg: inputs[6].value,
             compute: to_compute,
             csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
           },
@@ -55,3 +64,52 @@ const formSubmitHandler = () => {
             }
         });
 };
+
+function voltageChartAjax(inputs){
+  var $voltageChart = $("#voltage-Chart");
+  $.ajax({
+          type: 'POST',
+          url: 'voltageChart',
+          dataType: 'json',
+          data: {
+            voltage: inputs[0].value,
+            length: inputs[1].value,
+            r_not: inputs[2].value,
+            r_a: inputs[3].value,
+            x: inputs[4].value,
+            force: inputs[5].value,
+            awg: inputs[6].value,
+            compute: 'force',
+            csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+          },
+          success: function (data) {
+
+            var ctx = $voltageChart[0].getContext("2d");
+
+            new Chart(ctx, {
+             type: 'line',
+              data: {
+                labels: data.labels,
+                datasets: [{
+                  label: 'Voltage',
+                  backgroundColor: 'green',
+                 data: data.data
+               }]          
+             },
+              options: {
+                responsive: true,
+                legend: {
+                  position: 'top',
+                },
+                title: {
+                  display: true,
+                  text: 'Voltage Line Chart'
+                },
+                xAxes: [{ display: true, scaleLabel: { display: true, labelString: 'Voltage'}}],
+                yAxes: [{ display: true, scaleLabel: { display: true, labelString: 'Force'}}]
+              }
+            });
+
+          }
+        });
+}
