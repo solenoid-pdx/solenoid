@@ -71,10 +71,9 @@ const formSubmitHandler = () => {
 
 
 const updateQueryString = inputs => {
-  const currentParams = new URLSearchParams(window.location.search)
   const newUrl = new URL(window.location);
   inputs.forEach( variable => {
-    if(variable.value && currentParams.get(variable.name != variable.value)) {
+    if(variable.value) {
       newUrl.searchParams.set(variable.name, variable.value)
     }
   })
