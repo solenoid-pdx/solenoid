@@ -24,6 +24,17 @@ const formSubmitHandler = () => {
           else input.value = element.value;
         });
 
+        if(to_compute !== 'force' && inputs['x'] !== 0) {
+          alert('X MUST BE 0.');
+          inputs[4].value = 0;
+
+        }
+
+        if(to_compute === 'x') {
+          alert('X CANNOT BE SOLVED FOR.');
+          return;
+        }
+
         if(blank_counter > 1) {
           if(document.getElementById('missing-input-flash-err') == undefined) {
             let err = 
@@ -64,16 +75,17 @@ const formSubmitHandler = () => {
           data: {
             voltage: inputs[0].value,
             length: inputs[1].value,
-            r_not: inputs[5].value,
-            r_a: inputs[6].value,
-            x: inputs[7].value,
-            force: inputs[8].value,
-            awg: inputs[9].value,
+            r_not: inputs[2].value,
+            r_a: inputs[3].value,
+            x: inputs[4].value,
+            force: inputs[5].value,
+            awg: inputs[6].value,
             compute: to_compute,
             csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
           },
             success: res => {
               result = res[res.compute];
+              console.log(res)
               document.getElementById(`input-text-${res.compute}`).value = result;
             }
         });
