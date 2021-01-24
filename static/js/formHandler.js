@@ -20,17 +20,40 @@ const formSubmitHandler = () => {
             input.value = 0;
             input.answer = true;
             to_compute = input.name;
-            console.log(to_compute);
           }
           else input.value = element.value;
         });
 
         if(blank_counter > 1) {
-          alert('PLEASE FILL OUT ALL FIELDS');
+          if(document.getElementById('missing-input-flash-err') == undefined) {
+            let err = 
+              `<div id="missing-input-flash-err" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <span><strong>Invalid Input:</strong> PLEASE FILL OUT ALL THE FIELDS.</span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+
+              </div>`
+            document
+              .getElementById('calc-container')
+              .insertAdjacentHTML('afterbegin', err);
+          }
           return;
         }
         if(blank_counter <= 0) {
-          alert('PLEASE LEAVE A VALUE TO SOLVE FOR BLANK');
+          if(document.getElementById('no-solve-flash-err') == undefined) {
+            let err = 
+              `<div id="no-solve-flash-err" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <span><strong>Invalid Input:</strong> PLEASE LEAVE A VALUE TO SOLVE FOR BLANK.</span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+
+              </div>`
+            document
+              .getElementById('calc-container')
+              .insertAdjacentHTML('afterbegin', err);
+          }
           return;
         } 
         
