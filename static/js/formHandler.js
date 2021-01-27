@@ -43,6 +43,8 @@ const formSubmitHandler = () => {
           alert('PLEASE LEAVE A VALUE TO SOLVE FOR BLANK');
           return;
         } 
+
+        updateQueryString(inputs)
         
         $.ajax({
           type: 'POST',
@@ -66,3 +68,14 @@ const formSubmitHandler = () => {
             }
         });
 };
+
+
+const updateQueryString = inputs => {
+  const newUrl = new URL(window.location);
+  inputs.forEach( variable => {
+    if(variable.value) {
+      newUrl.searchParams.set(variable.name, variable.value)
+    }
+  })
+  window.history.pushState({}, document.title, newUrl);
+} 
