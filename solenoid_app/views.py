@@ -78,12 +78,19 @@ def voltageChart(request):
             data['compute'] = form.cleaned_data['compute']
             compute = data['compute']
 
+            data['compute'] = None
+            
+
             for i in range(2, 8):
                 labels.append(i)
-                graph.append(solenoid_solve(i, data['length'], data['r_not'],
-                                        data['r_a'], data['awg'], data['x'], data['force']))
+                data['force'] = None
+                # print(type(data['force']))
+                data['voltage'] = i
+                # print(i)
+                graph.append(str(round(solenoid_solve(i, data['length'], data['r_not'],
+                                         data['r_a'], data['awg'], data['x'], data['force']),2)))
 
-        
+        # print(graph)
     return JsonResponse(data={
         'labels': labels,
         'data': graph,

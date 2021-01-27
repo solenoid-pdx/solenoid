@@ -91,9 +91,9 @@ function voltageChartAjax(inputs){
               data: {
                 labels: data.labels,
                 datasets: [{
-                  label: 'Voltage',
+                  label: 'Force',
                   backgroundColor: 'green',
-                 data: data.data
+                  data: data.data
                }]          
              },
               options: {
@@ -103,11 +103,12 @@ function voltageChartAjax(inputs){
                 },
                 title: {
                   display: true,
-                  text: 'Voltage Line Chart'
+                  text: 'Force vs Voltage'
                 },
-                xAxes: [{ display: true, scaleLabel: { display: true, labelString: 'Voltage'}}],
-                yAxes: [{ display: true, scaleLabel: { display: true, labelString: 'Force'}}]
-              }
+                scales: {
+                   xAxes: [{ display: true, scaleLabel: { display: true, labelString: 'Voltage'}}],
+                   yAxes: [{ display: true, scaleLabel: { display: true, labelString: 'Force'}}]
+              }}
             });
 
           }
