@@ -16,13 +16,13 @@ const createInputs = () => {
     const urlParams = new URLSearchParams(window.location.search)
 
     let inputs = [
-        { 'name': 'voltage', 'symbol': 'V', 'value': urlParams.get('voltage') || '5', 'unit': 'volts', 'html': '' },
-        { 'name': 'length', 'symbol': 'L', 'value': urlParams.get('length') || '27', 'unit': 'mm', 'html': '' },
-        { 'name': 'r_not', 'symbol': 'r sub not', 'value': urlParams.get('r_not') || '2.3', 'unit': 'mm', 'html': '' },
-        { 'name': 'r_a', 'symbol': 'r sub a', 'value': urlParams.get('r_a') || '4.5', 'unit': 'mm', 'html': '' },
-        { 'name': 'x', 'symbol': 'x', 'value': urlParams.get('x') || '0', 'unit': 'mm', 'html': '' },
+        { 'name': 'voltage', 'symbol': 'V', 'value': urlParams.get('voltage') || '', 'unit': 'volts', 'html': '' },
+        { 'name': 'length', 'symbol': 'L', 'value': urlParams.get('length') || '', 'unit': 'mm', 'html': '' },
+        { 'name': 'r_not', 'symbol': 'r sub not', 'value': urlParams.get('r_not') || '', 'unit': 'mm', 'html': '' },
+        { 'name': 'r_a', 'symbol': 'r sub a', 'value': urlParams.get('r_a') || '', 'unit': 'mm', 'html': '' },
+        { 'name': 'x', 'symbol': 'x', 'value': urlParams.get('x') || '', 'unit': 'mm', 'html': '' },
         { 'name': 'force', 'symbol': 'F', 'value': urlParams.get('force') || '', 'unit': 'N', 'html': '' },
-        { 'name': 'awg', 'symbol': 'AWG', 'value': urlParams.get('awg') || '30', 'unit': 'guage', 'html': '' },
+        { 'name': 'awg', 'symbol': 'AWG', 'value': urlParams.get('awg') || '', 'unit': 'guage', 'html': '' },
     ];
     inputs.forEach( element => {
         // console.log(html, index+1);
@@ -50,6 +50,15 @@ const createInputs = () => {
     return inputs;
 };
 
+function populateDefaults(){
+  document.getElementById('input-text-voltage').value = '5';
+  document.getElementById('input-text-length').value = '27';
+  document.getElementById('input-text-r_not').value = '2.3';
+  document.getElementById('input-text-r_a').value = '4.5';
+  document.getElementById('input-text-x').value = '0';
+  document.getElementById('input-text-awg').value = '30';
+  document.getElementById('input-radio-voltage').checked = true;
+}
 const formatR = unit => {
   if (unit == 'r sub not')
     return 'r<sub>0</sub>';
