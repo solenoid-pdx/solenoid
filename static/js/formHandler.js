@@ -12,17 +12,24 @@ const formSubmitHandler = () => {
 
         let blank_counter = 0;
         let to_compute = '';
+        let toGraph = '';
 
         inputs.forEach( (input, _index) => {
           let element = document.getElementById(`input-text-${input.name}`);
+          let radio = document.getElementById(`input-radio-${input.name}`);
           if(element.value === '' ) {
             blank_counter += 1;
             input.value = 0;
             input.answer = true;
             to_compute = input.name;
-            console.log(to_compute);
+            // console.log(to_compute);
           }
           else input.value = element.value;
+
+          if(radio.checked){
+            toGraph = input.name;
+            // console.log(input.name);
+          }
         });
 
         if(to_compute !== 'force' && inputs['x'] !== 0) {
@@ -42,7 +49,7 @@ const formSubmitHandler = () => {
           alert('PLEASE LEAVE A VALUE TO SOLVE FOR BLANK');
           return;
         } 
-        voltageChartAjax(inputs)
+        voltageChartAjax(inputs, toGraph)
         $.ajax({
           type: 'POST',
           url: 'formHandle',
@@ -65,8 +72,9 @@ const formSubmitHandler = () => {
         });
 };
 
-function voltageChartAjax(inputs){
-  var $voltageChart = $("#voltage-Chart");
+function voltageChartAjax(inputs, toGraph){
+  let $voltageChart = $("#voltage-Chart");
+  console.log(toGraph)
   $.ajax({
           type: 'POST',
           url: 'voltageChart',
@@ -79,7 +87,8 @@ function voltageChartAjax(inputs){
             x: inputs[4].value,
             force: inputs[5].value,
             awg: inputs[6].value,
-            compute: 'force',
+            compute: 'force', //Change this later, currently just comparing vs force tho
+            toGraph: toGraph,
             csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
           },
           success: function (data) {
@@ -103,10 +112,10 @@ function voltageChartAjax(inputs){
                 },
                 title: {
                   display: true,
-                  text: 'Force vs Voltage'
+                  text: `Force vs ${toGraph}`
                 },
                 scales: {
-                   xAxes: [{ display: true, scaleLabel: { display: true, labelString: 'Voltage'}}],
+                   xAxes: [{ display: true, scaleLabel: { display: true, labelString: toGraph}}],
                    yAxes: [{ display: true, scaleLabel: { display: true, labelString: 'Force'}}]
               }}
             });
