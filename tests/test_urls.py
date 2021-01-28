@@ -6,12 +6,13 @@
 # https://docs.djangoproject.com/en/3.1/topics/testing/overview/
 
 import unittest
-from django.test import SimpleTestCase, Client
+from django.test import SimpleTestCase, Client, tag
 from django.urls import reverse, resolve
 
 from solenoid_app.views import indexView
 
 
+@tag('unit')
 class TestUrls(SimpleTestCase):
     "Url Tests"
 

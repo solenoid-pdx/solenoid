@@ -22,13 +22,11 @@ const formSubmitHandler = () => {
             input.value = 0;
             input.answer = true;
             to_compute = input.name;
-            // console.log(to_compute);
           }
           else input.value = element.value;
 
           if(radio.checked){
             toGraph = input.name;
-            // console.log(input.name);
           }
         });
 
@@ -36,6 +34,9 @@ const formSubmitHandler = () => {
           alert('X MUST BE 0.');
           inputs[4].value = 0;
         }
+
+        
+
         if(to_compute === 'x') {
           alert('X CANNOT BE SOLVED FOR.');
           return;
@@ -50,6 +51,9 @@ const formSubmitHandler = () => {
           return;
         } 
         voltageChartAjax(inputs, toGraph)
+
+        updateQueryString(inputs)
+        
         $.ajax({
           type: 'POST',
           url: 'formHandle',
@@ -67,6 +71,7 @@ const formSubmitHandler = () => {
           },
             success: res => {
               result = res[res.compute];
+              console.log(res)
               document.getElementById(`input-text-${res.compute}`).value = result;
             }
         });
@@ -123,3 +128,13 @@ function voltageChartAjax(inputs, toGraph){
           }
         });
 }
+
+const updateQueryString = inputs => {
+  const newUrl = new URL(window.location);
+  inputs.forEach( variable => {
+    if(variable.value) {
+      newUrl.searchParams.set(variable.name, variable.value)
+    }
+  })
+  window.history.pushState({}, document.title, newUrl);
+} 

@@ -13,14 +13,16 @@ const mountInputs = () => {
 };
 
 const createInputs = () => {
+    const urlParams = new URLSearchParams(window.location.search)
+
     let inputs = [
-        { 'name': 'voltage', 'symbol': 'V', 'unit': 'volts', 'html': '' , 'value': '5'},
-        { 'name': 'length', 'symbol': 'L', 'unit': 'mm', 'html': '', 'value': '27' },
-        { 'name': 'r_not', 'symbol': 'r sub not', 'unit': 'mm', 'html': '', 'value': '2.3'},
-        { 'name': 'r_a', 'symbol': 'r sub a', 'unit': 'mm', 'html': '', 'value': '4.5'},
-        { 'name': 'x', 'symbol': 'x', 'unit': 'mm', 'html': '', 'value': '0'},
-        { 'name': 'force', 'symbol': 'F', 'unit': 'N', 'html': '', 'value': ''},
-        { 'name': 'awg', 'symbol': 'AWG', 'unit': 'guage', 'html': '', 'value': '30'},
+        { 'name': 'voltage', 'symbol': 'V', 'value': urlParams.get('voltage') || '5', 'unit': 'volts', 'html': '' },
+        { 'name': 'length', 'symbol': 'L', 'value': urlParams.get('length') || '27', 'unit': 'mm', 'html': '' },
+        { 'name': 'r_not', 'symbol': 'r sub not', 'value': urlParams.get('r_not') || '2.3', 'unit': 'mm', 'html': '' },
+        { 'name': 'r_a', 'symbol': 'r sub a', 'value': urlParams.get('r_a') || '4.5', 'unit': 'mm', 'html': '' },
+        { 'name': 'x', 'symbol': 'x', 'value': urlParams.get('x') || '0', 'unit': 'mm', 'html': '' },
+        { 'name': 'force', 'symbol': 'F', 'value': urlParams.get('force') || '', 'unit': 'N', 'html': '' },
+        { 'name': 'awg', 'symbol': 'AWG', 'value': urlParams.get('awg') || '30', 'unit': 'guage', 'html': '' },
     ];
     inputs.forEach( element => {
         // console.log(html, index+1);
