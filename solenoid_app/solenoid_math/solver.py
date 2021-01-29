@@ -61,16 +61,16 @@ PERM_RELATIVE = 350
 """
 Solves for a single missing variable within the solenoid force equation.
 
-The variable being solved for is inputed as a None value. All other
+The variable being solved for is inputted as a None value. All other
 arguments are then required and cannot be None
 
 Parameters:
     volts (float | None): Voltage applied to the solenoid - Volts
-    length (float | None): Overall length of the solenoid coil - Milimeters
-    r0 (float | None): Inner radius of the sloenoid coil - Milimeters
-    ra (float | None): Outer radius of the sloenoid coil - Milimeters
+    length (float | None): Overall length of the solenoid coil - Millimeters
+    r0 (float | None): Inner radius of the solenoid coil - Millimeters
+    ra (float | None): Outer radius of the solenoid coil - Millimeters
     gauge (string): A value between "0000" -> "40"
-    location (float | None): Location (Stroke) of the solenoid core within the coil - Milimeters
+    location (float | None): Location (Stroke) of the solenoid core within the coil - Millimeters
     force (float | None): The force produced by the solenoid - Newtons
 
 Returns:
@@ -165,18 +165,18 @@ def solenoid_solve(volts, length, r0, ra, gauge, location, force):
 """
 Solves directly for a single missing variable within the solenoid force equation.
 
-Performs much faster than sympy
+Performs much faster than the sympy equivalents in solenoid_solve
 
 The variable being solved for is inputted as a None value. All other
 arguments are then required and cannot be None
 
 Parameters:
     volts (float | None): Voltage applied to the solenoid - Volts
-    length (float | None): Overall length of the solenoid coil - Milimeters
-    r0 (float | None): Inner radius of the sloenoid coil - Milimeters
-    ra (float | None): Outer radius of the sloenoid coil - Milimeters
+    length (float | None): Overall length of the solenoid coil - Millimeters
+    r0 (float | None): Inner radius of the solenoid coil - Millimeters
+    ra (float | None): Outer radius of the solenoid coil - Millimeters
     gauge (string): A value between "0000" -> "40"
-    location (float | None): Location (Stroke) of the solenoid core within the coil - Milimeters
+    location (float | None): Location (Stroke) of the solenoid core within the coil - Millimeters
     force (float | None): The force produced by the solenoid - Newtons
 
 Returns:
@@ -192,7 +192,7 @@ def solenoid_performance(volts, length, r0, ra, gauge, location, force):
                     ra / 1000) * np.e ** (((location / 1000) * a) / (2 * (length / 1000)))) / (
                              (r0 / 1000) * np.sqrt(PERM_RELATIVE) * np.sqrt(PERM_FREE) * np.sqrt(a))
 
-    # Only valid is location == 0
+    # Only valid if location == 0
     elif length is None:
 
         result = 1000 * (np.sqrt(a) * (r0 / 1000) * np.sqrt(PERM_FREE) * np.sqrt(PERM_RELATIVE) * volts) / (
@@ -233,19 +233,19 @@ variable is selected by entering variable the name for the idv argument.
 
 Parameters:
     volts (float | None): Voltage applied to the solenoid - Volts
-    length (float | None): Overall length of the solenoid coil - Milimeters
-    r0 (float | None): Inner radius of the sloenoid coil - Milimeters
-    ra (float | None): Outer radius of the sloenoid coil - Milimeters
+    length (float | None): Overall length of the solenoid coil - Millimeters
+    r0 (float | None): Inner radius of the solenoid coil - Millimeters
+    ra (float | None): Outer radius of the solenoid coil - Millimeters
     gauge (string): A value between "0000" -> "40"
-    location (float | None): Location (Stroke) of the solenoid core within the coil - Milimeters
+    location (float | None): Location (Stroke) of the solenoid core within the coil - Millimeters
     force (float | None): The force produced by the solenoid - Newtons
-    idv (string): Independent variable - ["volts", "length", "r0", "ra", "force", "gauge"]
+    idv (string): Independent variable - one of ["volts", "length", "r0", "ra", "force", "gauge", "location"]
     start (int | float): Starting value of the independent variable range
     stop (int | float): Stopping value of the independent variable range
     step (int | float): range granularity
 
 Returns:
-    result (float): The solved value of specified variable
+    result (list of tuples): A list of tuples containing (x, y) pairs for graphing
 """
 def solenoid_range(volts, length, r0, ra, gauge, location, force, idv, start=0.0, stop=1.0, step=1.0):
     result = []
