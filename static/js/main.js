@@ -13,14 +13,16 @@ const mountInputs = () => {
 };
 
 const createInputs = () => {
+    const urlParams = new URLSearchParams(window.location.search)
+
     let inputs = [
-        { 'name': 'voltage', 'symbol': 'V', 'unit': 'volts', 'html': '' },
-        { 'name': 'length', 'symbol': 'L', 'unit': 'mm', 'html': '' },
-        { 'name': 'r_not', 'symbol': 'r sub not', 'unit': 'mm', 'html': '' },
-        { 'name': 'r_a', 'symbol': 'r sub a', 'unit': 'mm', 'html': '' },
-        { 'name': 'x', 'symbol': 'x', 'unit': 'mm', 'html': '' },
-        { 'name': 'force', 'symbol': 'F', 'unit': 'N', 'html': '' },
-        { 'name': 'awg', 'symbol': 'AWG', 'unit': 'guage', 'html': '' },
+        { 'name': 'voltage', 'symbol': 'V', 'value': urlParams.get('voltage') || '', 'unit': 'volts', 'html': '' },
+        { 'name': 'length', 'symbol': 'L', 'value': urlParams.get('length') || '', 'unit': 'mm', 'html': '' },
+        { 'name': 'r_not', 'symbol': 'r sub not', 'value': urlParams.get('r_not') || '', 'unit': 'mm', 'html': '' },
+        { 'name': 'r_a', 'symbol': 'r sub a', 'value': urlParams.get('r_a') || '', 'unit': 'mm', 'html': '' },
+        { 'name': 'x', 'symbol': 'x', 'value': urlParams.get('x') || '', 'unit': 'mm', 'html': '' },
+        { 'name': 'force', 'symbol': 'F', 'value': urlParams.get('force') || '', 'unit': 'N', 'html': '' },
+        { 'name': 'awg', 'symbol': 'AWG', 'value': urlParams.get('awg') || '', 'unit': 'guage', 'html': '' },
     ];
     inputs.forEach( element => {
         // console.log(html, index+1);
@@ -37,6 +39,7 @@ const createInputs = () => {
                class="form-control"
                aria-label="Text input with radio button"
                placeholder="Enter ${element.symbol}"
+               value="${element.value}"
          >
         <div class="input-group-append">
             <span class="input-group-text">${element.unit}</span>
