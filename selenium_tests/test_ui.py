@@ -53,8 +53,8 @@ class TestUI(LiveServerTestCase):
         queryString = queryString[:-1]
         self.assertEqual(self.driver.current_url, URL + queryString)
     
+    """
     def test_query_string_not_updated_invalid_calculate(self):
-        """ Test that query string is not updated when attempting an invalid calculation """
 
         testValue = "7"
         formParameters = ["voltage", "length", "r_not", "r_a", "force", "awg"]
@@ -62,3 +62,4 @@ class TestUI(LiveServerTestCase):
             self.driver.find_element_by_id('input-text-' + formParameter).send_keys(testValue)
         self.driver.find_element_by_xpath('//*[@id="input-submit-form"]/input[2]').click()
         self.assertEqual(self.driver.current_url, URL)
+    """
