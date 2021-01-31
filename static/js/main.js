@@ -26,7 +26,7 @@ const createInputs = () => {
     ];
     inputs.forEach( element => {
         // console.log(html, index+1);
-        element.html = 
+        element.html =
         `<div id="input-${element.name}" class="input-group mb-3">
         <div class="input-group-prepend">
           <span class="input-group-text">${formatR(element.symbol)}</span>
@@ -46,7 +46,10 @@ const createInputs = () => {
           </div>
         </div>
       `
+
     });
+
+
     return inputs;
 };
 
