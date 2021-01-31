@@ -36,8 +36,8 @@ const formSubmitHandler = () => {
 
               </div>`
             document
-              .getElementById('calc-container')
-              .insertAdjacentHTML('afterbegin', err);
+              .getElementById('flash-container')
+              .insertAdjacentHTML('afterend', err);
           }
           return;
         }
@@ -52,8 +52,8 @@ const formSubmitHandler = () => {
 
               </div>`
             document
-              .getElementById('calc-container')
-              .insertAdjacentHTML('afterbegin', err);
+              .getElementById('flash-container')
+              .insertAdjacentHTML('beforeend', err);
           }
           return;
         } 
@@ -68,8 +68,8 @@ const formSubmitHandler = () => {
 
               </div>`
             document
-              .getElementById('calc-container')
-              .insertAdjacentHTML('afterbegin', err);
+              .getElementById('flash-container')
+              .insertAdjacentHTML('beforeend', err);
           }
           return;
         }
@@ -84,8 +84,8 @@ const formSubmitHandler = () => {
 
               </div>`
             document
-              .getElementById('calc-container')
-              .insertAdjacentHTML('afterbegin', err);
+              .getElementById('flash-container')
+              .insertAdjacentHTML('beforeend', err);
           }
           return;
         } 
