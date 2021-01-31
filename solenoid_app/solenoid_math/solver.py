@@ -216,10 +216,10 @@ def solenoid_performance(volts, length, r0, ra, gauge, location, force):
         # TODO: Check this math if it return correctly
         constant_1 = ((volts ** 2) * PERM_RELATIVE* PERM_FREE) / (
                     8 * np.pi * ((AWG_DATA[gauge]["resistance"] / 1000) ** 2) * (
-                    (length / 1000) ** 2)) * ALPHA
+                    (length / 1000) ** 2)) * a
         constant_2 = (((r0 /1000)**2) / ((ra/1000)**2))
         multOfConstant = constant_1 * constant_2
-        exponent = -1 * (ALPHA / ( length/1000))
+        exponent = -1 * (a / ( length/1000))
 
         f = lambda x,a,b: a * np.e**(b*x) - force
         fder = lambda x,a,b: a * b * np.e**(b*x)
