@@ -2,6 +2,7 @@ from sympy import symbols, solve
 import numpy as np
 from time import perf_counter
 from solenoid_app.solenoid_math.exceptions import TooManyVariables, IncorrectDataType
+from scipy import optimize
 
 # Wire Gauge constants for copper
 # Resistance per unit length and cross-sectional area
@@ -212,8 +213,17 @@ def solenoid_performance(volts, length, r0, ra, gauge, location, force):
                                  length / 1000))
 
     elif location is None:
-        # TODO: find eq for location or handle with error (here or at frontend)
-        result = -1
+        # TODO: Check this math if it return correctly
+        constant_1 = ((volts ** 2) * PERM_RELATIVE* PERM_FREE) / (
+                    8 * np.pi * ((AWG_DATA[gauge]["resistance"] / 1000) ** 2) * (
+                    (length / 1000) ** 2)) * ALPHA
+        constant_2 = (((r0 /1000)**2) / ((ra/1000)**2))
+        multOfConstant = constant_1 * constant_2
+        exponent = -1 * (ALPHA / ( length/1000))
+
+        f = lambda x,a,b: a * np.e**(b*x) - force
+        fder = lambda x,a,b: a * b * np.e**(b*x)
+        result = optimize.newton(f, 0, args=(multOfConstant,exponent), fprime=fder, maxiter=1000)
 
     elif force is None:
 
