@@ -47,7 +47,7 @@ jobs:
         
       # Start Server
       - name: Start Server
-        run: gunicorn --bind 0.0.0.0:8000 solenoid.wsgi
+        run: python3 manage.py runserver
       
       # Execute Selenium Tests
       - name: Selenium Tests
