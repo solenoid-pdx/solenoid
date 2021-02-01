@@ -47,7 +47,7 @@ jobs:
         
       # Start Server
       - name: Start Server
-        run: python3 manage.py runserver
+        run: python3 manage.py runserver &
       
       # Execute Selenium Tests
       - name: Selenium Tests
