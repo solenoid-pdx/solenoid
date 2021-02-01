@@ -6,6 +6,7 @@
 from selenium import webdriver
 from django.test import LiveServerTestCase, tag
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.chrome.options import Options
 
 
 URL = "http://localhost:8000/"
@@ -16,7 +17,9 @@ class TestUI(LiveServerTestCase):
 
     def __init__(self, methods):
         super().__init__(methods)
-        self.driver = webdriver.Chrome()
+        chrome_options = Options()
+        chrome_options.add_argument("--headless")
+        self.driver = webdriver.Chrome(chrome_options=chrome_options)
 
     # This method is automatically invoked before each test case is run.
     def setUp(self):
