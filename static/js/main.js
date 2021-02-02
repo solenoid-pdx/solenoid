@@ -56,4 +56,4 @@ const formatR = unit => {
   if (unit == 'r sub a')
     return 'r<sub>a</sub>';
   return unit;
-}
+};
