@@ -158,6 +158,10 @@ function voltageChartAjax(inputs, toGraph){
                }]          
              },
               options: {
+                tooltips: {
+                  mode: 'nearest',
+                  intersect: false,
+                },
                 responsive: true,
                 legend: {
                   position: 'top',
