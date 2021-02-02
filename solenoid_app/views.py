@@ -104,6 +104,20 @@ def voltageChart(request):
                 for r_a in np.around(np.arange(1.0, 5.0, 0.1),decimals=2).astype(float):
                     labels.append(r_a)
                     graph.append(str(round(solenoid_solve(data['voltage'], data['length'], data['r_not'], r_a, data['awg'], data['x'], data['force']),2)))
+            
+            elif data['toGraph'] == 'x':
+                length = int(data['length']) + 1
+                for x in range(0, length):
+                    labels.append(x)
+                    graph.append(str(round(solenoid_solve(data['voltage'], data['length'], data['r_not'], data['r_a'], data['awg'], x, data['force']),2)))
+
+            elif data['toGraph'] == 'awg':
+                # a = ['0000', '000', '00']
+                # b = map(str, range(0,40))
+                # awg = a + list(b)
+                for i in list(map(str, range(26, 41))):
+                    labels.append(i)
+                    graph.append(str(round(solenoid_solve(data['voltage'], data['length'], data['r_not'], data['r_a'], i, data['x'], data['force']),2)))
             else: #defaults to voltage for now, will change, possibly don't need
                 for volts in range(0, 51):
                     labels.append(volts)

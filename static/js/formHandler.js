@@ -123,8 +123,9 @@ const formSubmitHandler = () => {
 };
 
 function voltageChartAjax(inputs, toGraph){
-  let $voltageChart = $("#voltage-Chart");
-  console.log(toGraph)
+  let $voltageChart = $("#voltage-Chart")
+  // myChart.destroy()
+  // console.log(toGraph)
   $.ajax({
           type: 'POST',
           url: 'voltageChart',
@@ -144,8 +145,10 @@ function voltageChartAjax(inputs, toGraph){
           success: function (data) {
 
             var ctx = $voltageChart[0].getContext("2d");
-
-            new Chart(ctx, {
+            if(window.line != undefined){
+              window.line.destroy()
+            }
+            window.line = new Chart(ctx, {
              type: 'line',
               data: {
                 labels: data.labels,
