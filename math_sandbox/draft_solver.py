@@ -481,7 +481,7 @@ if __name__ == "__main__":
 
     # equations(None, 27, 2.3, 4.5, "30", 0, 8.01266694554291)
 
-    solver_performance(100, 5, 27, 2.3, 4.5, "30", 0, 8.01266694554291)
+    # solver_performance(100, 5, 27, 2.3, 4.5, "30", 0, 8.01266694554291)
 
     # start = perf_counter()
     # #                                volts, length, r0, ra, gauge, location
@@ -559,35 +559,36 @@ if __name__ == "__main__":
     #                               "| Volts = %g | Gauge = %s | Location(Stroke) = %g"
     #                               % (force1, force2, length, r0, volts, gauge, location))
     volts = 5
-    length = 27
-    r0 = 2.3
-    ra = 4.5
+    length = 22
+    r0 = 2.7
+    ra = 4.6
     gauge = "30"
-    location = 0
+    location = 21
 
     print("\nValues: Volts = %g | Length = %g | R0 = %g | RA = %g | Gauge = %s | Location(Stroke) = %g" % (volts, length, r0, ra, gauge, location))
 
     print("\nSolenoid_solve:")
     force = solenoid_solve(volts, length, r0, ra, gauge, location, None)
-    print(" Force = %f (N)" % force)
-    print(" Volts = %f (V)" % solenoid_solve(None, length, r0, ra, gauge, location, force))
-    print(" length = %f (mm)" % solenoid_solve(volts, None, r0, ra, gauge, location, force))
-    print(" R0 = %f (mm)" % solenoid_solve(volts, length, None, ra, gauge, location, force))
-    print(" Ra = %f" % solenoid_solve(volts, length, r0, None, gauge, location, force))
+    print(" Force = %.5f (N)" % force)
+    print(" Volts = %.5f (V)" % solenoid_solve(None, length, r0, ra, gauge, location, force))
+    # print(" length = %.5f (mm)" % solenoid_solve(volts, None, r0, ra, gauge, location, force))
+    print(" R0 = %.5f (mm)" % solenoid_solve(volts, length, None, ra, gauge, location, force))
+    print(" Ra = %.5f" % solenoid_solve(volts, length, r0, None, gauge, location, force))
     # print("Location = %g (mm)" % solenoid_solve(volts, length, r0, ra, gauge, None, force))
 
     print("\nSolenoid_peformance:")
     force = solenoid_performance(volts, length, r0, ra, gauge, location, None)
-    print(" Force = %f (N)" % force)
-    print(" Volts = %f (V)" % solenoid_performance(None, length, r0, ra, gauge, location, force))
-    print(" length = %f (mm)" % solenoid_performance(volts, None, r0, ra, gauge, location, force))
-    print(" R0 = %f (mm)" % solenoid_performance(volts, length, None, ra, gauge, location, force))
-    print(" Ra = %f\n" % solenoid_performance(volts, length, r0, None, gauge, location, force))
+    print(" Force = %.5f (N)" % force)
+    print(" Volts = %.5f (V)" % solenoid_performance(None, length, r0, ra, gauge, location, force))
+    print(" length = %.5f (mm)" % solenoid_performance(volts, None, r0, ra, gauge, location, force))
+    print(" R0 = %.5f (mm)" % solenoid_performance(volts, length, None, ra, gauge, location, force))
+    print(" Ra = %.5f (mm)" % solenoid_performance(volts, length, r0, None, gauge, location, force))
+    print(" Location = %.5f (mm)\n" % solenoid_performance(volts, length, r0, ra, gauge, None, force))
 
-    print(solenoid_range(None, length, r0, ra, gauge, location, None, "volts", 1, 10, 1))
-    print(solenoid_range(volts, None, r0, ra, gauge, location, None, "length", 20, 30, 1))
-    print(solenoid_range(volts, length, None, ra, gauge, location, None, "r0", 2.0, 3.0, 0.1))
-    print(solenoid_range(volts, length, r0, None, gauge, location, None, "ra", 4.0, 5.0, 0.1))
-    print(solenoid_range(volts, length, r0, ra, None, location, None, "gauge"))
-    print(solenoid_range(volts, length, r0, ra, gauge, None, None, "location", 0, 10.0, 1))
+    # print(solenoid_range(None, length, r0, ra, gauge, location, None, "volts", 1, 10, 1))
+    # print(solenoid_range(volts, None, r0, ra, gauge, location, None, "length", 20, 30, 1))
+    # print(solenoid_range(volts, length, None, ra, gauge, location, None, "r0", 2.0, 3.0, 0.1))
+    # print(solenoid_range(volts, length, r0, None, gauge, location, None, "ra", 4.0, 5.0, 0.1))
+    # print(solenoid_range(volts, length, r0, ra, None, location, None, "gauge"))
+    # print(solenoid_range(volts, length, r0, ra, gauge, None, None, "location", 0, 10.0, 1))
 

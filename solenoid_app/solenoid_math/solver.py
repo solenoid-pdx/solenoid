@@ -193,11 +193,14 @@ def solenoid_performance(volts, length, r0, ra, gauge, location, force):
                     ra / 1000) * np.e ** (((location / 1000) * a) / (2 * (length / 1000)))) / (
                              (r0 / 1000) * np.sqrt(PERM_RELATIVE) * np.sqrt(PERM_FREE) * np.sqrt(a))
 
-    # Only valid if location == 0
+    # TODO: Find EQ or handle location != 0 case with error (probably frontend)
     elif length is None:
 
-        result = 1000 * (np.sqrt(a) * (r0 / 1000) * np.sqrt(PERM_FREE) * np.sqrt(PERM_RELATIVE) * volts) / (
-                2 * np.sqrt(2 * np.pi) * np.sqrt(force) * (AWG_DATA[gauge]["resistance"] / 1000) * (ra / 1000))
+        if location == 0:
+            result = 1000 * (np.sqrt(a) * (r0 / 1000) * np.sqrt(PERM_FREE) * np.sqrt(PERM_RELATIVE) * volts) / (
+                    2 * np.sqrt(2 * np.pi) * np.sqrt(force) * (AWG_DATA[gauge]["resistance"] / 1000) * (ra / 1000))
+        else:
+            result = -1
 
     elif r0 is None:
 
@@ -213,17 +216,16 @@ def solenoid_performance(volts, length, r0, ra, gauge, location, force):
                                  length / 1000))
 
     elif location is None:
-        # TODO: Check this math if it return correctly
-        constant_1 = ((volts ** 2) * PERM_RELATIVE* PERM_FREE) / (
-                    8 * np.pi * ((AWG_DATA[gauge]["resistance"] / 1000) ** 2) * (
-                    (length / 1000) ** 2)) * a
-        constant_2 = (((r0 /1000)**2) / ((ra/1000)**2))
-        multOfConstant = constant_1 * constant_2
-        exponent = -1 * (a / ( length/1000))
 
-        f = lambda x,a,b: a * np.e**(b*x) - force
-        fder = lambda x,a,b: a * b * np.e**(b*x)
-        result = optimize.newton(f, 0, args=(multOfConstant,exponent), fprime=fder, maxiter=1000)
+        constant_1 = ((volts ** 2) * PERM_RELATIVE * PERM_FREE) / (
+                    8 * np.pi * ((AWG_DATA[gauge]["resistance"] / 1000) ** 2) * ((length / 1000) ** 2)) * a
+        constant_2 = (((r0 / 1000)**2) / ((ra / 1000)**2))
+        product = constant_1 * constant_2
+        exponent = -1 * (a / (length/1000))
+
+        f = lambda x, a, b: a * np.e**(b * x) - force
+        fder = lambda x, a, b: a * b * np.e**(b * x)
+        result = 1000 * abs(optimize.newton(f, 0, args=(product, exponent), fprime=fder, maxiter=1000))
 
     elif force is None:
 
@@ -287,8 +289,5 @@ def solenoid_range(volts, length, r0, ra, gauge, location, force, idv, start=0.0
     elif idv == "location":
         for i in list(np.arange(start, stop, step)):
             result.append((i, solenoid_performance(volts, length, r0, ra, gauge, i, force)))
-
-    else:
-        return -1
 
     return result
