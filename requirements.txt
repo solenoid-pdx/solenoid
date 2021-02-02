@@ -6,3 +6,4 @@ sqlparse==0.4.1
 numpy==1.19.4
 sympy==1.7
 django-chartjs==2.2.1
+scipy==1.6.0
