@@ -113,24 +113,3 @@ def voltageChart(request):
         'labels': labels,
         'data': graph,
     })
-
-# Base Graph, Don't need just for testing
-class LineChartJSONView(BaseLineChartView):
-    #This will be from the formhandle, it will return each of these
-    def get_labels(self):
-        """Return 7 labels for the x-axis."""
-        return ["2", "3", "3", "4", "5", "6", "7"]
-
-    def get_providers(self):
-        """Return names of datasets."""
-        return ["Something", "Goes", "Here Later"]
-
-    def get_data(data):
-        """Return 3 datasets to plot."""
-
-        return [[75, 44, 92, 11, 44, 95, 35],
-                [41, 92, 18, 3, 73, 87, 92],
-                [87, 21, 94, 3, 90, 13, 65]]
-
-line_chart = TemplateView.as_view(template_name='line_chart.html')
-line_chart_json = LineChartJSONView.as_view()
