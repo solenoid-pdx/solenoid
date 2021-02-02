@@ -30,24 +30,69 @@ const formSubmitHandler = () => {
           }
         });
 
-        if(to_compute !== 'force' && inputs['x'] !== 0) {
-          alert('X MUST BE 0.');
-          inputs[4].value = 0;
-        }
-
-        
-
-        if(to_compute === 'x') {
-          alert('X CANNOT BE SOLVED FOR.');
-          return;
-        }
 
         if(blank_counter > 1) {
-          alert('PLEASE FILL OUT ALL FIELDS');
+          if(document.getElementById('missing-input-flash-err') == undefined) {
+            let err = 
+              `<div id="missing-input-flash-err" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <span><strong>Invalid Input:</strong> PLEASE FILL OUT ALL THE FIELDS.</span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+
+              </div>`
+            document
+              .getElementById('flash-container')
+              .insertAdjacentHTML('afterend', err);
+          }
           return;
         }
         if(blank_counter <= 0) {
-          alert('PLEASE LEAVE A VALUE TO SOLVE FOR BLANK');
+          if(document.getElementById('no-solve-input-flash-err') == undefined) {
+            let err = 
+              `<div id="no-solve-input-flash-err" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <span><strong>Invalid Input:</strong> PLEASE LEAVE A VALUE TO SOLVE FOR BLANK.</span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+
+              </div>`
+            document
+              .getElementById('flash-container')
+              .insertAdjacentHTML('beforeend', err);
+          }
+          return;
+        } 
+        if(to_compute !== 'force' && inputs[4].value != 0) {
+          if(document.getElementById('x-eq-zero-flash-err') == undefined) {
+            let err = 
+              `<div id="x-eq-zero-flash-err" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <span><strong>Invalid Input:</strong> X MUST EQUAL 0 FOR THIS SOLUTION.</span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+
+              </div>`
+            document
+              .getElementById('flash-container')
+              .insertAdjacentHTML('beforeend', err);
+          }
+          return;
+        }
+        if(to_compute === 'x') {
+          if(document.getElementById('unsolved-x-flash-err') == undefined) {
+            let err = 
+              `<div id="unsolved-x-flash-err" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <span><strong>Invalid Input:</strong> X CANNOT BE SOLVED FOR.</span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+
+              </div>`
+            document
+              .getElementById('flash-container')
+              .insertAdjacentHTML('beforeend', err);
+          }
           return;
         } 
         voltageChartAjax(inputs, toGraph)
@@ -71,8 +116,8 @@ const formSubmitHandler = () => {
           },
             success: res => {
               result = res[res.compute];
-              console.log(res)
               document.getElementById(`input-text-${res.compute}`).value = result;
+              document.getElementById('graph-container').style = 'width: 100%; display: block;';
             }
         });
 };
@@ -107,7 +152,9 @@ function voltageChartAjax(inputs, toGraph){
                 datasets: [{
                   label: 'Force',
                   backgroundColor: 'green',
-                  data: data.data
+                  borderColor: 'green',
+                  data: data.data,
+                  fill: false,
                }]          
              },
               options: {

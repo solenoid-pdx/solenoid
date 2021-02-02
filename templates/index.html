@@ -74,10 +74,13 @@
             </div>
     </div>
     <div id="calc-graph-container"
-         class="container d-flex justify-content-between border-bottom" 
+         class="container d-flex justify-content-between border-bottom flex-column" 
          style="margin-bottom: 5%; padding-bottom: 7%;"
     >
-        <div id="calc-container" style="width: 30%;">
+        <div id="calc-container"
+             class="d-flex flex-column justify-content-center"
+             style="width: 60%; margin-bottom: 5%;"
+        >
             <!--begin data set form-->
             <button class="btn btn-info"
                     style="margin-bottom: 5%;"
@@ -88,15 +91,20 @@
             <form
                 id="input-submit-form"
                 method="POST"
+                style="width: 100%;"
             >
             {% csrf_token %}
             </form>
             <!--end data set form-->
+            <div id="flash-container"
+                 class="d-flex flex-column justify-content-center"
+                 style="width: 100%; margin-top: 2%;"
+            >
+            </div>
         </div>
-        <div id="graph-container" style="width: 65%;">
+        <div id="graph-container" style="width: 100%; display: none;">
                 <h3>Graph</h3>
                 <div>
-                    <!-- {% include 'line_chart.html' %} -->
                     {% include 'voltageChart.html' %}
                 </div>
         </div>
