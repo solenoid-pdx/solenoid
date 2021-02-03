@@ -56,7 +56,6 @@ class TestUI(LiveServerTestCase):
         queryString = queryString[:-1]
         self.assertEqual(self.driver.current_url, URL + queryString)
     
-    """
     def test_query_string_not_updated_invalid_calculate(self):
 
         testValue = "7"
@@ -65,4 +64,3 @@ class TestUI(LiveServerTestCase):
             self.driver.find_element_by_id('input-text-' + formParameter).send_keys(testValue)
         self.driver.find_element_by_xpath('//*[@id="input-submit-form"]/input[2]').click()
         self.assertEqual(self.driver.current_url, URL)
-    """
