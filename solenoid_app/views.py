@@ -5,7 +5,7 @@ from django.http import JsonResponse
 from subprocess import check_output
 from django.views.generic import TemplateView
 from chartjs.views.lines import BaseLineChartView
-from .forms import DataSetForm, GraphForm 
+from .forms import DataSetForm 
 from solenoid_app.solenoid_math.solver import solenoid_solve
 import os
 import time
@@ -41,6 +41,7 @@ def formHandle(request):
             data['force'] = form.cleaned_data['force']
             data['awg'] = form.cleaned_data['awg']
             data['compute'] = form.cleaned_data['compute']
+            data['toGraph'] = form.cleaned_data['toGraph']
             compute = data['compute']
 
             data[compute] = None
@@ -68,7 +69,7 @@ def voltageChart(request):
     }
 
     if (request.method == "POST"):
-        form = GraphForm(request.POST)
+        form = DataSetForm(request.POST)
         print(request.POST)
         if form.is_valid():
             data['voltage'] = form.cleaned_data['voltage']
@@ -112,9 +113,6 @@ def voltageChart(request):
                     graph.append(str(round(solenoid_solve(data['voltage'], data['length'], data['r_not'], data['r_a'], data['awg'], x, data['force']),2)))
 
             elif data['toGraph'] == 'awg':
-                # a = ['0000', '000', '00']
-                # b = map(str, range(0,40))
-                # awg = a + list(b)
                 for i in list(map(str, range(26, 41))):
                     labels.append(i)
                     graph.append(str(round(solenoid_solve(data['voltage'], data['length'], data['r_not'], data['r_a'], i, data['x'], data['force']),2)))

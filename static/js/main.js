@@ -57,6 +57,7 @@ function populateDefaults(){
   document.getElementById('input-text-r_a').value = '4.5';
   document.getElementById('input-text-x').value = '0';
   document.getElementById('input-text-awg').value = '30';
+  document.getElementById('input-text-force').value = '';
   document.getElementById('input-radio-voltage').checked = true;
 }
 const formatR = unit => {

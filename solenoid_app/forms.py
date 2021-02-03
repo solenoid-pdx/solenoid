@@ -9,14 +9,4 @@ class DataSetForm(forms.Form):
     force = forms.FloatField()
     awg = forms.CharField()
     compute = forms.CharField()
-
-class GraphForm(forms.Form):
-    voltage = forms.FloatField()
-    length = forms.FloatField()
-    r_not = forms.FloatField()
-    r_a = forms.FloatField()
-    x = forms.FloatField()
-    force = forms.FloatField()
-    awg = forms.CharField()
-    compute = forms.CharField()
     toGraph = forms.CharField()
