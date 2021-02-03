@@ -14,7 +14,7 @@ from solenoid_app.views import indexView
 
 @tag('unit')
 class TestUrls(SimpleTestCase):
-    "Url Tests"
+    """Url Tests"""
 
     # This method is automatically invoked before each test case is run. Use when necessary
     def setUp(self):
@@ -26,12 +26,14 @@ class TestUrls(SimpleTestCase):
 
     def test_base_url_is_resolved(self):
         # You can use doc strings to give your tests a human readable name when executing
-        "Test '/' url resolves"
+        """Test '/' url resolves"""
+
         url = reverse('indexUrl')
         self.assertEquals(resolve(url).func, indexView)
     
     def test_base_url_response_code(self):
-        "Assert 200 response code on base '/' url request"
+        """Assert 200 response code on base '/' url request"""
+
         client = Client()
         response = client.get('')
         self.assertEqual(response.status_code, 200)

@@ -184,11 +184,14 @@ function voltageChartAjax(inputs, toGraph){
 }
 
 const updateQueryString = inputs => {
-  const newUrl = new URL(window.location);
+  const newUrl = new URL(window.location)
+  newUrl.searchParams.forEach( (value, key) => {
+    newUrl.searchParams.delete(key)
+  })
   inputs.forEach( variable => {
     if(variable.value) {
       newUrl.searchParams.set(variable.name, variable.value)
     }
   })
   window.history.pushState({}, document.title, newUrl);
-} 
+}
