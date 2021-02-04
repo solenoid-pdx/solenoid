@@ -57,13 +57,15 @@ const createInputs = () => {
               <div class="input-group-text">
                 <input type="radio" aria-label="Radio button for following text input" name="radAnswer">
               </div>
-            </div>
-            
-            <select id="input-text-${element.name}"
-                    class="form-control"
-            ></select>
-            
-            
+            </div>   
+            <input id = "input-text-awg"
+                   class = "form-control"
+                   list="input-text"
+                   value="${element.value}" 
+                   placeholder="Enter ${element.symbol}" 
+            >
+              <datalist id="input-text">
+              </datalist>           
             <div class="input-group-append">
               <span class="input-group-text">${element.unit}</span>
               </div>
@@ -80,14 +82,13 @@ const formatR = unit => {
   if (unit == 'r sub a')
     return 'r<sub>a</sub>';
   return unit;
-}
+};
 
 const add_awg_select_options =() =>{
-    $('#input-text-awg').append("<option selected disabled>"+ "Select AWG" + "</option>")
-    $('#input-text-awg').append("<option>"+ "0000" + "</option>")
-    $('#input-text-awg').append("<option>"+ "000" + "</option>")
-    $('#input-text-awg').append("<option>"+ "00" + "</option>")
+    $('#input-text').append("<option>"+ '0000' + "</option>")
+    $('#input-text').append("<option>"+ '000' + "</option>")
+    $('#input-text').append("<option>"+ '00' + "</option>")
     for(i=0; i<41; i++){
-        $("#input-text-awg").append("<option>" + i + "</option>");
+        $("#input-text").append("<option>" + i + "</option>");
     }
 };
