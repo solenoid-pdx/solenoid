@@ -90,5 +90,4 @@ const add_awg_select_options =() =>{
     for(i=0; i<41; i++){
         $("#input-text-awg").append("<option>" + i + "</option>");
     }
-}
-
+};
