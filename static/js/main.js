@@ -59,7 +59,7 @@ const createInputs = () => {
               </div>
             </div>
             
-            <select id="input-text-awg"
+            <select id="input-text-${element.name}"
                     class="form-control"
             ></select>
             
