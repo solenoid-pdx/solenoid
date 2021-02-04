@@ -127,14 +127,16 @@
     <div style="margin-top: 5%; text-align: center;"></div>
 </body>
 
+
+{% load static %}
+<script src="{% static 'js/table.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/chartHandler.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/formHandler.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/main.js' %}" type="text/javascript"></script>
 <script>
     $(document).on('submit', '#input-submit-form', (form) => {
         form.preventDefault();
         formSubmitHandler();
     });
 </script>
-{% load static %}
-<script src="{% static 'js/table.js' %}" type="text/javascript"></script>
-<script src="{% static 'js/main.js' %}" type="text/javascript"></script>
-<script src="{% static 'js/formHandler.js' %}" type="text/javascript"></script>
 </html>

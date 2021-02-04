@@ -1,3 +1,4 @@
+
 const formSubmitHandler = () => {
 
         let inputs = [
@@ -79,22 +80,22 @@ const formSubmitHandler = () => {
           }
           return;
         }
-        if(to_compute === 'x') {
-          if(document.getElementById('unsolved-x-flash-err') == undefined) {
-            let err = 
-              `<div id="unsolved-x-flash-err" class="alert alert-danger alert-dismissible fade show" role="alert">
-                <span><strong>Invalid Input:</strong> X CANNOT BE SOLVED FOR.</span>
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-                </button>
+        // if(to_compute === 'x') {
+        //   if(document.getElementById('unsolved-x-flash-err') == undefined) {
+        //     let err = 
+        //       `<div id="unsolved-x-flash-err" class="alert alert-danger alert-dismissible fade show" role="alert">
+        //         <span><strong>Invalid Input:</strong> X CANNOT BE SOLVED FOR.</span>
+        //         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        //         <span aria-hidden="true">&times;</span>
+        //         </button>
 
-              </div>`
-            document
-              .getElementById('flash-container')
-              .insertAdjacentHTML('beforeend', err);
-          }
-          return;
-        } 
+        //       </div>`
+        //     document
+        //       .getElementById('flash-container')
+        //       .insertAdjacentHTML('beforeend', err);
+        //   }
+        //   return;
+        // } 
         voltageChartAjax(inputs, toGraph)
 
         updateQueryString(inputs)
@@ -123,86 +124,5 @@ const formSubmitHandler = () => {
         });
 };
 
-function voltageChartAjax(inputs, toGraph){
-  let $voltageChart = $("#voltage-Chart")
-  // myChart.destroy()
-  // console.log(toGraph)
-  $.ajax({
-          type: 'POST',
-          url: 'voltageChart',
-          dataType: 'json',
-          data: {
-            voltage: inputs[0].value,
-            length: inputs[1].value,
-            r_not: inputs[2].value,
-            r_a: inputs[3].value,
-            x: inputs[4].value,
-            force: inputs[5].value,
-            awg: inputs[6].value,
-            compute: 'force', //Change this later, currently just comparing vs force tho
-            toGraph: toGraph,
-            csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
-          },
-          success: function (data) {
 
-            var ctx = $voltageChart[0].getContext("2d");
-            if(window.line != undefined){
-              window.line.destroy()
-            }
-            window.line = new Chart(ctx, {
-             type: 'line',
-              data: {
-                labels: data.labels,
-                datasets: [{
-                  label: 'Force',
-                  backgroundColor: 'green',
-                  borderColor: 'green',
-                  data: data.data,
-                  fill: false,
-               }]          
-             },
-              options: {
-                tooltips: {
-                  mode: 'nearest',
-                  intersect: false,
-                },
-                responsive: true,
-                legend: {
-                  position: 'top',
-                },
-                title: {
-                  display: true,
-                  fontSize: 20,
-                  text: `Force vs ${format(toGraph)}`
-                },
-                scales: {
-                   xAxes: [{ display: true, scaleLabel: { display: true, fontSize:20, labelString: format(toGraph)}}],
-                   yAxes: [{ display: true, scaleLabel: { display: true, fontSize:20, labelString: 'Force'}}]
-              }}
-            });
 
-          }
-        });
-}
-
-const updateQueryString = inputs => {
-  const newUrl = new URL(window.location)
-  newUrl.searchParams.forEach( (value, key) => {
-    newUrl.searchParams.delete(key)
-  })
-  inputs.forEach( variable => {
-    if(variable.value) {
-      newUrl.searchParams.set(variable.name, variable.value)
-    }
-  })
-  window.history.pushState({}, document.title, newUrl);
-}
-
-const format = input => {
-  if(input === 'r_not'){
-    return 'r\u2080'
-  }else if(input === 'r_a'){
-    return "r\u2090" 
-  }
-  return input
-}
