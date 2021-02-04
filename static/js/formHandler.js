@@ -172,11 +172,12 @@ function voltageChartAjax(inputs, toGraph){
                 },
                 title: {
                   display: true,
-                  text: `Force vs ${toGraph}`
+                  fontSize: 20,
+                  text: `Force vs ${format(toGraph)}`
                 },
                 scales: {
-                   xAxes: [{ display: true, scaleLabel: { display: true, labelString: toGraph}}],
-                   yAxes: [{ display: true, scaleLabel: { display: true, labelString: 'Force'}}]
+                   xAxes: [{ display: true, scaleLabel: { display: true, fontSize:20, labelString: format(toGraph)}}],
+                   yAxes: [{ display: true, scaleLabel: { display: true, fontSize:20, labelString: 'Force'}}]
               }}
             });
 
@@ -195,4 +196,13 @@ const updateQueryString = inputs => {
     }
   })
   window.history.pushState({}, document.title, newUrl);
+}
+
+const format = input => {
+  if(input === 'r_not'){
+    return 'r\u2080'
+  }else if(input === 'r_a'){
+    return "r\u2090" 
+  }
+  return input
 }
