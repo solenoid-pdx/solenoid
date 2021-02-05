@@ -12,27 +12,34 @@ const formSubmitHandler = () => {
         ];
 
         let blank_counter = 0;
+        // let blank = []
         let to_compute = '';
         let toGraph = '';
+        let selected = false;
 
         inputs.forEach( (input, _index) => {
           let element = document.getElementById(`input-text-${input.name}`);
           let radio = document.getElementById(`input-radio-${input.name}`);
-          if(element.value === '' ) {
+          if(element.value === '' && !radio.checked ) {
             blank_counter += 1;
             input.value = 0;
             input.answer = true;
             to_compute = input.name;
+            // blank.push(input.name);
           }
           else input.value = element.value;
 
           if(radio.checked){
+            selected = true;
             toGraph = input.name;
+            // if(element.value === ''){
+            //   blank.push(input.name)
+            // }
           }
         });
 
 
-        if(blank_counter > 1) {
+        if(blank_counter > 2 || (blank_counter === 2 && selected === false)) {
           if(document.getElementById('missing-input-flash-err') == undefined) {
             let err = 
               `<div id="missing-input-flash-err" class="alert alert-danger alert-dismissible fade show" role="alert">
