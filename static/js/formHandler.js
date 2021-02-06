@@ -25,16 +25,16 @@ const formSubmitHandler = () => {
             input.value = 0;
             input.answer = true;
             to_compute = input.name;
-            // blank.push(input.name);
           }
           else input.value = element.value;
 
           if(radio.checked){
             selected = true;
             toGraph = input.name;
-            // if(element.value === ''){
-            //   blank.push(input.name)
-            // }
+            
+            if(element.value === ''){
+              blank_counter += 1;
+            }
           }
         });
 
