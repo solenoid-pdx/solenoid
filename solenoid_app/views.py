@@ -86,6 +86,7 @@ def voltageChart(request):
 
             data['compute'] = None
             data['force'] = None
+            
             if data['toGraph'] == 'voltage':
                 x = 'Voltage'    
                 for volts in range(0, 15):

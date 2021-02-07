@@ -76,17 +76,6 @@ const createInputs = () => {
     return inputs;
 };
 
-function clickMe(myRadio){
-  console.log('Hi')
-  let a = document.getElementById(`input-text-${myRadio}`)
-  a.value = ''
-}
-
-//CHANGE RADIO BUTTONS FUNCTIONS ABOVE
-// const loadChartOnClick = myRadio => {
-//   console.log('Hi')
-//   voltageChartAjax(myRadio)
-// }
 const populateDefaults = () => {
   document.getElementById('input-text-voltage').value = '5';
   document.getElementById('input-text-length').value = '27';

@@ -1,8 +1,8 @@
 
 const voltageChartAjax = (inputs, toGraph) => {
   let $voltageChart = $("#voltage-Chart")
-  // let inputs = getInputs()
-
+  console.log(toGraph)
+  // console.log("Chart handler was reached")
   $.ajax({
           type: 'POST',
           url: 'voltageChart',
@@ -20,7 +20,8 @@ const voltageChartAjax = (inputs, toGraph) => {
             csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
           },
           success: function (data) {
-
+            document.getElementById('graph-container').style = 'width: 100%; display: block;';
+            // console.log(data)
             var ctx = $voltageChart[0].getContext("2d");
             if(window.line != undefined){
               window.line.destroy()
