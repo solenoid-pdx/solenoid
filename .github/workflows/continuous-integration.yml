@@ -23,10 +23,13 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: |
-          python3 -m pip install --upgrade pip
-          python3 -m pip install setuptools
+          python3 -m pip install --upgrade pip setuptools wheel
           python3 -m pip install -r requirements.txt
       - name: Make Migrations
         run: python3 manage.py migrate
@@ -34,3 +37,21 @@ jobs:
       # Execute test suite (unit & integration tests)
       - name: Unit/Integration Test Execution
         run: python3 manage.py test tests/
+
+      # Install ChromeDriver
+      - name: Install ChromeDriver
+        run: |
+          mkdir ${HOME}/bin
+          cd ${HOME}/bin
+          wget https://chromedriver.storage.googleapis.com/88.0.4324.96/chromedriver_linux64.zip
+          unzip chromedriver_linux64.zip
+          chmod +x chromedriver
+          export PATH="${PATH}:${HOME}/bin"
+        
+      # Start Server
+      - name: Start Server
+        run: python3 manage.py runserver &
+      
+      # Execute Selenium Tests
+      - name: Selenium Tests
+        run: python3 manage.py test selenium_tests/
