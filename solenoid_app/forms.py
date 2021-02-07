@@ -9,3 +9,4 @@ class DataSetForm(forms.Form):
     force = forms.FloatField()
     awg = forms.CharField()
     compute = forms.CharField()
+    toGraph = forms.CharField()

@@ -33,7 +33,7 @@ const createInputs = () => {
         <div class="input-group-prepend">
           <span class="input-group-text">${formatR(element.symbol)}</span>
           <div class="input-group-text">
-            <input type="radio" aria-label="Radio button for following text input" name="radAnswer">
+            <input id="input-radio-${element.name}" type="radio" onclick="clickMe(this.value)" value="${element.name}" aria-label="Radio button for following text input" name="radAnswer">
           </div>
         </div>
         <input type="text"
@@ -76,6 +76,17 @@ const createInputs = () => {
     return inputs;
 };
 
+const populateDefaults = () => {
+  document.getElementById('input-text-voltage').value = '5';
+  document.getElementById('input-text-length').value = '27';
+  document.getElementById('input-text-r_not').value = '2.3';
+  document.getElementById('input-text-r_a').value = '4.5';
+  document.getElementById('input-text-x').value = '0';
+  document.getElementById('input-text-awg').value = '30';
+  document.getElementById('input-text-force').value = '';
+  document.getElementById('input-radio-voltage').checked = true;
+}
+
 const formatR = unit => {
   if (unit == 'r sub not')
     return 'r<sub>0</sub>';
@@ -84,6 +95,18 @@ const formatR = unit => {
   return unit;
 };
 
+const updateQueryString = inputs => {
+  const newUrl = new URL(window.location)
+  newUrl.searchParams.forEach( (value, key) => {
+    newUrl.searchParams.delete(key)
+  })
+  inputs.forEach( variable => {
+    if(variable.value) {
+      newUrl.searchParams.set(variable.name, variable.value)
+    }
+  })
+  window.history.pushState({}, document.title, newUrl);
+}
 const add_awg_select_options =() =>{
     $('#input-text').append("<option>"+ '0000' + "</option>")
     $('#input-text').append("<option>"+ '000' + "</option>")
