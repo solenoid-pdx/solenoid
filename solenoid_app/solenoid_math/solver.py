@@ -57,7 +57,7 @@ AWG_DATA = {
 # Permeability constants
 # TODO: allow variable relative permeabilities to allow users to match their core
 PERM_FREE = 1.257 * (10**-6)
-PERM_RELATIVE = 350
+# PERM_RELATIVE = 350
 
 """
 Solves for a single missing variable within the solenoid force equation.
@@ -77,14 +77,14 @@ Parameters:
 Returns:
     result (float): The solved value of specified variable
 """
-def solenoid_solve(volts, length, r0, ra, gauge, location, force):
+def solenoid_solve(volts, length, r0, ra, gauge, location, force, relative_permeability):
     
     # verify only 1 argument is being solved for
     none_count = sum(isinstance(arg, type(None)) for arg in [volts, length, r0, ra, gauge, location, force])
     if none_count > 1:
         raise TooManyVariables
 
-    for arg in ['volts', 'length', 'r0', 'ra', 'location', 'force']:
+    for arg in ['volts', 'length', 'r0', 'ra', 'location', 'force', 'relative_permeability']:
         if not isinstance(locals()[arg], (type(None), int, float)):
             raise IncorrectDataType(type(arg).__name__, arg)
 
@@ -92,11 +92,11 @@ def solenoid_solve(volts, length, r0, ra, gauge, location, force):
         raise IncorrectDataType(type(gauge).__name__, "gauge")
 
     result = None
-    a = np.log(PERM_RELATIVE) 
-    f, v, l, R0, RA, x = symbols('f v l R0 RA x')
+    a = np.log(relative_permeability) 
+    f, v, l, R0, RA, x= symbols('f v l R0 RA x')
 
     # Generalized equation
-    eq1 = ((v ** 2) * PERM_RELATIVE * PERM_FREE) / (
+    eq1 = ((v ** 2) * relative_permeability * PERM_FREE) / (
                 8 * np.pi * ((AWG_DATA[gauge]["resistance"] / 1000) ** 2) * ((l / 1000) ** 2))
     eq2 = ((R0/1000)**2 / (RA/1000)**2)
     eq3 = np.e**(-(a/(l / 1000)) * (x / 1000))
@@ -183,21 +183,21 @@ Parameters:
 Returns:
     result (float): The solved value of specified variable
 """
-def solenoid_performance(volts, length, r0, ra, gauge, location, force):
+def solenoid_performance(volts, length, r0, ra, gauge, location, force, relative_permeability):
     result = None
-    a = np.log(PERM_RELATIVE)
+    a = np.log(relative_permeability)
 
     if volts is None:
 
         result = (2 * np.sqrt(2 * np.pi) * np.sqrt(force) * (AWG_DATA[gauge]["resistance"] / 1000) * (length / 1000) * (
                     ra / 1000) * np.e ** (((location / 1000) * a) / (2 * (length / 1000)))) / (
-                             (r0 / 1000) * np.sqrt(PERM_RELATIVE) * np.sqrt(PERM_FREE) * np.sqrt(a))
+                             (r0 / 1000) * np.sqrt(relative_permeability) * np.sqrt(PERM_FREE) * np.sqrt(a))
 
     # TODO: Find EQ or handle location != 0 case with error (probably frontend)
     elif length is None:
 
         if location == 0:
-            result = 1000 * (np.sqrt(a) * (r0 / 1000) * np.sqrt(PERM_FREE) * np.sqrt(PERM_RELATIVE) * volts) / (
+            result = 1000 * (np.sqrt(a) * (r0 / 1000) * np.sqrt(PERM_FREE) * np.sqrt(relative_permeability) * volts) / (
                     2 * np.sqrt(2 * np.pi) * np.sqrt(force) * (AWG_DATA[gauge]["resistance"] / 1000) * (ra / 1000))
         else:
             result = -1
@@ -206,18 +206,18 @@ def solenoid_performance(volts, length, r0, ra, gauge, location, force):
 
         result = 1000 * (2 * np.sqrt(2 * np.pi) * np.sqrt(force) * (AWG_DATA[gauge]["resistance"] / 1000) * (
                     length / 1000) * (ra / 1000) * np.e ** (((location / 1000) * a) / (2 * (length / 1000)))) / (
-                             np.sqrt(PERM_RELATIVE) * np.sqrt(PERM_FREE) * volts * np.sqrt(a))
+                             np.sqrt(relative_permeability) * np.sqrt(PERM_FREE) * volts * np.sqrt(a))
 
     elif ra is None:
 
-        result = 1000 * ((r0 / 1000) * np.sqrt(PERM_RELATIVE) * np.sqrt(PERM_FREE) * volts * np.sqrt(a) * np.e ** -(
+        result = 1000 * ((r0 / 1000) * np.sqrt(relative_permeability) * np.sqrt(PERM_FREE) * volts * np.sqrt(a) * np.e ** -(
                     ((location / 1000) * a) / (2 * (length / 1000)))) / (
                              2 * np.sqrt(2 * np.pi) * np.sqrt(force) * (AWG_DATA[gauge]["resistance"] / 1000) * (
                                  length / 1000))
 
     elif location is None:
 
-        constant_1 = ((volts ** 2) * PERM_RELATIVE * PERM_FREE) / (
+        constant_1 = ((volts ** 2) * relative_permeability * PERM_FREE) / (
                     8 * np.pi * ((AWG_DATA[gauge]["resistance"] / 1000) ** 2) * ((length / 1000) ** 2)) * a
         constant_2 = (((r0 / 1000)**2) / ((ra / 1000)**2))
         product = constant_1 * constant_2
@@ -229,7 +229,7 @@ def solenoid_performance(volts, length, r0, ra, gauge, location, force):
 
     elif force is None:
 
-        result = ((volts ** 2) * PERM_RELATIVE * PERM_FREE) / (
+        result = ((volts ** 2) * relative_permeability * PERM_FREE) / (
                     8 * np.pi * ((AWG_DATA[gauge]["resistance"] / 1000) ** 2) * ((length / 1000) ** 2)) * (
                              (r0 / 1000) ** 2 / (ra / 1000) ** 2) * np.e ** (
                              -(a / (length / 1000)) * (location / 1000)) * a

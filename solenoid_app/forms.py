@@ -10,3 +10,4 @@ class DataSetForm(forms.Form):
     awg = forms.CharField()
     compute = forms.CharField()
     toGraph = forms.CharField()
+    relative_permeability = forms.FloatField()

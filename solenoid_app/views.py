@@ -27,7 +27,8 @@ def formHandle(request):
         'x': '',
         'force': '',
         'awg': '',
-        'compute': ''
+        'compute': '',
+        'relative_permeability': '',
     }
 
     if (request.method == "POST"):
@@ -42,11 +43,13 @@ def formHandle(request):
             data['awg'] = form.cleaned_data['awg']
             data['compute'] = form.cleaned_data['compute']
             data['toGraph'] = form.cleaned_data['toGraph']
+            data['relative_permeability'] = form.cleaned_data['relative_permeability']
+
             compute = data['compute']
 
             data[compute] = None
             data[compute] = solenoid_solve(data['voltage'], data['length'], data['r_not'],
-                                           data['r_a'], data['awg'], data['x'], data['force'])
+                                           data['r_a'], data['awg'], data['x'], data['force'], data['relative_permeability'])
 
             for k, v in data.items():
                 data[k] = str(v)
@@ -66,7 +69,8 @@ def voltageChart(request):
         'force': '',
         'awg': '',
         'compute': '',
-        'toGraph': ''
+        'toGraph': '',
+        'relative_permeability': '',
     }
 
     if (request.method == "POST"):
@@ -82,6 +86,7 @@ def voltageChart(request):
             data['awg'] = form.cleaned_data['awg']
             data['compute'] = form.cleaned_data['compute']
             data['toGraph'] = form.cleaned_data['toGraph']
+            data['relative_permeability'] = form.cleaned_data['relative_permeability']
             compute = data['compute']
 
             data['compute'] = None
@@ -91,43 +96,51 @@ def voltageChart(request):
                 x = 'Voltage'    
                 for volts in range(0, 15):
                     labels.append(volts)
-                    graph.append(str(round(solenoid_solve(volts, data['length'], data['r_not'], data['r_a'], data['awg'], data['x'], data['force']),2)))
+                    graph.append(str(round(solenoid_solve(volts, data['length'], data['r_not'], data['r_a'], data['awg'], data['x'], data['force'], data['relative_permeability']),2)))
 
             elif data['toGraph'] == 'length':
                 x = 'Length (mm)'
                 for length in range(5, 26):
                     labels.append(length)
-                    graph.append(str(round(solenoid_solve(data['voltage'], length, data['r_not'], data['r_a'], data['awg'], data['x'], data['force']),2)))   
+                    graph.append(str(round(solenoid_solve(data['voltage'], length, data['r_not'], data['r_a'], data['awg'], data['x'], data['force'], data['relative_permeability']),2)))   
 
             elif data['toGraph'] == 'r_not':
                 x = 'r_not'
                 for r_not in np.around(np.arange(1.0, 5.0, 0.1),decimals=2).astype(float):
                     labels.append(r_not)
-                    graph.append(str(round(solenoid_solve(data['voltage'], data['length'], r_not, data['r_a'], data['awg'], data['x'], data['force']),2)))
+                    graph.append(str(round(solenoid_solve(data['voltage'], data['length'], r_not, data['r_a'], data['awg'], data['x'], data['force'], data['relative_permeability']),2)))
 
             elif data['toGraph'] == 'r_a':
                 x = 'r_a'
                 for r_a in np.around(np.arange(1.0, 5.0, 0.1),decimals=2).astype(float):
                     labels.append(r_a)
-                    graph.append(str(round(solenoid_solve(data['voltage'], data['length'], data['r_not'], r_a, data['awg'], data['x'], data['force']),2)))
+                    graph.append(str(round(solenoid_solve(data['voltage'], data['length'], data['r_not'], r_a, data['awg'], data['x'], data['force'], data['relative_permeability']),2)))
             
             elif data['toGraph'] == 'x':
                 x = 'x'
                 length = int(data['length']) + 1
                 for i in range(0, length):
                     labels.append(i)
-                    graph.append(str(round(solenoid_solve(data['voltage'], data['length'], data['r_not'], data['r_a'], data['awg'], i, data['force']),2)))
+                    graph.append(str(round(solenoid_solve(data['voltage'], data['length'], data['r_not'], data['r_a'], data['awg'], i, data['force'], data['relative_permeability']),2)))
 
             elif data['toGraph'] == 'awg':
                 x = 'American Wire Gauge'
                 for i in list(map(str, range(26, 41))):
                     labels.append(i)
-                    graph.append(str(round(solenoid_solve(data['voltage'], data['length'], data['r_not'], data['r_a'], i, data['x'], data['force']),2)))
+                    graph.append(str(round(solenoid_solve(data['voltage'], data['length'], data['r_not'], data['r_a'], i, data['x'], data['force'], data['relative_permeability']),2)))
+            
+            elif data['toGraph'] == 'relative_permeability':
+                x = 'Relative Permeability'
+                for i in range(10, 60):
+                    i_mult_ten = i * 10
+                    labels.append(i_mult_ten)
+                    graph.append(str(round(solenoid_solve(data['voltage'], data['length'], data['r_not'], data['r_a'], data['awg'], data['x'], data['force'], i_mult_ten),2)))
+
             else: #defaults to voltage for now, will change, possibly don't need
                 x = 'Voltage'
                 for volts in range(0, 51):
                     labels.append(volts)
-                    graph.append(str(round(solenoid_solve(volts, data['length'], data['r_not'], data['r_a'], data['awg'], data['x'], data['force']),2)))
+                    graph.append(str(round(solenoid_solve(volts, data['length'], data['r_not'], data['r_a'], data['awg'], data['x'], data['force'], data['relative_permeability']),2)))
 
     return JsonResponse(data={
         'labels': labels,
