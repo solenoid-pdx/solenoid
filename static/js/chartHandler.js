@@ -1,8 +1,8 @@
+let $voltageChart = $("#voltage-Chart")
+let compute = 'force' //Change later :) 
 
 const voltageChartAjax = (inputs, toGraph) => {
-  let $voltageChart = $("#voltage-Chart")
   console.log(toGraph)
-  // console.log("Chart handler was reached")
   $.ajax({
           type: 'POST',
           url: 'voltageChart',
@@ -21,12 +21,11 @@ const voltageChartAjax = (inputs, toGraph) => {
           },
           success: function (data) {
             document.getElementById('graph-container').style = 'width: 100%; display: block;';
-            // console.log(data)
             var ctx = $voltageChart[0].getContext("2d");
             if(window.line != undefined){
               window.line.destroy()
             }
-            window.line = new Chart(ctx, {
+            let newChart = window.line = new Chart(ctx, {
              type: 'line',
               data: {
                 labels: data.labels,
@@ -36,9 +35,23 @@ const voltageChartAjax = (inputs, toGraph) => {
                   borderColor: 'green',
                   data: data.data,
                   fill: false,
+                  pointRadius: 5,
+                  pointHoverRadius: 5, 
                }]          
              },
               options: {
+                'onClick': (evt, item) => {
+                  let activePoints = newChart.getElementsAtEvent(evt)
+                  if(activePoints[0]){
+                    let clickedElementIndex = activePoints[0]['_index']
+                    let label = newChart.data.labels[clickedElementIndex]
+                    let value = newChart.data.datasets[0].data[clickedElementIndex]
+                    document.getElementById(`input-text-${toGraph}`).value = label
+                    document.getElementById(`input-text-${compute}`).value = value 
+                    console.log('Label', label)
+                    console.log('Value', value)
+                  }
+                },
                 tooltips: {
                   mode: 'nearest',
                   intersect: false,
@@ -57,20 +70,8 @@ const voltageChartAjax = (inputs, toGraph) => {
                    yAxes: [{ display: true, scaleLabel: { display: true, fontSize:20, labelString: 'Force'}}]
               }}
             });
-        //     $voltageChart.onClick = evt => {
-        //       let activePoints = window.line.getElementsAtEvent(evt);
-        //       if(activePoints[0]){
-        //         let chartData = activePoints[0]['_chart'].config.data;
-        //         let idx = activePoints[0]['_index'];
-        //         var label = chartData.labels[idx];
-        //       var value = chartData.datasets[0].data[idx];
-
-        // var url = "http://example.com/?label=" + label + "&value=" + value;
-        // console.log(url);
-        // alert(url);
-        //       }
-        //     }
           }
+          
         });
 }
 
@@ -82,3 +83,4 @@ const format = input => {
   }
   return input
 }
+

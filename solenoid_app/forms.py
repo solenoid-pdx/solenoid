@@ -10,3 +10,7 @@ class DataSetForm(forms.Form):
     awg = forms.CharField()
     compute = forms.CharField()
     toGraph = forms.CharField()
+
+
+class GraphSetForm(DataSetForm):
+    toGraph = forms.CharField()

@@ -26,14 +26,13 @@ const createInputs = () => {
         { 'name': 'awg', 'symbol': 'AWG', 'value': urlParams.get('awg') || '', 'unit': 'guage', 'html': '' },
     ];
     inputs.forEach( element => {
-        // console.log(html, index+1);
         if (element.name != 'awg') {
             element.html = `
         <div id="input-${element.name}" class="input-group mb-3">
         <div class="input-group-prepend">
           <span class="input-group-text">${formatR(element.symbol)}</span>
           <div class="input-group-text">
-            <input id="input-radio-${element.name}" type="radio" onclick="clickMe(this.value)" value="${element.name}" aria-label="Radio button for following text input" name="radAnswer">
+            <input id="input-radio-${element.name}" type="radio" value="${element.name}" aria-label="Radio button for following text input" name="radAnswer">
           </div>
         </div>
         <input type="text"
@@ -107,7 +106,7 @@ const updateQueryString = inputs => {
   })
   window.history.pushState({}, document.title, newUrl);
 }
-const add_awg_select_options =() =>{
+const add_awg_select_options = () =>{
     $('#input-text').append("<option>"+ '0000' + "</option>")
     $('#input-text').append("<option>"+ '000' + "</option>")
     $('#input-text').append("<option>"+ '00' + "</option>")

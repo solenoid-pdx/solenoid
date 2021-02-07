@@ -1,49 +1,15 @@
 
 const formSubmitHandler = () => {
 
-        let inputs = [
-          { 'name': 'voltage', 'value': '' },
-          { 'name': 'length', 'value': '' },
-          { 'name': 'r_not', 'value': '' },
-          { 'name': 'r_a', 'value': '' },
-          { 'name': 'x', 'value': '' },
-          { 'name': 'force', 'value': '' },
-          { 'name': 'awg', 'value': '' },
-        ];
-
-        let blank_counter = [];
-        let to_compute = '';
-        let toGraph = '';
-
-        inputs.forEach( (input, _index) => {
-          let element = document.getElementById(`input-text-${input.name}`);
-          let radio = document.getElementById(`input-radio-${input.name}`);
-          if(element.value === '' && !radio.checked ) {
-            // blank_counter += 1;
-            blank_counter.push(input.name)
-            input.value = 0;
-            input.answer = true;
-            to_compute = input.name;
-          }
-          else input.value = element.value;
-
-          if(radio && radio.checked){
-            toGraph = input.name;
-            if(element.value === ''){
-              // blank_counter += 1;
-              input.value = 0;
-              blank_counter.push(input.name)
-            }
-          }
-        });
-        console.log(blank_counter.length)
+        let inputs = inputHandler();
+        console.log(inputs.blanks.length)
         // Blank counter  == 2 || 0.
-        if(((blank_counter.length < 3 && blank_counter.length !== 1) && toGraph !== '')){
-          if( blank_counter.length === 2 && !blank_counter.includes(toGraph)){
+        if(((inputs.blanks.length < 3 && inputs.blanks.length !== 1) && inputs.toGraph !== '')){
+          if( inputs.blanks.length === 2 && !inputs.blanks.includes(inputs.toGraph)){
             if(document.getElementById('missing-input-flash-err') == undefined) {
               let err = 
                 `<div id="missing-input-flash-err" class="alert alert-danger alert-dismissible fade show" role="alert">
-                  <span><strong>Invalid Input:</strong> PLEASE FILL OUT ONE OF THESE FIELDS ${blank_counter[0]} OR ${blank_counter[1]} .</span>
+                  <span><strong>Invalid Input:</strong> PLEASE FILL OUT ONE OF THESE FIELDS ${inputs.blanks[0]} OR ${inputs.blanks[1]} .</span>
                   <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
                 </button>
@@ -56,10 +22,10 @@ const formSubmitHandler = () => {
             return;
           }
 
-          voltageChartAjax(inputs, toGraph)
+          voltageChartAjax(inputs.inputs, inputs.toGraph)
           return;
         }
-        if(blank_counter.length > 1) {
+        if(inputs.blanks.length > 1) {
           if(document.getElementById('missing-input-flash-err') == undefined) {
             let err = 
               `<div id="missing-input-flash-err" class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -75,7 +41,7 @@ const formSubmitHandler = () => {
           }
           return;
         }
-        if(blank_counter.length <= 0) {
+        if(inputs.blanks.length <= 0) {
           if(document.getElementById('no-solve-input-flash-err') == undefined) {
             let err = 
               `<div id="no-solve-input-flash-err" class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -91,7 +57,7 @@ const formSubmitHandler = () => {
           }
           return;
         } 
-        if(to_compute !== 'force' && inputs[4].value != 0) {
+        if(inputs.toCompute !== 'force' && inputs.inputs[4].value != 0) {
           if(document.getElementById('x-eq-zero-flash-err') == undefined) {
             let err = 
               `<div id="x-eq-zero-flash-err" class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -107,7 +73,7 @@ const formSubmitHandler = () => {
           }
           return;
         }
-        if(to_compute === 'x') {
+        if(inputs.toCompute === 'x') {
           if(document.getElementById('unsolved-x-flash-err') == undefined) {
             let err = 
               `<div id="unsolved-x-flash-err" class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -123,30 +89,29 @@ const formSubmitHandler = () => {
           }
           return;
         } 
-        voltageChartAjax(inputs, toGraph)
 
-        updateQueryString(inputs)
+        voltageChartAjax(inputs.inputs, inputs.toGraph)
+        updateQueryString(inputs.inputs)
         
         $.ajax({
           type: 'POST',
           url: 'formHandle',
           dataType: 'json',
           data: {
-            voltage: inputs[0].value,
-            length: inputs[1].value,
-            r_not: inputs[2].value,
-            r_a: inputs[3].value,
-            x: inputs[4].value,
-            force: inputs[5].value,
-            awg: inputs[6].value,
-            compute: to_compute,
-            toGraph: toGraph,
+            voltage: inputs.inputs[0].value,
+            length: inputs.inputs[1].value,
+            r_not: inputs.inputs[2].value,
+            r_a: inputs.inputs[3].value,
+            x: inputs.inputs[4].value,
+            force: inputs.inputs[5].value,
+            awg: inputs.inputs[6].value,
+            compute: inputs.toCompute,
+            toGraph: inputs.toGraph,
             csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
           },
             success: res => {
               result = res[res.compute];
               document.getElementById(`input-text-${res.compute}`).value = result;
-              // document.getElementById('graph-container').style = 'width: 100%; display: block;';
             }
         });
 };
