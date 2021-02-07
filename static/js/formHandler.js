@@ -29,13 +29,14 @@ const formSubmitHandler = () => {
 
           if(radio && radio.checked){
             toGraph = input.name;
-            input.value = 0;
             if(element.value === ''){
               // blank_counter += 1;
+              input.value = 0;
               blank_counter.push(input.name)
             }
           }
         });
+        console.log(blank_counter.length)
         // Blank counter  == 2 || 0.
         if(((blank_counter.length < 3 && blank_counter.length !== 1) && toGraph !== '')){
           if( blank_counter.length === 2 && !blank_counter.includes(toGraph)){

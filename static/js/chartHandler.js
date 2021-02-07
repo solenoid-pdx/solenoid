@@ -57,7 +57,19 @@ const voltageChartAjax = (inputs, toGraph) => {
                    yAxes: [{ display: true, scaleLabel: { display: true, fontSize:20, labelString: 'Force'}}]
               }}
             });
+        //     $voltageChart.onClick = evt => {
+        //       let activePoints = window.line.getElementsAtEvent(evt);
+        //       if(activePoints[0]){
+        //         let chartData = activePoints[0]['_chart'].config.data;
+        //         let idx = activePoints[0]['_index'];
+        //         var label = chartData.labels[idx];
+        //       var value = chartData.datasets[0].data[idx];
 
+        // var url = "http://example.com/?label=" + label + "&value=" + value;
+        // console.log(url);
+        // alert(url);
+        //       }
+        //     }
           }
         });
 }
