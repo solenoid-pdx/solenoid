@@ -1,3 +1,14 @@
+
+const SolenoidParameters = {
+  VOLTAGE: "voltage",
+  LENGTH: "length",
+  R_NOT: "r_not",
+  R_A: "r_a",
+  X: "x",
+  FORCE: "force",
+  AWG: "awg",
+}
+
 const renderPage = () => {
     mountInputs();
     add_awg_select_options();
@@ -17,13 +28,13 @@ const createInputs = () => {
     const urlParams = new URLSearchParams(window.location.search)
 
     let inputs = [
-        { 'name': 'voltage', 'symbol': 'V', 'value': urlParams.get('voltage') || '', 'unit': 'volts', 'html': '' },
-        { 'name': 'length', 'symbol': 'L', 'value': urlParams.get('length') || '', 'unit': 'mm', 'html': '' },
-        { 'name': 'r_not', 'symbol': 'r sub not', 'value': urlParams.get('r_not') || '', 'unit': 'mm', 'html': '' },
-        { 'name': 'r_a', 'symbol': 'r sub a', 'value': urlParams.get('r_a') || '', 'unit': 'mm', 'html': '' },
-        { 'name': 'x', 'symbol': 'x', 'value': urlParams.get('x') || '', 'unit': 'mm', 'html': '' },
-        { 'name': 'force', 'symbol': 'F', 'value': urlParams.get('force') || '', 'unit': 'N', 'html': '' },
-        { 'name': 'awg', 'symbol': 'AWG', 'value': urlParams.get('awg') || '', 'unit': 'guage', 'html': '' },
+        { 'name': 'voltage', 'symbol': 'V', 'value': urlParams.get(SolenoidParameters.VOLTAGE) || '', 'unit': 'volts', 'html': '' },
+        { 'name': 'length', 'symbol': 'L', 'value': urlParams.get(SolenoidParameters.LENGTH) || '', 'unit': 'mm', 'html': '' },
+        { 'name': 'r_not', 'symbol': 'r sub not', 'value': urlParams.get(SolenoidParameters.R_NOT) || '', 'unit': 'mm', 'html': '' },
+        { 'name': 'r_a', 'symbol': 'r sub a', 'value': urlParams.get(SolenoidParameters.R_A) || '', 'unit': 'mm', 'html': '' },
+        { 'name': 'x', 'symbol': 'x', 'value': urlParams.get(SolenoidParameters.X) || '', 'unit': 'mm', 'html': '' },
+        { 'name': 'force', 'symbol': 'F', 'value': urlParams.get(SolenoidParameters.FORCE) || '', 'unit': 'N', 'html': '' },
+        { 'name': 'awg', 'symbol': 'AWG', 'value': urlParams.get(SolenoidParameters.AWG) || '', 'unit': 'guage', 'html': '' },
     ];
     inputs.forEach( element => {
         // console.log(html, index+1);
@@ -95,18 +106,19 @@ const formatR = unit => {
   return unit;
 };
 
-const updateQueryString = inputs => {
+const updateQueryString = formInputs => {
   const newUrl = new URL(window.location)
   newUrl.searchParams.forEach( (value, key) => {
     newUrl.searchParams.delete(key)
   })
-  inputs.forEach( variable => {
+  formInputs.forEach( variable => {
     if(variable.value) {
       newUrl.searchParams.set(variable.name, variable.value)
     }
   })
   window.history.pushState({}, document.title, newUrl);
 }
+
 const add_awg_select_options =() =>{
     $('#input-text').append("<option>"+ '0000' + "</option>")
     $('#input-text').append("<option>"+ '000' + "</option>")
