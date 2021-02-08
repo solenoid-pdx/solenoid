@@ -1,8 +1,6 @@
 
 const voltageChartAjax = (inputs, toGraph) => {
   let $voltageChart = $("#voltage-Chart")
-  console.log(toGraph)
-  // console.log("Chart handler was reached")
   $.ajax({
           type: 'POST',
           url: 'voltageChart',
@@ -21,7 +19,6 @@ const voltageChartAjax = (inputs, toGraph) => {
           },
           success: function (data) {
             document.getElementById('graph-container').style = 'width: 100%; display: block;';
-            // console.log(data)
             var ctx = $voltageChart[0].getContext("2d");
             if(window.line != undefined){
               window.line.destroy()
@@ -66,7 +63,6 @@ const voltageChartAjax = (inputs, toGraph) => {
         //       var value = chartData.datasets[0].data[idx];
 
         // var url = "http://example.com/?label=" + label + "&value=" + value;
-        // console.log(url);
         // alert(url);
         //       }
         //     }

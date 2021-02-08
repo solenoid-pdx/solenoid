@@ -6,42 +6,118 @@ const renderPage = () => {
 const mountInputs = () => {
     let form = document.getElementById("input-submit-form");
     let inputs = createInputs();
-    let submit_button = '<input class="btn btn-outline-primary" type="submit" value="Calculate">'
+    let submit_button =
+      `<input
+        class="btn btn-outline-primary"
+        type="submit"
+        data-tooltip
+        data-placement="top"
+        title="Calculate With Entered Values"
+        value="Calculate"
+      >`
     inputs.forEach(input => {
         form.insertAdjacentHTML('beforeend', input['html']);
     });
     form.insertAdjacentHTML('beforeend', submit_button);
 };
 
-const createInputs = () => {
-    const urlParams = new URLSearchParams(window.location.search)
+const createInputsContextObj = () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  let inputs = [
+    { 
+      'name': 'voltage',
+      'symbol': 'V',
+      'value': urlParams.get('voltage') || '',
+      'unit': 'volts',
+      'description': 'Voltage Applied',
+      'html': ''
+    },
+    {
+      'name': 'length',
+      'symbol': 'L',
+      'value': urlParams.get('length') || '',
+      'unit': 'mm',
+      'description': 'Coil Length',
+      'html': ''
+    },
+    {
+      'name': 'r_not',
+      'symbol': 'r sub not',
+      'value': urlParams.get('r_not') || '',
+      'unit': 'mm',
+      'description': 'Inner Coil Radius',
+      'html': ''
+    },
+    {
+      'name': 'r_a',
+      'symbol': 'r sub a',
+      'value': urlParams.get('r_a') || '',
+      'unit': 'mm',
+      'description': 'Outer Coil Radius',
+      'html': ''
+    },
+    {
+      'name': 'x',
+      'symbol': 'x',
+      'value': urlParams.get('x') || '',
+      'unit': 'mm',
+      'description': 'Stroke Position (0 = Stroke Start)',
+      'html': ''
+    },
+    {
+      'name': 'force',
+      'symbol': 'F',
+      'value': urlParams.get('force') || '',
+      'unit': 'N',
+      'description': 'Solenoid Generated Force',
+      'html': ''
+    },
+    {
+      'name': 'awg',
+      'symbol': 'AWG',
+      'value': urlParams.get('awg') || '',
+      'unit': 'guage',
+      'description': 'Gauge of Coil Wire',
+      'html': ''
+    },
+  ];
 
-    let inputs = [
-        { 'name': 'voltage', 'symbol': 'V', 'value': urlParams.get('voltage') || '', 'unit': 'volts', 'html': '' },
-        { 'name': 'length', 'symbol': 'L', 'value': urlParams.get('length') || '', 'unit': 'mm', 'html': '' },
-        { 'name': 'r_not', 'symbol': 'r sub not', 'value': urlParams.get('r_not') || '', 'unit': 'mm', 'html': '' },
-        { 'name': 'r_a', 'symbol': 'r sub a', 'value': urlParams.get('r_a') || '', 'unit': 'mm', 'html': '' },
-        { 'name': 'x', 'symbol': 'x', 'value': urlParams.get('x') || '', 'unit': 'mm', 'html': '' },
-        { 'name': 'force', 'symbol': 'F', 'value': urlParams.get('force') || '', 'unit': 'N', 'html': '' },
-        { 'name': 'awg', 'symbol': 'AWG', 'value': urlParams.get('awg') || '', 'unit': 'guage', 'html': '' },
-    ];
+  return inputs;
+}
+
+const createInputs = () => {
+    let inputs = createInputsContextObj();
+
     inputs.forEach( element => {
-        // console.log(html, index+1);
         if (element.name != 'awg') {
-            element.html = `
+          element.html =
+          `
         <div id="input-${element.name}" class="input-group mb-3">
         <div class="input-group-prepend">
-          <span class="input-group-text">${formatR(element.symbol)}</span>
+          <span
+              class="input-group-text" 
+              data-tooltip
+              data-placement="top"
+              title="Input For ${element.description}"
+          >
+            ${formatR(element.symbol)}
+          </span>
           <div class="input-group-text">
-            <input id="input-radio-${element.name}" type="radio" onclick="clickMe(this.value)" value="${element.name}" aria-label="Radio button for following text input" name="radAnswer">
+            <input
+              id="input-radio-${element.name}"
+              type="radio" onclick="clickMe(this.value)"
+              value="${element.name}"
+              aria-label="Radio button for following text input"
+              name="radAnswer"
+            >
           </div>
         </div>
         <input type="text"
-               id="input-text-${element.name}"
-               class="form-control"
-               aria-label="Text input with radio button"
-               placeholder="Enter ${element.symbol}"
-               value="${element.value}"
+              id="input-text-${element.name}"
+              class="form-control"
+              aria-label="Text input with radio button"
+              placeholder="${element.description}"
+              value="${element.value}"
         >
         <div class="input-group-append">
             <span class="input-group-text">${element.unit}</span>
@@ -50,10 +126,18 @@ const createInputs = () => {
       `
         }
         else {
-            element.html =`
+          element.html =
+          `
             <div id="input-${element.name}" class="input-group mb-3">
             <div class="input-group-prepend">
-              <span class="input-group-text">${formatR(element.symbol)}</span>
+              <span
+                class="input-group-text" 
+                data-tooltip
+                data-placement="top"
+                title="Input For ${element.description}"
+              >
+                ${formatR(element.symbol)}
+              </span>
               <div class="input-group-text">
                 <input type="radio" aria-label="Radio button for following text input" name="radAnswer">
               </div>
@@ -62,7 +146,7 @@ const createInputs = () => {
                    class = "form-control"
                    list="input-text"
                    value="${element.value}" 
-                   placeholder="Enter ${element.symbol}" 
+                   placeholder="${element.description}" 
             >
               <datalist id="input-text">
               </datalist>           
@@ -101,9 +185,8 @@ const updateQueryString = inputs => {
     newUrl.searchParams.delete(key)
   })
   inputs.forEach( variable => {
-    if(variable.value) {
+    if (variable.value)
       newUrl.searchParams.set(variable.name, variable.value)
-    }
   })
   window.history.pushState({}, document.title, newUrl);
 }
