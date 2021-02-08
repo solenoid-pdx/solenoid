@@ -5,7 +5,7 @@ from django.http import JsonResponse
 from subprocess import check_output
 from django.views.generic import TemplateView
 from chartjs.views.lines import BaseLineChartView
-from .forms import DataSetForm 
+from .forms import DataSetForm, GraphForm
 from solenoid_app.solenoid_math.solver import solenoid_solve
 import os
 import time
@@ -41,7 +41,6 @@ def formHandle(request):
             data['force'] = form.cleaned_data['force']
             data['awg'] = form.cleaned_data['awg']
             data['compute'] = form.cleaned_data['compute']
-            data['toGraph'] = form.cleaned_data['toGraph']
             compute = data['compute']
 
             data[compute] = None
@@ -70,7 +69,7 @@ def voltageChart(request):
     }
 
     if (request.method == "POST"):
-        form = DataSetForm(request.POST)
+        form = GraphForm(request.POST)
         print(request.POST)
         if form.is_valid():
             data['voltage'] = form.cleaned_data['voltage']

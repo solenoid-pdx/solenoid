@@ -5,12 +5,14 @@ const renderPage = () => {
 
 const mountInputs = () => {
     let form = document.getElementById("input-submit-form");
+    createDropDown();
     let inputs = createInputs();
     let submit_button = '<input class="btn btn-outline-primary" type="submit" value="Calculate">'
     inputs.forEach(input => {
         form.insertAdjacentHTML('beforeend', input['html']);
     });
     form.insertAdjacentHTML('beforeend', submit_button);
+    
 };
 
 const createInputs = () => {
@@ -74,6 +76,20 @@ const createInputs = () => {
     });
     return inputs;
 };
+
+const createDropDown = () => {
+  let select_X = document.getElementById("x-values-input")
+  let select_Y = document.getElementById("y-values-input")
+  let inputs = ['Voltage', 'Length', 'r_not', 'r_a', 'x', 'Force', 'AWG']
+  inputs.forEach( element => {
+    let option = document.createElement('option')
+    option.text = `${element}`
+    select_X.add(option)
+    let option1 = document.createElement('option')
+    option1.text = `${element}`
+    select_Y.add(option1)
+  })
+}
 
 const populateDefaults = () => {
   document.getElementById('input-text-voltage').value = '5';

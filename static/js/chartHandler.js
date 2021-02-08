@@ -2,7 +2,6 @@ let $voltageChart = $("#voltage-Chart")
 let compute = 'force' //Change later :) 
 
 const voltageChartAjax = (inputs, toGraph) => {
-  console.log(toGraph)
   $.ajax({
           type: 'POST',
           url: 'voltageChart',

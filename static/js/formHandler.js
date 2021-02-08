@@ -106,7 +106,6 @@ const formSubmitHandler = () => {
             force: inputs.inputs[5].value,
             awg: inputs.inputs[6].value,
             compute: inputs.toCompute,
-            toGraph: inputs.toGraph,
             csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
           },
             success: res => {

@@ -102,8 +102,33 @@
             >
             </div>
         </div>
+        <div id="graph-select" style='margin-bottom: 5;'>
+            <select 
+                name="x-values-input" 
+                id="x-values-input"
+                class="custom-select"
+                style="width:15%">
+                <!-- <optgroup label="X Value"></optgroup> -->
+                <option value='' disabled selected > Select X Value</option>
+            </select>            
+            <select
+                 name="y-values-input"
+                 id="y-values-input"
+                 class="custom-select"
+                 style="width:15%">
+                 <!-- <optgroup label="Y Value"></optgroup> -->
+                <option value='' disabled selected> Select Y Value</option>
+            </select>
+
+            <button class="btn btn-outline-primary"
+                style="margin-bottom: 0%;"
+                type="button">
+                Graph
+            </button>
+        </div>
         <div id="graph-container" style="width: 100%; display: none;">
                 <h3>Graph</h3>
+                
                 <div>
                     {% include 'voltageChart.html' %}
                 </div>
@@ -139,5 +164,7 @@
         form.preventDefault();
         formSubmitHandler();
     });
+    $('#x-values-input, #y-values-input').prop("selectedIndex", 0);
+    //TODO :: Add onChange to add and remove options from selectors
 </script>
 </html>
