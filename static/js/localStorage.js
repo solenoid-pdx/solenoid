@@ -1,5 +1,5 @@
 const download = (filename, text) => {
-    element = document.createElement('a');
+    let element = document.createElement('a');
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
     element.setAttribute('download', filename);
     element.style.display = 'none';
@@ -29,19 +29,18 @@ const savingData = () => {
     });
 
     let myJSON = JSON.stringify(inputs);
-    text = myJSON;
-    let filename = "input.json";
+    let text = myJSON;
+    let filename = "parameters.json";
     download(filename, text);
 }
 
 const upload = (input) => {
     if (window.FileReader) {
         let file = input.files[0];
-        filename = file.name.split(".")[0];
+        let filename = file.name.split(".")[0];
         let reader = new FileReader();
         reader.onload = function() {
-
-            text = this.result;
+            let text = this.result;
             let obj = JSON.parse(text);
 
         obj.forEach(item => {
