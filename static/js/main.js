@@ -79,9 +79,11 @@ const createDropDown = () => {
     let option = document.createElement('option')
     option.text = `${element}`
     select_X.add(option)
-    let option1 = document.createElement('option')
-    option1.text = `${element}`
-    select_Y.add(option1)
+    if(element !== 'AWG'){
+      let option1 = document.createElement('option')
+      option1.text = `${element}`
+      select_Y.add(option1)
+    }
   })
 }
 
@@ -93,7 +95,6 @@ const populateDefaults = () => {
   document.getElementById('input-text-x').value = '0';
   document.getElementById('input-text-awg').value = '30';
   document.getElementById('input-text-force').value = '';
-  document.getElementById('input-radio-voltage').checked = true;
 }
 
 const formatR = unit => {
@@ -124,3 +125,9 @@ const add_awg_select_options = () =>{
         $("#input-text").append("<option>" + i + "</option>");
     }
 };
+
+const dropDownOnChange = () => {
+  //Need previous value added to the other selector and new value removed from other.
+  return;
+
+}

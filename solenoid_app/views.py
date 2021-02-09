@@ -85,15 +85,15 @@ def voltageChart(request):
 
            # data['compute'] = None 
             # data['force'] = None
-            data[compute] = None
+            data[compute.lower()] = None
             
-            if data['xGraph'] == 'voltage':
+            if data['xGraph'] == 'Voltage':
                 x = 'Voltage'    
                 for volts in range(0, 15):
                     labels.append(volts)
                     graph.append(str(round(solenoid_solve(volts, data['length'], data['r_not'], data['r_a'], data['awg'], data['x'], data['force']),2)))
 
-            elif data['xGraph'] == 'length':
+            elif data['xGraph'] == 'Length':
                 x = 'Length (mm)'
                 for length in range(5, 26):
                     labels.append(length)
@@ -118,7 +118,7 @@ def voltageChart(request):
                     labels.append(i)
                     graph.append(str(round(solenoid_solve(data['voltage'], data['length'], data['r_not'], data['r_a'], data['awg'], i, data['force']),2)))
 
-            elif data['xGraph'] == 'awg':
+            elif data['xGraph'] == 'AWG':
                 x = 'American Wire Gauge'
                 for i in list(map(str, range(26, 41))):
                     labels.append(i)

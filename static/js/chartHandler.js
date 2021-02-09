@@ -1,28 +1,30 @@
 let $voltageChart = $("#voltage-Chart")
 let compute = 'force' //Change later :) 
 
-const voltageChartAjax = () => {
+const chartHandler = () => {
   let values = inputHandler()
   let xGraph = $('#x-values-input :selected').text()
   let yGraph = $('#y-values-input :selected').text()
 
-  if(xGraph === '' || yGraph === ''){
-    flashHandler('PLEASE SELECT X AND Y VALUES', 'missing-selections-flash-err') 
+  //This won't be needed once I finish onChange function for the select elements.
+  if(xGraph === yGraph){
+    flashHandler('PLEASE SELECT DIFFERENT X AND Y VALUES', 'same-selections-flash-err') 
     return;
   }
-  if(inputs.blanks.length > 1) {
-    flashHandler('PLEASE FILL OUT ALL THE FIELDS', 'missing-input-flash-err')
+  
+  if(xGraph === 'Select X Value' || yGraph === 'Select Y Value'){
+    flashHandler('PLEASE SELECT X AND Y VALUES', 'same-selections-flash-err') 
     return;
   }
-  if(inputs.blanks.length <= 0) {
-    flashHandler('PLEASE LEAVE A VALUE TO SOLVE FOR BLANK', 'no-solve-input-flash-err')
+  if(values.blanks.length >= 2 && (!values.blanks.includes(xGraph.toLowerCase()) || !values.blanks.includes(yGraph.toLowerCase()))) {
+    flashHandler(`ALL VALUES OTHER THAN ${xGraph} AND ${yGraph} NEED TO BE FILLED `, 'missing-input-flash-err')
     return;
-  } 
-  if(inputs.toCompute !== 'force' && inputs.inputs[4].value != 0) {
+  }
+  if(values.toCompute !== 'force' && values.inputs[4].value != 0) {
     flashHandler('X MUST EQUAL 0 FOR THIS SOLUTION.', 'x-eq-zero-flash-err')
     return;
   }
-  if(inputs.toCompute === 'x') {
+  if(values.toCompute === 'x') {
     flashHandler('X CANNOT BE SOLVED FOR', 'unsolved-x-flash-err')
     return;
   }
@@ -72,8 +74,8 @@ const voltageChartAjax = () => {
                     let clickedElementIndex = activePoints[0]['_index']
                     let label = newChart.data.labels[clickedElementIndex]
                     let value = newChart.data.datasets[0].data[clickedElementIndex]
-                    document.getElementById(`input-text-${xGraph}`).value = label
-                    document.getElementById(`input-text-${compute}`).value = value 
+                    document.getElementById(`input-text-${xGraph.toLowerCase()}`).value = label
+                    document.getElementById(`input-text-${yGraph.toLowerCase()}`).value = value 
                   }
                 },
                 tooltips: {
