@@ -7,6 +7,7 @@ const SolenoidParameters = {
   X: "x",
   FORCE: "force",
   AWG: "awg",
+  PERMEABILITY:"relative_permeability",
 }
 
 const renderPage = () => {
@@ -35,6 +36,7 @@ const createInputs = () => {
         { 'name': 'x', 'symbol': 'x', 'value': urlParams.get(SolenoidParameters.X) || '', 'unit': 'mm', 'html': '' },
         { 'name': 'force', 'symbol': 'F', 'value': urlParams.get(SolenoidParameters.FORCE) || '', 'unit': 'N', 'html': '' },
         { 'name': 'awg', 'symbol': 'AWG', 'value': urlParams.get(SolenoidParameters.AWG) || '', 'unit': 'guage', 'html': '' },
+        { 'name': 'relative_permeability', 'symbol': 'PERMEABILITY', 'value': urlParams.get(SolenoidParameters.PERMEABILITY) || '', 'unit': 'mu', 'html': '' },
     ];
     inputs.forEach( element => {
         // console.log(html, index+1);
@@ -88,6 +90,7 @@ const createInputs = () => {
 };
 
 const populateDefaults = () => {
+  document.getElementById('input-text-relative_permeability').value = '350';
   document.getElementById('input-text-voltage').value = '5';
   document.getElementById('input-text-length').value = '27';
   document.getElementById('input-text-r_not').value = '2.3';

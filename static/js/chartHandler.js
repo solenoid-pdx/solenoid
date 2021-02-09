@@ -15,6 +15,7 @@ const voltageChartAjax = (inputs, toGraph) => {
             x: inputs[4].value,
             force: inputs[5].value,
             awg: inputs[6].value,
+            relative_permeability: inputs[7].value, //Add new field DPN-31 FE
             compute: 'force', //Change this later, currently just comparing vs force tho
             toGraph: toGraph,
             csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),

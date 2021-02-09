@@ -9,6 +9,7 @@ const formSubmitHandler = () => {
           { 'name': 'x', 'value': '' },
           { 'name': 'force', 'value': '' },
           { 'name': 'awg', 'value': '' },
+          { 'name': 'relative_permeability', 'value': '' },
         ];
 
         let blank_counter = [];
@@ -139,12 +140,13 @@ const formSubmitHandler = () => {
             x: inputs[4].value,
             force: inputs[5].value,
             awg: inputs[6].value,
+            relative_permeability: inputs[7].value,
             compute: to_compute,
             toGraph: toGraph,
             csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
           },
             success: res => {
-              result = res[res.compute];
+                let result = res[res.compute];
               document.getElementById(`input-text-${res.compute}`).value = result;
               // document.getElementById('graph-container').style = 'width: 100%; display: block;';
             }
