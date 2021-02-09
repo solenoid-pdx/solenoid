@@ -33,9 +33,6 @@ const createInputs = () => {
         <div id="input-${element.name}" class="input-group mb-3">
         <div class="input-group-prepend">
           <span class="input-group-text">${formatR(element.symbol)}</span>
-          <div class="input-group-text">
-            <input id="input-radio-${element.name}" type="radio" value="${element.name}" aria-label="Radio button for following text input" name="radAnswer">
-          </div>
         </div>
         <input type="text"
                id="input-text-${element.name}"
@@ -55,9 +52,6 @@ const createInputs = () => {
             <div id="input-${element.name}" class="input-group mb-3">
             <div class="input-group-prepend">
               <span class="input-group-text">${formatR(element.symbol)}</span>
-              <div class="input-group-text">
-                <input type="radio" aria-label="Radio button for following text input" name="radAnswer">
-              </div>
             </div>   
             <input id = "input-text-awg"
                    class = "form-control"

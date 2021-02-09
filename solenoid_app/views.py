@@ -65,7 +65,7 @@ def voltageChart(request):
         'force': '',
         'awg': '',
         'compute': '',
-        'toGraph': ''
+        'xGraph': ''
     }
 
     if (request.method == "POST"):
@@ -80,44 +80,45 @@ def voltageChart(request):
             data['force'] = form.cleaned_data['force']
             data['awg'] = form.cleaned_data['awg']
             data['compute'] = form.cleaned_data['compute']
-            data['toGraph'] = form.cleaned_data['toGraph']
+            data['xGraph'] = form.cleaned_data['xGraph']
             compute = data['compute']
 
-            data['compute'] = None
-            data['force'] = None
+           # data['compute'] = None 
+            # data['force'] = None
+            data[compute] = None
             
-            if data['toGraph'] == 'voltage':
+            if data['xGraph'] == 'voltage':
                 x = 'Voltage'    
                 for volts in range(0, 15):
                     labels.append(volts)
                     graph.append(str(round(solenoid_solve(volts, data['length'], data['r_not'], data['r_a'], data['awg'], data['x'], data['force']),2)))
 
-            elif data['toGraph'] == 'length':
+            elif data['xGraph'] == 'length':
                 x = 'Length (mm)'
                 for length in range(5, 26):
                     labels.append(length)
                     graph.append(str(round(solenoid_solve(data['voltage'], length, data['r_not'], data['r_a'], data['awg'], data['x'], data['force']),2)))   
 
-            elif data['toGraph'] == 'r_not':
+            elif data['xGraph'] == 'r_not':
                 x = 'r_not'
                 for r_not in np.around(np.arange(1.0, 5.0, 0.1),decimals=2).astype(float):
                     labels.append(r_not)
                     graph.append(str(round(solenoid_solve(data['voltage'], data['length'], r_not, data['r_a'], data['awg'], data['x'], data['force']),2)))
 
-            elif data['toGraph'] == 'r_a':
+            elif data['xGraph'] == 'r_a':
                 x = 'r_a'
                 for r_a in np.around(np.arange(1.0, 5.0, 0.1),decimals=2).astype(float):
                     labels.append(r_a)
                     graph.append(str(round(solenoid_solve(data['voltage'], data['length'], data['r_not'], r_a, data['awg'], data['x'], data['force']),2)))
             
-            elif data['toGraph'] == 'x':
+            elif data['xGraph'] == 'x':
                 x = 'x'
                 length = int(data['length']) + 1
                 for i in range(0, length):
                     labels.append(i)
                     graph.append(str(round(solenoid_solve(data['voltage'], data['length'], data['r_not'], data['r_a'], data['awg'], i, data['force']),2)))
 
-            elif data['toGraph'] == 'awg':
+            elif data['xGraph'] == 'awg':
                 x = 'American Wire Gauge'
                 for i in list(map(str, range(26, 41))):
                     labels.append(i)
@@ -132,4 +133,5 @@ def voltageChart(request):
         'labels': labels,
         'data': graph,
         'x' : x,
+        'y' : compute,
     })

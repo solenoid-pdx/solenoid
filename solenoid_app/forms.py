@@ -12,4 +12,4 @@ class DataSetForm(forms.Form):
 
 
 class GraphForm(DataSetForm):
-    toGraph = forms.CharField()
+    xGraph = forms.CharField()
