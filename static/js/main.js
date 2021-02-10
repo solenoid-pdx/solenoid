@@ -99,6 +99,8 @@ const populateDefaults = () => {
   document.getElementById('input-text-x').value = '0';
   document.getElementById('input-text-awg').value = '30';
   document.getElementById('input-text-force').value = '';
+  document.getElementById('x-values-input').value = 'Voltage';
+  document.getElementById('y-values-input').value = 'Force';
 }
 
 const formatR = unit => {
