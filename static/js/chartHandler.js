@@ -3,33 +3,19 @@ let compute = 'force' //Change later :)
 
 const chartHandler = () => {
   let values = inputHandler()
-  let xGraph = $('#x-values-input :selected').text()
-  let yGraph = $('#y-values-input :selected').text()
+  let xGraph = $('#x-values-input :selected').text().toLowerCase()
+  let yGraph = $('#y-values-input :selected').text().toLowerCase()
+  values.blanks = values.blanks.filter(i => i !== xGraph && i !== yGraph)
 
-  //This won't be needed once I finish onChange function for the select elements.
-  if(xGraph === yGraph){
-    flashHandler('PLEASE SELECT DIFFERENT X AND Y VALUES', 'same-selections-flash-err') 
-    return;
-  }
-  
   if(xGraph === 'Select X Value' || yGraph === 'Select Y Value'){
     flashHandler('PLEASE SELECT X AND Y VALUES', 'same-selections-flash-err') 
     return;
   }
-  if(values.blanks.length >= 2 && (!values.blanks.includes(xGraph.toLowerCase()) || !values.blanks.includes(yGraph.toLowerCase()))) {
+
+  if(values.blanks.length >= 1) {
     flashHandler(`ALL VALUES OTHER THAN ${xGraph} AND ${yGraph} NEED TO BE FILLED `, 'missing-input-flash-err')
     return;
   }
-  if(values.toCompute !== 'force' && values.inputs[4].value != 0) {
-    flashHandler('X MUST EQUAL 0 FOR THIS SOLUTION.', 'x-eq-zero-flash-err')
-    return;
-  }
-  if(values.toCompute === 'x') {
-    flashHandler('X CANNOT BE SOLVED FOR', 'unsolved-x-flash-err')
-    return;
-  }
-
-
 
   $.ajax({
           type: 'POST',
@@ -38,8 +24,8 @@ const chartHandler = () => {
           data: {
             voltage: values.inputs[0].value,
             length: values.inputs[1].value,
-            r_not: values.inputs[2].value,
-            r_a: values.inputs[3].value,
+            r0: values.inputs[2].value,
+            ra: values.inputs[3].value,
             x: values.inputs[4].value,
             force: values.inputs[5].value,
             awg: values.inputs[6].value,
@@ -111,4 +97,3 @@ const format = input => {
   }
   return input
 }
-

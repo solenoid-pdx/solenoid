@@ -29,8 +29,8 @@ const formSubmitHandler = () => {
           data: {
             voltage: inputs.inputs[0].value,
             length: inputs.inputs[1].value,
-            r_not: inputs.inputs[2].value,
-            r_a: inputs.inputs[3].value,
+            r0: inputs.inputs[2].value,
+            ra: inputs.inputs[3].value,
             x: inputs.inputs[4].value,
             force: inputs.inputs[5].value,
             awg: inputs.inputs[6].value,

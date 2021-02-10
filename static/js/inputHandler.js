@@ -2,8 +2,8 @@ inputHandler = () => {
   let inputs= [
     { 'name': 'voltage', 'value': '' },
     { 'name': 'length', 'value': '' },
-    { 'name': 'r_not', 'value': '' },
-    { 'name': 'r_a', 'value': '' },
+    { 'name': 'r0', 'value': '' },
+    { 'name': 'ra', 'value': '' },
     { 'name': 'x', 'value': '' },
     { 'name': 'force', 'value': '' },
     { 'name': 'awg', 'value': '' },

@@ -21,8 +21,8 @@ const createInputs = () => {
     let inputs = [
         { 'name': 'voltage', 'symbol': 'V', 'value': urlParams.get('voltage') || '', 'unit': 'volts', 'html': '' },
         { 'name': 'length', 'symbol': 'L', 'value': urlParams.get('length') || '', 'unit': 'mm', 'html': '' },
-        { 'name': 'r_not', 'symbol': 'r sub not', 'value': urlParams.get('r_not') || '', 'unit': 'mm', 'html': '' },
-        { 'name': 'r_a', 'symbol': 'r sub a', 'value': urlParams.get('r_a') || '', 'unit': 'mm', 'html': '' },
+        { 'name': 'r0', 'symbol': 'r sub not', 'value': urlParams.get('r_not') || '', 'unit': 'mm', 'html': '' },
+        { 'name': 'ra', 'symbol': 'r sub a', 'value': urlParams.get('r_a') || '', 'unit': 'mm', 'html': '' },
         { 'name': 'x', 'symbol': 'x', 'value': urlParams.get('x') || '', 'unit': 'mm', 'html': '' },
         { 'name': 'force', 'symbol': 'F', 'value': urlParams.get('force') || '', 'unit': 'N', 'html': '' },
         { 'name': 'awg', 'symbol': 'AWG', 'value': urlParams.get('awg') || '', 'unit': 'guage', 'html': '' },
@@ -74,14 +74,18 @@ const createInputs = () => {
 const createDropDown = () => {
   let select_X = document.getElementById("x-values-input")
   let select_Y = document.getElementById("y-values-input")
-  let inputs = ['Voltage', 'Length', 'r_not', 'r_a', 'x', 'Force', 'AWG']
+  let inputs = ['Voltage', 'Length', 'r0', 'ra', 'x', 'Force', 'AWG']
   inputs.forEach( element => {
     let option = document.createElement('option')
     option.text = `${element}`
+    option.value = `${element}`
+    option.id = `option-x-${element}`
     select_X.add(option)
     if(element !== 'AWG'){
       let option1 = document.createElement('option')
       option1.text = `${element}`
+      option1.value = `${element}`
+      option1.id = `option-y-${element}`
       select_Y.add(option1)
     }
   })
@@ -90,8 +94,8 @@ const createDropDown = () => {
 const populateDefaults = () => {
   document.getElementById('input-text-voltage').value = '5';
   document.getElementById('input-text-length').value = '27';
-  document.getElementById('input-text-r_not').value = '2.3';
-  document.getElementById('input-text-r_a').value = '4.5';
+  document.getElementById('input-text-r0').value = '2.3';
+  document.getElementById('input-text-ra').value = '4.5';
   document.getElementById('input-text-x').value = '0';
   document.getElementById('input-text-awg').value = '30';
   document.getElementById('input-text-force').value = '';
@@ -126,8 +130,20 @@ const add_awg_select_options = () =>{
     }
 };
 
-const dropDownOnChange = () => {
-  //Need previous value added to the other selector and new value removed from other.
-  return;
 
-}
+(() => {
+  let previousX;
+  let previousY;
+
+  $("select[name=x-values-input]").change(function() {
+    $(`#option-y-${previousX}`).show()
+    previousX = this.value;
+    $(`#option-y-${previousX}`).hide()
+  });
+
+  $("select[name=y-values-input]").change(function() {
+    $(`#option-x-${previousY}`).show()
+    previousY = this.value;
+    $(`#option-x-${previousY}`).hide()
+  });   
+})();
