@@ -19,7 +19,7 @@ class TestUI(LiveServerTestCase):
         super().__init__(methods)
         chrome_options = Options()
         chrome_options.add_argument("--headless")
-        self.driver = webdriver.Chrome(chrome_options=chrome_options)
+        self.driver = webdriver.Chrome(chrome_options=chrome_options)  
 
     # This method is automatically invoked before each test case is run.
     def setUp(self):
@@ -33,7 +33,7 @@ class TestUI(LiveServerTestCase):
         """ Test that passing in a query string to the end of a URL fills out the form """
 
         testValue = "5"
-        queryParameters = ["voltage", "length", "r_not", "r_a", "x", "force", "awg"]
+        queryParameters = ["voltage", "length", "r0", "ra", "x", "force", "awg"]
         queryString = "?"
         for queryParameter in queryParameters:
             queryString += queryParameter + "=" + testValue + "&"
@@ -46,7 +46,7 @@ class TestUI(LiveServerTestCase):
         """ Test that query string is updated after performing calculation """
 
         testValue = "6"
-        formParameters = ["voltage", "length", "r_not", "r_a", "x", "awg"]
+        formParameters = ["voltage", "length", "r0", "ra", "x", "awg"]
         for formParameter in formParameters:
             self.driver.find_element_by_id('input-text-' + formParameter).send_keys(testValue)
         self.driver.find_element_by_xpath('//*[@id="input-submit-form"]/input[2]').click()
@@ -59,7 +59,7 @@ class TestUI(LiveServerTestCase):
     def test_query_string_not_updated_invalid_calculate(self):
 
         testValue = "7"
-        formParameters = ["voltage", "length", "r_not", "r_a", "force", "awg"]
+        formParameters = ["voltage", "length", "r0", "ra", "force", "awg"]
         for formParameter in formParameters:
             self.driver.find_element_by_id('input-text-' + formParameter).send_keys(testValue)
         self.driver.find_element_by_xpath('//*[@id="input-submit-form"]/input[2]').click()
