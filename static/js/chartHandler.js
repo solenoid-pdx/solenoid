@@ -44,7 +44,7 @@ const chartHandler = () => {
               data: {
                 labels: data.labels,
                 datasets: [{
-                  label: 'Force',
+                  label: format(data.y),
                   backgroundColor: 'green',
                   borderColor: 'green',
                   data: data.data,
@@ -92,8 +92,7 @@ const format = input => {
     return 'r\u2080'
   }else if(input === 'ra'){
     return "r\u2090" 
-  }else if(input === 'force'){
-    return "Force"
   }
-  return input
+
+  return input.charAt(0).toUpperCase() + input.slice(1) 
 }

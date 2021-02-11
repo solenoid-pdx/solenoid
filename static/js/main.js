@@ -1,3 +1,6 @@
+let previousX;
+let previousY;
+
 const renderPage = () => {
     mountInputs();
     add_awg_select_options();
@@ -101,6 +104,10 @@ const populateDefaults = () => {
   document.getElementById('input-text-force').value = '';
   document.getElementById('x-values-input').value = 'Voltage';
   document.getElementById('y-values-input').value = 'Force';
+  previousX = $('#x-values-input')[0].value
+  $(`#option-y-${previousX}`).hide()
+  previousY = $('#y-values-input')[0].value
+  $(`#option-x-${previousY}`).hide()
 }
 
 const formatR = unit => {
@@ -134,8 +141,6 @@ const add_awg_select_options = () =>{
 
 
 (() => {
-  let previousX;
-  let previousY;
 
   $("select[name=x-values-input]").change(function() {
     $(`#option-y-${previousX}`).show()

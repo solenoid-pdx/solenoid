@@ -83,7 +83,7 @@ def voltageChart(request):
             data['compute'] = form.cleaned_data['compute']
             data['xGraph'] = form.cleaned_data['xGraph']
             compute = data['compute']
-
+            print(compute)
             data[compute.lower()] = None
             
             if data['xGraph'] == 'voltage':
@@ -117,19 +117,20 @@ def voltageChart(request):
                   labels.append(k)
                   graph.append(round(v,sigFigs))  
                   
-            elif data['xGraph'] == 'AWG':
+            elif data['xGraph'] == 'awg':
                 x = 'American Wire Gauge'
                 for k,v in solenoid_range(data['voltage'],data['length'], data['r0'], data['ra'], data['awg'], data['x'], data['force'], "gauge", 1.0, 5.0, 0.1):
                   labels.append(k)
                   graph.append(round(v,sigFigs))  
 
-            elif data['xGraph'] == 'Force':
+            elif data['xGraph'] == 'force':
+                x = 'Force'
                 for k,v in solenoid_range(data['voltage'],data['length'], data['r0'], data['ra'], data['awg'], data['x'], data['force'], data['xGraph'], 1.0, 50.0, 1.0):
                   labels.append(k)
                   graph.append(round(v,sigFigs))  
 
-            else:
-                x = 'Voltage'
+            else: 
+                x = 'Voltage' 
                 for volts in range(0, 51):
                     labels.append(volts)
                     graph.append(str(round(solenoid_solve(volts, data['length'], data['r0'], data['ra'], data['awg'], data['x'], data['force']),sigFigs)))
