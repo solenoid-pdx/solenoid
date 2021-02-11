@@ -7,7 +7,6 @@ from selenium import webdriver
 from django.test import LiveServerTestCase, tag
 from selenium.webdriver.common.keys import Keys
 from selenium_tests.selenium_test_base import SeleniumTestBase
-import time
 
 
 URL = "http://localhost:8000/"
