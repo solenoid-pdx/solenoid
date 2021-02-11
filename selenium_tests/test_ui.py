@@ -6,28 +6,17 @@
 from selenium import webdriver
 from django.test import LiveServerTestCase, tag
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.chrome.options import Options
+from selenium_tests.selenium_test_base import SeleniumTestBase
 
 
 URL = "http://localhost:8000/"
 
 @tag('ui')
-class TestUI(LiveServerTestCase):
+class TestUI(SeleniumTestBase):
     """UI Tests"""
 
     def __init__(self, methods):
         super().__init__(methods)
-        chrome_options = Options()
-        chrome_options.add_argument("--headless")
-        self.driver = webdriver.Chrome(chrome_options=chrome_options)
-
-    # This method is automatically invoked before each test case is run.
-    def setUp(self):
-        self.driver.get(URL)
-
-    # This method is automatically invoked after each test case is run.
-    def tearDown(self):
-        self.driver.quit()
     
     def test_query_string_fills_form_fields(self):
         """ Test that passing in a query string to the end of a URL fills out the form """
@@ -57,6 +46,7 @@ class TestUI(LiveServerTestCase):
         self.assertEqual(self.driver.current_url, URL + queryString)
     
     def test_query_string_not_updated_invalid_calculate(self):
+        """ Test that on an invalid calculation request the query string is not updated. """
 
         testValue = "7"
         formParameters = ["voltage", "length", "r_not", "r_a", "force", "awg"]
