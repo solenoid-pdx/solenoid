@@ -88,9 +88,9 @@ const chartHandler = () => {
 }
 
 const format = input => {
-  if(input === 'r_not'){
+  if(input === 'r0'){
     return 'r\u2080'
-  }else if(input === 'r_a'){
+  }else if(input === 'ra'){
     return "r\u2090" 
   }else if(input === 'force'){
     return "Force"
