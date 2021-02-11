@@ -36,7 +36,7 @@ jobs:
 
       # Execute test suite (unit & integration tests)
       - name: Unit/Integration Test Execution
-        run: python3 manage.py test tests/
+        run: python3 manage.py test python_tests/
 
       # Install ChromeDriver
       - name: Install ChromeDriver
