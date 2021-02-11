@@ -7,6 +7,7 @@ from selenium import webdriver
 from django.test import LiveServerTestCase, tag
 from selenium.webdriver.common.keys import Keys
 from selenium_tests.selenium_test_base import SeleniumTestBase
+import time
 
 
 URL = "http://localhost:8000/"
@@ -29,8 +30,8 @@ class TestUI(SeleniumTestBase):
         queryString = queryString[:-1]
         self.driver.get(URL + queryString)
         for queryParameter in queryParameters:
-            self.assertEqual(self.driver.find_element_by_id("input-text-" + queryParameter).get_attribute('value') , testValue)
-    
+            self.assertEqual(self.driver.find_element_by_id("input-text-" + queryParameter).get_attribute('value'), testValue)
+
     def test_calculate_creates_query_string(self):
         """ Test that query string is updated after performing calculation """
 

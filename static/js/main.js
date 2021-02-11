@@ -21,8 +21,8 @@ const createInputs = () => {
     let inputs = [
         { 'name': 'voltage', 'symbol': 'V', 'value': urlParams.get('voltage') || '', 'unit': 'volts', 'html': '' },
         { 'name': 'length', 'symbol': 'L', 'value': urlParams.get('length') || '', 'unit': 'mm', 'html': '' },
-        { 'name': 'r0', 'symbol': 'r sub not', 'value': urlParams.get('r_not') || '', 'unit': 'mm', 'html': '' },
-        { 'name': 'ra', 'symbol': 'r sub a', 'value': urlParams.get('r_a') || '', 'unit': 'mm', 'html': '' },
+        { 'name': 'r0', 'symbol': 'r sub not', 'value': urlParams.get('r0') || '', 'unit': 'mm', 'html': '' },
+        { 'name': 'ra', 'symbol': 'r sub a', 'value': urlParams.get('ra') || '', 'unit': 'mm', 'html': '' },
         { 'name': 'x', 'symbol': 'x', 'value': urlParams.get('x') || '', 'unit': 'mm', 'html': '' },
         { 'name': 'force', 'symbol': 'F', 'value': urlParams.get('force') || '', 'unit': 'N', 'html': '' },
         { 'name': 'awg', 'symbol': 'AWG', 'value': urlParams.get('awg') || '', 'unit': 'guage', 'html': '' },
