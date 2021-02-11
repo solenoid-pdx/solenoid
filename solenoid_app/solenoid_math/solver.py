@@ -1,4 +1,4 @@
-from sympy import symbols, solve, lambdify
+from sympy import symbols, solve
 import numpy as np
 from time import perf_counter
 from solenoid_app.solenoid_math.exceptions import TooManyVariables, IncorrectDataType
@@ -200,20 +200,7 @@ def solenoid_performance(volts, length, r0, ra, gauge, location, force):
             result = 1000 * (np.sqrt(a) * (r0 / 1000) * np.sqrt(PERM_FREE) * np.sqrt(PERM_RELATIVE) * volts) / (
                     2 * np.sqrt(2 * np.pi) * np.sqrt(force) * (AWG_DATA[gauge]["resistance"] / 1000) * (ra / 1000))
         else:
-            #THIS IS NOT THE SOLUTION, TEMPORARY PLACE HOLDER UNTIL WE DISCOVER THE CORRECT WAY OF SOLVING THIS!!!
-            try:
-                x = symbols('x')
-                func = (((volts**2) * PERM_FREE * PERM_RELATIVE) / (8 * np.pi * ((AWG_DATA[gauge]["resistance"] / 1000)**2) * ((x/1000)**2))) * (
-                    ((r0/1000)/(ra/1000))**2) * a * np.e**(-1 * (a / x/1000) * (location/1000)) - force
-
-                f = lambdify(x,func,modules=["scipy", "numpy"])
-                funcPrime = func.diff(x)
-                fder = lambdify(x,funcPrime,modules=["scipy", "numpy"])
-                funcPrime2 = funcPrime.diff(x)
-                fder2 = lambdify(x,funcPrime2,modules=["scipy", "numpy"])
-                result = optimize.newton(fder, 0.5, fprime= fder, fprime2=fder2, maxiter=1000)
-            except OverflowError:
-                print("Result is either too large or too small")
+            result = -1
 
     elif r0 is None:
 
@@ -229,13 +216,16 @@ def solenoid_performance(volts, length, r0, ra, gauge, location, force):
                                  length / 1000))
 
     elif location is None:
-        x = symbols('x')
-        func = (((volts**2) * PERM_FREE * PERM_RELATIVE) / (8 * np.pi * ((AWG_DATA[gauge]["resistance"] / 1000)**2) * (
-            (length/1000)**2))) * (((r0/1000)/(ra/1000))**2) * a * np.e**(-1 * (a / (length/1000)) * x) - force
-        f = lambdify(x,func,modules=["numpy", "scipy"])
-        funcPrime = func.diff(x) 
-        fder = lambdify(x,funcPrime,modules=["numpy", "scipy"])
-        result = 1000 * abs(optimize.newton(f,0,fprime=fder,maxiter=1000))
+
+        constant_1 = ((volts ** 2) * PERM_RELATIVE * PERM_FREE) / (
+                    8 * np.pi * ((AWG_DATA[gauge]["resistance"] / 1000) ** 2) * ((length / 1000) ** 2)) * a
+        constant_2 = (((r0 / 1000)**2) / ((ra / 1000)**2))
+        product = constant_1 * constant_2
+        exponent = -1 * (a / (length/1000))
+
+        f = lambda x, a, b: a * np.e**(b * x) - force
+        fder = lambda x, a, b: a * b * np.e**(b * x)
+        result = 1000 * abs(optimize.newton(f, 0, args=(product, exponent), fprime=fder, maxiter=1000))
 
     elif force is None:
 
@@ -301,5 +291,3 @@ def solenoid_range(volts, length, r0, ra, gauge, location, force, idv, start=0.0
             result.append((i, solenoid_performance(volts, length, r0, ra, gauge, i, force)))
 
     return result
-
-
