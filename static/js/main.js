@@ -54,8 +54,8 @@ const createInputs = () => {
         `
             }
             if (element.name === 'length'
-                || element.name === 'r_not'
-                || element.name === 'r_a'
+                || element.name === 'r0'
+                || element.name === 'ra'
                 || element.name === 'x') {
                 element.html +=`
                 <div class="input-group-append">
