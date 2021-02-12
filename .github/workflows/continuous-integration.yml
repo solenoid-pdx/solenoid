@@ -48,9 +48,6 @@ jobs:
           chmod +x chromedriver
           export PATH="${PATH}:${HOME}/bin"
           
-      # Install Copy/Paste mechanisms
-      - name: Install Copy/Paste mechanisms
-        run: python3 -m pip install PyQt4
         
       # Start Server
       - name: Start Server
