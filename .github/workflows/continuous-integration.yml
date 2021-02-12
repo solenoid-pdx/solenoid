@@ -50,7 +50,7 @@ jobs:
           
       # Install Copy/Paste mechanisms
       - name: Install Copy/Paste mechanisms
-        run: pip install gtk
+        run: python3 -m pip install gtk
         
       # Start Server
       - name: Start Server
