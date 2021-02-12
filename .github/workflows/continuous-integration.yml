@@ -47,6 +47,10 @@ jobs:
           unzip chromedriver_linux64.zip
           chmod +x chromedriver
           export PATH="${PATH}:${HOME}/bin"
+          
+      # Install Copy/Paste mechanisms
+      - name: Install Copy/Paste mechanisms
+        run: sudo apt-get install xsel
         
       # Start Server
       - name: Start Server
