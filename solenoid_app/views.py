@@ -71,7 +71,7 @@ def voltageChart(request):
 
     if (request.method == "POST"):
         form = GraphForm(request.POST)
-        print(request.POST)
+        # print(request.POST)
         if form.is_valid():
             data['voltage'] = form.cleaned_data['voltage']
             data['length'] = form.cleaned_data['length']

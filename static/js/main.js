@@ -1,3 +1,4 @@
+// TODO: Look at this later lol
 let previousX;
 let previousY;
 

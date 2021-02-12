@@ -17,3 +17,15 @@ class TestChart(SeleniumTestBase):
         self.driver.find_element_by_xpath("//*[@id='calc-container']/button").click()
         self.driver.find_element_by_xpath("//*[@id='graph-select']/button").click()
         self.assertTrue(self.driver.find_element_by_id("voltage-Chart").is_enabled())
+
+    def test_x_input_resricts_y(self):
+        """ Test that selecting a value for x to graph restricts the user from selecting that value for y. """
+
+        display_none_style = "display: none;"
+        x_values = ["Voltage", "Length", "r0", "ra", "x", "Force"]
+        for x_value in x_values:
+            self.driver.find_element_by_id("option-x-" + x_value).click()
+            # The following line is commented out because is_displayed was returning true?
+            # self.assertFalse(self.driver.find_element_by_id("option-y-" + x_value).is_displayed())
+            style_attribute = self.driver.find_element_by_id("option-y-" + x_value).get_attribute("style")
+            self.assertEqual(display_none_style, style_attribute)
