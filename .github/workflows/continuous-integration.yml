@@ -50,7 +50,7 @@ jobs:
           
       # Install Copy/Paste mechanisms
       - name: Install Copy/Paste mechanisms
-        run: sudo apt-get install xclip
+        run: pip install gtk
         
       # Start Server
       - name: Start Server
