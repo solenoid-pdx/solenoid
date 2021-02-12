@@ -262,7 +262,7 @@ Returns:
 def solenoid_range(volts, length, r0, ra, gauge, location, force, idv, start=0.0, stop=1.0, step=1.0):
     result = []
 
-    if idv == "volts":
+    if idv == "voltage":
         for i in list(np.arange(start, stop, step)):
             result.append((i, solenoid_performance(i, length, r0, ra, gauge, location, force)))
 
@@ -272,11 +272,11 @@ def solenoid_range(volts, length, r0, ra, gauge, location, force, idv, start=0.0
 
     elif idv == "r0":
         for i in list(np.arange(start, stop, step)):
-            result.append((i, solenoid_performance(volts, length, i, ra, gauge, location, force)))
+            result.append((i, np.around(solenoid_performance(volts, length, i, ra, gauge, location, force),decimals=2)))
 
     elif idv == "ra":
         for i in list(np.arange(start, stop, step)):
-            result.append((i, solenoid_performance(volts, length, r0, i, gauge, location, force)))
+            result.append((i, np.around(solenoid_performance(volts, length, r0, i, gauge, location, force),decimals=2)))
 
     elif idv == "force":
         for i in list(np.arange(start, stop, step)):
@@ -286,7 +286,7 @@ def solenoid_range(volts, length, r0, ra, gauge, location, force, idv, start=0.0
         for item in AWG_DATA.keys():
             result.append((item, solenoid_performance(volts, length, r0, ra, item, location, force)))
 
-    elif idv == "location":
+    elif idv == "x":
         for i in list(np.arange(start, stop, step)):
             result.append((i, solenoid_performance(volts, length, r0, ra, gauge, i, force)))
 
