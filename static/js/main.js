@@ -45,11 +45,40 @@ const createInputs = () => {
                placeholder="Enter ${element.symbol}"
                value="${element.value}"
         >
-        <div class="input-group-append">
-            <span class="input-group-text">${element.unit}</span>
-          </div>
-        </div>
       `
+            if (element.name === 'voltage') {
+                element.html +=`           
+                <div class="input-group-append">
+                  <span class="input-group-text">volts</span>
+                </div> 
+        `
+            }
+            if (element.name === 'length'
+                || element.name === 'r0'
+                || element.name === 'ra'
+                || element.name === 'x') {
+                element.html +=`
+                <div class="input-group-append">
+                  <select id="input-unit-${element.name}" class="input-group-text">
+                    <option selected>mm</option>
+                    <option>cm</option>
+                    <option>m</option>
+                    <option>inch</option>
+                    <option>feet</option>
+                  </select>
+                </div>
+        `
+            }
+            if (element.name === 'force') {
+               element.html +=`
+               <div class="input-group-append">
+                 <select id="input-unit-${element.name}" class="input-group-text">
+                   <option selected>N</option>
+                   <option>lbf</option>
+                 </select>
+               </div>
+        `
+            }
         }
         else {
             element.html =`
