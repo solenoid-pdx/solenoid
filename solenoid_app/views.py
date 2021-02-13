@@ -7,6 +7,7 @@ from django.views.generic import TemplateView
 from chartjs.views.lines import BaseLineChartView
 from .forms import DataSetForm, GraphForm
 from solenoid_app.solenoid_math.solver import solenoid_convert, solenoid_range
+from solenoid_app.solenoid_math.exceptions import *
 from solenoid_app.solenoid_math import ureg
 import os
 import time
@@ -67,10 +68,13 @@ def formHandle(request):
             else:
                 output_unit = None
 
-            data[compute] = solenoid_convert(data['voltage'], data['length'], data['r0'], data['ra'], data['awg'],
-                                             data['x'], data['force'], output_unit)
+            try:
+                data[compute] = solenoid_convert(data['voltage'], data['length'], data['r0'], data['ra'], data['awg'],
+                                                 data['x'], data['force'], output_unit)
 
-            data[compute] = round(data[compute], sig_figs)
+                data[compute] = round(data[compute], sig_figs)
+            except NoSolution:
+                data[compute] = "No Solution Found"
 
             for k, v in data.items():
                 data[k] = str(v)
@@ -196,12 +200,12 @@ def voltageChart(request):
                     graph.append(round(v, sig_figs))
 
             else: 
-                x = 'Voltage' 
-                for volts in range(0, 51):
-                    labels.append(volts)
-                    graph.append(str(round(
-                        solenoid_convert(volts, data['length'], data['r0'], data['ra'], data['awg'], data['x'],
-                                         data['force'], output_unit), sig_figs)))
+                x = 'Voltage'
+                for k, v in solenoid_range(data['voltage'], data['length'], data['r0'], data['ra'], data['awg'],
+                                           data['x'], data['force'], output_unit, data['xGraph'], idv_unit, 0.0, 51.0,
+                                           1.0):
+                    labels.append(k)
+                    graph.append(round(v, sig_figs))
 
     return JsonResponse(data={
         'labels': labels,

@@ -1,8 +1,12 @@
 from sympy import symbols, solve, lambdify
 import numpy as np
-from solenoid_app.solenoid_math.exceptions import TooManyVariables, IncorrectDataType
+from solenoid_app.solenoid_math.exceptions import TooManyVariables, IncorrectDataType, NoSolution
 from scipy import optimize
 from . import ureg
+
+# Catch divide by 0 errors
+import warnings
+warnings.filterwarnings("error")
 
 # Wire Gauge constants for copper
 # Resistance per unit length and cross-sectional area
@@ -187,18 +191,28 @@ def solenoid_performance(volts, length, r0, ra, gauge, location, force):
     a = np.log(PERM_RELATIVE)
 
     if volts is None:
+        try:
+            result = (2 * np.sqrt(2 * np.pi) * np.sqrt(force) * (
+                        AWG_DATA[gauge]["resistance"] / 1000) * length * ra * np.e ** ((location * a) / (2 * length))) / (
+                                 r0 * np.sqrt(PERM_RELATIVE) * np.sqrt(PERM_FREE) * np.sqrt(a))
+        except RuntimeError:
+            raise NoSolution
+        except RuntimeWarning:
+            raise NoSolution
 
-        result = (2 * np.sqrt(2 * np.pi) * np.sqrt(force) * (
-                    AWG_DATA[gauge]["resistance"] / 1000) * length * ra * np.e ** ((location * a) / (2 * length))) / (
-                             r0 * np.sqrt(PERM_RELATIVE) * np.sqrt(PERM_FREE) * np.sqrt(a))
-
-    # TODO: Find EQ or handle location != 0 case with error (probably frontend)
-    # May have to write a new class for exception in this scenario (Overflow)
     elif length is None:
 
         if location == 0:
-            result = (np.sqrt(a) * r0 * np.sqrt(PERM_FREE) * np.sqrt(PERM_RELATIVE) * volts) / (
-                    2 * np.sqrt(2 * np.pi) * np.sqrt(force) * (AWG_DATA[gauge]["resistance"] / 1000) * ra)
+            try:
+                result = (np.sqrt(a) * r0 * np.sqrt(PERM_FREE) * np.sqrt(PERM_RELATIVE) * volts) / (
+                        2 * np.sqrt(2 * np.pi) * np.sqrt(force) * (AWG_DATA[gauge]["resistance"] / 1000) * ra)
+                if result < 0:
+                    raise NoSolution
+            except RuntimeError:
+                raise NoSolution
+            except RuntimeWarning:
+                raise NoSolution
+
         else:
             # THIS IS NOT THE SOLUTION, TEMPORARY PLACE HOLDER UNTIL WE DISCOVER THE CORRECT WAY OF SOLVING THIS!!!
             try:
@@ -213,20 +227,38 @@ def solenoid_performance(volts, length, r0, ra, gauge, location, force):
                 funcPrime2 = funcPrime.diff(x)
                 fder2 = lambdify(x, funcPrime2, modules=["scipy", "numpy"])
                 result = optimize.newton(fder, 0.5, fprime=fder, fprime2=fder2, maxiter=1000)
+                if result < 0:
+                    raise NoSolution
             except OverflowError:
-                print("Result is either too large or too small")
+                raise NoSolution
+            except RuntimeError:
+                raise NoSolution
+            except RuntimeWarning:
+                raise NoSolution
 
     elif r0 is None:
-
-        result = (2 * np.sqrt(2 * np.pi) * np.sqrt(force) * (
-                    AWG_DATA[gauge]["resistance"] / 1000) * length * ra * np.e ** ((location * a) / (2 * length))) / (
-                             np.sqrt(PERM_RELATIVE) * np.sqrt(PERM_FREE) * volts * np.sqrt(a))
+        try:
+            result = (2 * np.sqrt(2 * np.pi) * np.sqrt(force) * (
+                        AWG_DATA[gauge]["resistance"] / 1000) * length * ra * np.e ** ((location * a) / (2 * length))) / (
+                                 np.sqrt(PERM_RELATIVE) * np.sqrt(PERM_FREE) * volts * np.sqrt(a))
+            if result < 0:
+                raise NoSolution
+        except RuntimeError:
+            raise NoSolution
+        except RuntimeWarning:
+            raise NoSolution
 
     elif ra is None:
-
-        result = (r0 * np.sqrt(PERM_RELATIVE) * np.sqrt(PERM_FREE)) * volts * np.sqrt(a) * np.e ** -(
-                    (location * a) / (2 * length)) / (
-                             2 * np.sqrt(2 * np.pi) * np.sqrt(force) * (AWG_DATA[gauge]["resistance"] / 1000) * length)
+        try:
+            result = (r0 * np.sqrt(PERM_RELATIVE) * np.sqrt(PERM_FREE)) * volts * np.sqrt(a) * np.e ** -(
+                        (location * a) / (2 * length)) / (
+                                 2 * np.sqrt(2 * np.pi) * np.sqrt(force) * (AWG_DATA[gauge]["resistance"] / 1000) * length)
+            if result < 0:
+                raise NoSolution
+        except RuntimeError:
+            raise NoSolution
+        except RuntimeWarning:
+            raise NoSolution
 
     elif location is None:
 
@@ -240,15 +272,25 @@ def solenoid_performance(volts, length, r0, ra, gauge, location, force):
             funcPrime = func.diff(x)
             fder = lambdify(x, funcPrime, modules=["numpy", "scipy"])
             result = (optimize.newton(f, 0, fprime=fder, maxiter=1000))
-
-        except:
-            result = -1
+            if result < 0:
+                raise NoSolution
+        except OverflowError:
+            raise NoSolution
+        except RuntimeError:
+            raise NoSolution
+        except RuntimeWarning:
+            raise NoSolution
 
     elif force is None:
 
-        result = ((volts ** 2) * PERM_RELATIVE * PERM_FREE) / (
-                    8 * np.pi * ((AWG_DATA[gauge]["resistance"] / 1000) ** 2) * (length ** 2)) * (
-                             r0 ** 2 / ra ** 2) * np.e ** (-(a / length) * location) * a
+        try:
+            result = ((volts ** 2) * PERM_RELATIVE * PERM_FREE) / (
+                        8 * np.pi * ((AWG_DATA[gauge]["resistance"] / 1000) ** 2) * (length ** 2)) * (
+                                 r0 ** 2 / ra ** 2) * np.e ** (-(a / length) * location) * a
+        except RuntimeError:
+            raise NoSolution
+        except RuntimeWarning:
+            raise NoSolution
 
     return result
 
@@ -280,36 +322,57 @@ def solenoid_range(volts, length, r0, ra, gauge, location, force, output_unit,id
 
     if idv == "voltage":
         for i in list(np.arange(start, stop, step)):
-            result.append((i, solenoid_convert(i, length, r0, ra, gauge, location, force, output_unit)))
+            try:
+                result.append((i, solenoid_convert(i, length, r0, ra, gauge, location, force, output_unit)))
+            except NoSolution:
+                result.append((i, 0))
 
     elif idv == "length":
         for i in list(np.arange(start, stop, step)):
             value = i * ureg(idv_unit)
-            result.append((i, solenoid_convert(volts, value, r0, ra, gauge, location, force, output_unit)))
+            try:
+                result.append((i, solenoid_convert(volts, value, r0, ra, gauge, location, force, output_unit)))
+            except NoSolution:
+                result.append((i, 0))
 
     elif idv == "r0":
         for i in list(np.arange(start, stop, step)):
             value = i * ureg(idv_unit)
-            result.append((i, np.around(solenoid_convert(volts, length, value, ra, gauge, location, force, output_unit), decimals=2)))
+            try:
+                result.append((i, np.around(solenoid_convert(volts, length, value, ra, gauge, location, force, output_unit), decimals=2)))
+            except NoSolution:
+                result.append((i, 0))
 
     elif idv == "ra":
         for i in list(np.arange(start, stop, step)):
             value = i * ureg(idv_unit)
-            result.append((i, np.around(solenoid_convert(volts, length, r0, value, gauge, location, force, output_unit), decimals=2)))
+            try:
+                result.append((i, np.around(solenoid_convert(volts, length, r0, value, gauge, location, force, output_unit), decimals=2)))
+            except NoSolution:
+                result.append((i, 0))
 
     elif idv == "force":
         for i in list(np.arange(start, stop, step)):
             value = i * ureg(idv_unit)
-            result.append((i, solenoid_convert(volts, length, r0, ra, gauge, location, value, output_unit)))
+            try:
+                result.append((i, solenoid_convert(volts, length, r0, ra, gauge, location, value, output_unit)))
+            except NoSolution:
+                result.append((i, 0))
 
     elif idv == "gauge":
         for item in AWG_DATA.keys():
-            result.append((item, solenoid_convert(volts, length, r0, ra, item, location, force, output_unit)))
+            try:
+                result.append((item, solenoid_convert(volts, length, r0, ra, item, location, force, output_unit)))
+            except NoSolution:
+                result.append((item, 0))
 
     elif idv == "x":
         for i in list(np.arange(start, stop, step)):
             value = i * ureg(idv_unit)
-            result.append((i, solenoid_convert(volts, length, r0, ra, gauge, value, force, output_unit)))
+            try:
+                result.append((i, solenoid_convert(volts, length, r0, ra, gauge, value, force, output_unit)))
+            except NoSolution:
+                result.append((i, 0))
 
     return result
 
