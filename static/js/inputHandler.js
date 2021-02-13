@@ -1,11 +1,11 @@
 inputHandler = () => {
   let inputs= [
     { 'name': 'voltage', 'value': '' },
-    { 'name': 'length', 'value': '' },
-    { 'name': 'r0', 'value': '' },
-    { 'name': 'ra', 'value': '' },
-    { 'name': 'x', 'value': '' },
-    { 'name': 'force', 'value': '' },
+    { 'name': 'length', 'value': '', 'unit': '' },
+    { 'name': 'r0', 'value': '', 'unit': '' },
+    { 'name': 'ra', 'value': '', 'unit': '' },
+    { 'name': 'x', 'value': '', 'unit': '' },
+    { 'name': 'force', 'value': '', 'unit': '' },
     { 'name': 'awg', 'value': '' },
   ]
 
@@ -14,6 +14,7 @@ inputHandler = () => {
 
   inputs.forEach( (input, _index) => {
     let element = document.getElementById(`input-text-${input.name}`);
+    let unit = document.getElementById(`input-unit-${input.name}`);
 
     if(element.value === '') {
       blanks.push(input.name)
@@ -22,6 +23,11 @@ inputHandler = () => {
       toCompute = input.name;
     }
     else input.value = element.value;
+
+    if(input.name == 'length' || input.name == 'r0' || input.name == 'ra'
+     || input.name == 'x'|| input.name == 'force') {
+        input.unit = unit.value
+    }
   });
   
   let inputContextObj = {}

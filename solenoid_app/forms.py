@@ -1,5 +1,6 @@
 from django import forms
 
+
 class DataSetForm(forms.Form):
     voltage = forms.FloatField()
     length = forms.FloatField()
@@ -9,6 +10,11 @@ class DataSetForm(forms.Form):
     force = forms.FloatField()
     awg = forms.CharField()
     compute = forms.CharField()
+    length_unit = forms.CharField()
+    r0_unit = forms.CharField()
+    ra_unit = forms.CharField()
+    x_unit = forms.CharField()
+    force_unit = forms.CharField()
 
 
 class GraphForm(DataSetForm):

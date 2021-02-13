@@ -36,6 +36,11 @@ const formSubmitHandler = () => {
             awg: inputs.inputs[6].value,
             compute: inputs.toCompute,
             csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+            length_unit: inputs.inputs[1].unit,
+            r0_unit: inputs.inputs[2].unit,
+            ra_unit: inputs.inputs[3].unit,
+            x_unit: inputs.inputs[4].unit,
+            force_unit: inputs.inputs[5].unit,
           },
             success: res => {
               result = res[res.compute];
