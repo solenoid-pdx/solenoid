@@ -3,11 +3,14 @@ from django import forms
 class DataSetForm(forms.Form):
     voltage = forms.FloatField()
     length = forms.FloatField()
-    r_not = forms.FloatField()
-    r_a = forms.FloatField()
+    r0 = forms.FloatField()
+    ra = forms.FloatField()
     x = forms.FloatField()
     force = forms.FloatField()
     awg = forms.CharField()
     compute = forms.CharField()
-    toGraph = forms.CharField()
     relative_permeability = forms.FloatField()
+
+
+class GraphForm(DataSetForm):
+    xGraph = forms.CharField()
