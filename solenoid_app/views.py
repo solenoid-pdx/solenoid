@@ -66,7 +66,9 @@ def voltageChart(request):
         'force': '',
         'awg': '',
         'compute': '',
-        'xGraph': ''
+        'xGraph': '',
+        'xStart': '',
+        'xEnd': '',
     }
 
     if (request.method == "POST"):
@@ -82,50 +84,52 @@ def voltageChart(request):
             data['awg'] = form.cleaned_data['awg']
             data['compute'] = form.cleaned_data['compute']
             data['xGraph'] = form.cleaned_data['xGraph']
+            data['xStart'] = form.cleaned_data['xStart']
+            data['xEnd'] = form.cleaned_data['xEnd']
             compute = data['compute']
             print(compute)
             data[compute.lower()] = None
             
             if data['xGraph'] == 'voltage':
                 x = 'Voltage' 
-                for k,v in solenoid_range(data['voltage'],data['length'], data['r0'], data['ra'], data['awg'], data['x'], data['force'], data['xGraph'], 0.0, 15.0, 1.0):
+                for k,v in solenoid_range(data['voltage'],data['length'], data['r0'], data['ra'], data['awg'], data['x'], data['force'], data['xGraph'], data['xStart'], data['xEnd'], 1.0):
                     labels.append(k)
                     graph.append(round(v,sigFigs))
 
             elif data['xGraph'] == 'length':
                 x = 'Length (mm)'
-                for k,v in solenoid_range(data['voltage'],data['length'], data['r0'], data['ra'], data['awg'], data['x'], data['force'], data['xGraph'], 5.0, 26.0, 1.0):
+                for k,v in solenoid_range(data['voltage'],data['length'], data['r0'], data['ra'], data['awg'], data['x'], data['force'], data['xGraph'], data['xStart'], data['xEnd'], 1.0):
                     labels.append(k)
                     graph.append(round(v,sigFigs))  
 
             elif data['xGraph'] == 'r0':
                 x = 'r0'
-                for k,v in solenoid_range(data['voltage'],data['length'], data['r0'], data['ra'], data['awg'], data['x'], data['force'], data['xGraph'], 1.0, 5.0, 0.1):
+                for k,v in solenoid_range(data['voltage'],data['length'], data['r0'], data['ra'], data['awg'], data['x'], data['force'], data['xGraph'], data['xStart'], data['xEnd'], 0.1):
                   labels.append(round(k,sigFigs))
                   graph.append(v)                  
 
             elif data['xGraph'] == 'ra':
                 x = 'ra'
-                for k,v in solenoid_range(data['voltage'],data['length'], data['r0'], data['ra'], data['awg'], data['x'], data['force'], data['xGraph'], 1.0, 5.0, 0.1):
+                for k,v in solenoid_range(data['voltage'],data['length'], data['r0'], data['ra'], data['awg'], data['x'], data['force'], data['xGraph'], data['xStart'], data['xEnd'], 0.1):
                   labels.append(round(k,sigFigs))
                   graph.append(v)                 
            
             elif data['xGraph'] == 'x':
                 x = 'x'
                 length = float(data['length']) + 1.0
-                for k,v in solenoid_range(data['voltage'],data['length'], data['r0'], data['ra'], data['awg'], data['x'], data['force'], data['xGraph'], 0.0, length, 1.0):
+                for k,v in solenoid_range(data['voltage'],data['length'], data['r0'], data['ra'], data['awg'], data['x'], data['force'], data['xGraph'], data['xStart'], length, 1.0):
                   labels.append(k)
                   graph.append(round(v,sigFigs))  
                   
             elif data['xGraph'] == 'awg':
                 x = 'American Wire Gauge'
-                for k,v in solenoid_range(data['voltage'],data['length'], data['r0'], data['ra'], data['awg'], data['x'], data['force'], "gauge", 1.0, 5.0, 0.1):
+                for k,v in solenoid_range(data['voltage'],data['length'], data['r0'], data['ra'], data['awg'], data['x'], data['force'], "gauge", data['xStart'], data['xEnd'], 0.1):
                   labels.append(k)
                   graph.append(round(v,sigFigs))  
 
             elif data['xGraph'] == 'force':
                 x = 'Force'
-                for k,v in solenoid_range(data['voltage'],data['length'], data['r0'], data['ra'], data['awg'], data['x'], data['force'], data['xGraph'], 1.0, 50.0, 1.0):
+                for k,v in solenoid_range(data['voltage'],data['length'], data['r0'], data['ra'], data['awg'], data['x'], data['force'], data['xGraph'], data['xStart'], data['xEnd'], 1.0):
                   labels.append(k)
                   graph.append(round(v,sigFigs))  
 
