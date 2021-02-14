@@ -1,29 +1,16 @@
 import json
 import pathlib
 import os
-import time
-
-from selenium import webdriver
-from django.test import LiveServerTestCase, tag
 from selenium.webdriver.chrome.options import Options
-import clipboard
+from django.test import tag
+from selenium_tests.selenium_test_base import SeleniumTestBase
 
 URL = "http://localhost:8000/"
 
-
 @tag('storage')
-class TestStorage(LiveServerTestCase):
+class TestStorage(SeleniumTestBase):
     def __init__(self, methods):
         super().__init__(methods)
-        self.chrome_options = Options()
-        self.chrome_options.add_argument("--headless")
-        self.driver = webdriver.Chrome(chrome_options=self.chrome_options)
-
-    def setUp(self):
-        self.driver.get(URL)
-
-    def tearDown(self):
-        self.driver.quit()
 
     def test_if_upload_successfully(self):
         """ Test that upload file that assign correct value to input section """
@@ -78,9 +65,10 @@ class TestStorage(LiveServerTestCase):
 
         os.remove(path + '/parameters.json')
 
+    """
     def test_if_copy_link_successfully(self):
-        """ Test that Copy link icon correctly copied current url """
         self.driver.find_element_by_id("copy-link").click()
         time.sleep(2)
         text = clipboard.paste()
         self.assertEqual(URL, text)
+    """
