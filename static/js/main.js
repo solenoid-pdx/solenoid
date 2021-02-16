@@ -134,10 +134,11 @@ const populateDefaults = () => {
   document.getElementById('input-text-force').value = '';
   document.getElementById('x-values-input').value = 'Voltage';
   document.getElementById('y-values-input').value = 'Force';
-  previousX = $('#x-values-input')[0].value
-  $(`#option-y-${previousX}`).hide()
-  previousY = $('#y-values-input')[0].value
-  $(`#option-x-${previousY}`).hide()
+  previousX = $('#x-values-input')[0].value;
+  $(`#option-y-${previousX}`).hide();
+  previousY = $('#y-values-input')[0].value;
+  $(`#option-x-${previousY}`).hide();
+  graphRange(0);
 }
 
 const formatR = unit => {
@@ -169,39 +170,54 @@ const add_awg_select_options = () =>{
     }
 };
 
-const graphRange = x_value => { //Change ranges from the string to the spot in array to direct access
-  let ranges = [
-    {'name' : 'Force', 'min': '0', 'max': '100', 'dMin': '5', 'dMax': '20'},
-    {'name' : 'Voltage', 'min': '1', 'max': '25', 'dMin': '1', 'dMax': '30'},
-    {'name' : 'r0', 'min': '.1', 'max': '8.0', 'dMin': '2.0', 'dMax': '5.0'},
-    {'name' : 'ra', 'min': '.1', 'max': '8.0', 'dMin': '3.0', 'dMax': '5.0'},
-    {'name' : 'Length', 'min': '1', 'max': '50', 'dMin': '10', 'dMax': '30'},
-    {'name' : 'x', 'min': '0', 'max': '10', 'dMin': '0', 'dMax': '10'},
-    {'name' : 'AWG', 'min': '0000', 'max': '40', 'dMin': '26', 'dMax': '40'},
-  ]
-  ranges.forEach( element => {
-    if(element.name === x_value){
-      $('#slider-range').slider({
-        range: true,
-        min: element.min,
-        max: element.max,
-        values: [element.dMin , element.dMax],
-        slide: (event, ui) => {//Maybe add a symbol to the range values so that it can say 7N, or 8 Volts - 20 Volts
-          $('#x-value-range').val(ui.values[0] + " - " + ui.values[1]);
-        }
-      });
-      $( "#x-value-range" ).val( "$" + $( "#slider-range" ).slider( "values", 0 ) +" - " + $( "#slider-range" ).slider( "values", 1 ) );
-      break;
-    }
-  });
 
-};
+/* TODO :: 
+1. Add the number above, or reduce slider size  http://jsfiddle.net/ykay/jL044k1c/
+2. Change bar color
+3. 
+4.  
+*/
+
+const graphRange = x_value => {
+  let ranges = [
+    {'name' : 'Voltage', 'min': '0', 'max': '25', 'dMin': '1', 'dMax': '30', 'step': '1',},
+    {'name' : 'Length', 'min': '0', 'max': '50', 'dMin': '10', 'dMax': '30', 'step':'1',},
+    {'name' : 'r0', 'min': '0', 'max': '8.0', 'dMin': '2.0', 'dMax': '5.0', 'step': '0.1',},
+    {'name' : 'ra', 'min': '0', 'max': '8.0', 'dMin': '3.0', 'dMax': '5.0', 'step': '0.1',},
+    {'name' : 'x', 'min': '0', 'max': '10', 'dMin': '0', 'dMax': '10', 'step': '1',},
+    {'name' : 'Force', 'min': '0', 'max': '50', 'dMin': '5', 'dMax': '20', 'step': '1',},
+    {'name' : 'AWG', 'min': '0', 'max': '40', 'dMin': '26', 'dMax': '40', 'step': '1',},
+  ]
+  if(x_value === 4){ 
+    ranges[4].max = $("#input-text-length")[0].value;
+  }
+  $("#slider-range").slider({
+    range: true,
+    min: ranges[x_value].min,
+    max: ranges[x_value].max,
+    step: findStep(x_value),
+    values: [ranges[x_value].dMin , ranges[x_value].dMax],
+    slide: function(event, ui) {//Maybe add a symbol to the range values so that it can say 7N, or 8 Volts - 20 Volts
+      if(event.originalEvent){ $('#x-value-range').val(ui.values[0] + " - " + ui.values[1]); }
+    },
+  });
+  $( "#x-value-range" ).val( $( "#slider-range" ).slider( "values", 0 ) + " - " + $( "#slider-range" ).slider( "values", 1 ) );
+}
+
+const findStep = x_value => {
+  if(x_value === 2 || x_value === 3){
+    return .1;
+  }
+  return 1;
+}
 
 (() => {
 
   $("select[name=x-values-input]").change(function() {
     $(`#option-y-${previousX}`).show()
     previousX = this.value;
+    $("#x-value-range-label").text(`${previousX} range:`)
+    graphRange($("select[name=x-values-input")[0].selectedIndex - 1)
     $(`#option-y-${previousX}`).hide()
   });
 

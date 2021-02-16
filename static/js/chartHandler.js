@@ -1,19 +1,22 @@
-let $voltageChart = $("#voltage-Chart")
+let $voltageChart = $("#voltage-Chart");
 let compute = 'force' //Change later :) 
 
 const chartHandler = () => {
-  let values = inputHandler()
-  let xGraph = $('#x-values-input :selected').text().toLowerCase()
-  let yGraph = $('#y-values-input :selected').text().toLowerCase()
-  values.blanks = values.blanks.filter(i => i !== xGraph && i !== yGraph)
+  let values = inputHandler();
+  let xGraph = $('#x-values-input :selected').text().toLowerCase();
+  let yGraph = $('#y-values-input :selected').text().toLowerCase();
+  let xStart = $('#slider-range').slider("values")[0];
+  let xEnd = $('#slider-range').slider("values")[1];
+
+  values.blanks = values.blanks.filter(i => i !== xGraph && i !== yGraph);
 
   if(xGraph === 'Select X Value' || yGraph === 'Select Y Value'){
-    flashHandler('PLEASE SELECT X AND Y VALUES', 'same-selections-flash-err') 
+    flashHandler('PLEASE SELECT X AND Y VALUES', 'same-selections-flash-err');
     return;
   }
 
   if(values.blanks.length >= 1) {
-    flashHandler(`ALL VALUES OTHER THAN ${xGraph} AND ${yGraph} NEED TO BE FILLED `, 'missing-input-flash-err')
+    flashHandler(`ALL VALUES OTHER THAN ${xGraph} AND ${yGraph} NEED TO BE FILLED `, 'missing-input-flash-err');
     return;
   }
 
@@ -31,6 +34,8 @@ const chartHandler = () => {
             awg: values.inputs[6].value,
             compute: yGraph, 
             xGraph: xGraph,
+            xStart: xStart,
+            xEnd:  xEnd,
             csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
           },
           success: function (data) {
