@@ -145,7 +145,7 @@ def voltageChart(request):
             if data['xGraph'] == 'voltage':
                 x = 'Voltage'
                 for k, v in solenoid_range(data['voltage'], data['length'], data['r0'], data['ra'], data['awg'],
-                                           data['x'], data['force'], output_unit, data['xGraph'], idv_unit, 0.0, 15.0,
+                                           data['x'], data['force'], output_unit, data['xGraph'], idv_unit, 0.0, 51.0,
                                            1.0):
                     labels.append(k)
                     graph.append(round(v, sig_figs))
@@ -198,14 +198,8 @@ def voltageChart(request):
                                            1.0):
                     labels.append(k)
                     graph.append(round(v, sig_figs))
-
-            else: 
-                x = 'Voltage'
-                for k, v in solenoid_range(data['voltage'], data['length'], data['r0'], data['ra'], data['awg'],
-                                           data['x'], data['force'], output_unit, data['xGraph'], idv_unit, 0.0, 51.0,
-                                           1.0):
-                    labels.append(k)
-                    graph.append(round(v, sig_figs))
+    else:
+        compute = "Unknown Value"
 
     return JsonResponse(data={
         'labels': labels,

@@ -2,6 +2,7 @@ from sympy import symbols, solve, lambdify
 import numpy as np
 from solenoid_app.solenoid_math.exceptions import TooManyVariables, IncorrectDataType, NoSolution
 from scipy import optimize
+from math import floor
 from . import ureg
 
 # Catch divide by 0 errors
@@ -190,6 +191,11 @@ def solenoid_performance(volts, length, r0, ra, gauge, location, force):
     result = None
     a = np.log(PERM_RELATIVE)
 
+    # verify outer radius is not smaller than inner radius
+    if ra is not None and r0 is not None:
+        if ra < r0:
+            raise NoSolution
+
     if volts is None:
         try:
             result = (2 * np.sqrt(2 * np.pi) * np.sqrt(force) * (
@@ -206,8 +212,6 @@ def solenoid_performance(volts, length, r0, ra, gauge, location, force):
             try:
                 result = (np.sqrt(a) * r0 * np.sqrt(PERM_FREE) * np.sqrt(PERM_RELATIVE) * volts) / (
                         2 * np.sqrt(2 * np.pi) * np.sqrt(force) * (AWG_DATA[gauge]["resistance"] / 1000) * ra)
-                if result < 0:
-                    raise NoSolution
             except RuntimeError:
                 raise NoSolution
             except RuntimeWarning:
@@ -227,8 +231,6 @@ def solenoid_performance(volts, length, r0, ra, gauge, location, force):
                 funcPrime2 = funcPrime.diff(x)
                 fder2 = lambdify(x, funcPrime2, modules=["scipy", "numpy"])
                 result = optimize.newton(fder, 0.5, fprime=fder, fprime2=fder2, maxiter=1000)
-                if result < 0:
-                    raise NoSolution
             except OverflowError:
                 raise NoSolution
             except RuntimeError:
@@ -241,7 +243,9 @@ def solenoid_performance(volts, length, r0, ra, gauge, location, force):
             result = (2 * np.sqrt(2 * np.pi) * np.sqrt(force) * (
                         AWG_DATA[gauge]["resistance"] / 1000) * length * ra * np.e ** ((location * a) / (2 * length))) / (
                                  np.sqrt(PERM_RELATIVE) * np.sqrt(PERM_FREE) * volts * np.sqrt(a))
-            if result < 0:
+
+            # verify outer radius is not smaller than inner radius
+            if ra < result:
                 raise NoSolution
         except RuntimeError:
             raise NoSolution
@@ -253,7 +257,8 @@ def solenoid_performance(volts, length, r0, ra, gauge, location, force):
             result = (r0 * np.sqrt(PERM_RELATIVE) * np.sqrt(PERM_FREE)) * volts * np.sqrt(a) * np.e ** -(
                         (location * a) / (2 * length)) / (
                                  2 * np.sqrt(2 * np.pi) * np.sqrt(force) * (AWG_DATA[gauge]["resistance"] / 1000) * length)
-            if result < 0:
+            # verify outer radius is not smaller than inner radius
+            if result < r0:
                 raise NoSolution
         except RuntimeError:
             raise NoSolution
@@ -272,8 +277,6 @@ def solenoid_performance(volts, length, r0, ra, gauge, location, force):
             funcPrime = func.diff(x)
             fder = lambdify(x, funcPrime, modules=["numpy", "scipy"])
             result = (optimize.newton(f, 0, fprime=fder, maxiter=1000))
-            if result < 0:
-                raise NoSolution
         except OverflowError:
             raise NoSolution
         except RuntimeError:
@@ -303,13 +306,15 @@ variable is selected by entering variable the name for the idv argument.
 
 Parameters:
     volts (float | None): Voltage applied to the solenoid - Volts
-    length (float | None): Overall length of the solenoid coil - Meters
-    r0 (float | None): Inner radius of the solenoid coil - Meters
-    ra (float | None): Outer radius of the solenoid coil - Meters
+    length (pint Quantity | None): Overall length of the solenoid coil
+    r0 (pint Quantity | None): Inner radius of the solenoid coil
+    ra (pint Quantity | None): Outer radius of the solenoid coil
     gauge (string): A value between "0000" -> "40"
-    location (float | None): Location (Stroke) of the solenoid core within the coil - Meters
-    force (float | None): The force produced by the solenoid - Newtons
+    location (pint Quantity | None): Location (Stroke) of the solenoid core within the coil - Meters
+    force (pint Quantity | None): The force produced by the solenoid - Newtons
+    output_unit (string): unit identifier string the dependant variable - e.x.: "mm", "meters", "lbf", etc...
     idv (string): Independent variable - one of ["volts", "length", "r0", "ra", "force", "gauge", "location"]
+    idv_unit (string): unit identifier string the independent variable
     start (int | float): Starting value of the independent variable range
     stop (int | float): Stopping value of the independent variable range
     step (int | float): range granularity
@@ -325,7 +330,7 @@ def solenoid_range(volts, length, r0, ra, gauge, location, force, output_unit,id
             try:
                 result.append((i, solenoid_convert(i, length, r0, ra, gauge, location, force, output_unit)))
             except NoSolution:
-                result.append((i, 0))
+                pass
 
     elif idv == "length":
         for i in list(np.arange(start, stop, step)):
@@ -333,7 +338,7 @@ def solenoid_range(volts, length, r0, ra, gauge, location, force, output_unit,id
             try:
                 result.append((i, solenoid_convert(volts, value, r0, ra, gauge, location, force, output_unit)))
             except NoSolution:
-                result.append((i, 0))
+                pass
 
     elif idv == "r0":
         for i in list(np.arange(start, stop, step)):
@@ -341,7 +346,7 @@ def solenoid_range(volts, length, r0, ra, gauge, location, force, output_unit,id
             try:
                 result.append((i, np.around(solenoid_convert(volts, length, value, ra, gauge, location, force, output_unit), decimals=2)))
             except NoSolution:
-                result.append((i, 0))
+                pass
 
     elif idv == "ra":
         for i in list(np.arange(start, stop, step)):
@@ -349,7 +354,7 @@ def solenoid_range(volts, length, r0, ra, gauge, location, force, output_unit,id
             try:
                 result.append((i, np.around(solenoid_convert(volts, length, r0, value, gauge, location, force, output_unit), decimals=2)))
             except NoSolution:
-                result.append((i, 0))
+                pass
 
     elif idv == "force":
         for i in list(np.arange(start, stop, step)):
@@ -357,14 +362,14 @@ def solenoid_range(volts, length, r0, ra, gauge, location, force, output_unit,id
             try:
                 result.append((i, solenoid_convert(volts, length, r0, ra, gauge, location, value, output_unit)))
             except NoSolution:
-                result.append((i, 0))
+                pass
 
     elif idv == "gauge":
         for item in AWG_DATA.keys():
             try:
                 result.append((item, solenoid_convert(volts, length, r0, ra, item, location, force, output_unit)))
             except NoSolution:
-                result.append((item, 0))
+                pass
 
     elif idv == "x":
         for i in list(np.arange(start, stop, step)):
@@ -372,11 +377,31 @@ def solenoid_range(volts, length, r0, ra, gauge, location, force, output_unit,id
             try:
                 result.append((i, solenoid_convert(volts, length, r0, ra, gauge, value, force, output_unit)))
             except NoSolution:
-                result.append((i, 0))
+                pass
 
     return result
 
 
+"""
+Wrapper for solenoid_performance. This function takes in values of differing units, converts them to base SI units, then
+solves for the specified parameter. When a solution is found, it is converted back to the expected output units.
+
+The variable being solved for is inputted as a None value. All other
+arguments are then required and cannot be None
+
+Parameters:
+    volts (float | None): Voltage applied to the solenoid - Volts
+    length (pint Quantity | None): Overall length of the solenoid coil
+    r0 (pint Quantity | None): Inner radius of the solenoid coil
+    ra (pint Quantity | None): Outer radius of the solenoid coil
+    gauge (string): A value between "0000" -> "40"
+    location (pint Quantity | None): Location (Stroke) of the solenoid core within the coil
+    force (pint Quantity | None): The force produced by the solenoid
+    output_unit (string): unit identifier string the result - e.x.: "mm", "meters", "lbf", etc...
+
+Returns:
+    result (float): The solved value of specified variable
+"""
 def solenoid_convert(volts, length, r0, ra, gauge, location, force, output_unit):
 
     chosen = None
@@ -422,14 +447,20 @@ def solenoid_convert(volts, length, r0, ra, gauge, location, force, output_unit)
         result = result * ureg.meters
         result.ito(ureg(output_unit))
         result = float(result.magnitude)
-        return result
+        if result < 0 and floor(abs(result)) != 0:
+            raise NoSolution
+        return abs(result)
 
     elif chosen == "force":
         result = result * ureg.newtons
         result.ito(ureg(output_unit))
         result = float(result.magnitude)
-        return result
+        if result < 0 and floor(abs(result)) != 0:
+            raise NoSolution
+        return abs(result)
 
     elif chosen == "volts":
         result = float(result)
-        return result
+        if result < 0 and floor(abs(result)) != 0:
+            raise NoSolution
+        return abs(result)
