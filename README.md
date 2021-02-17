@@ -33,7 +33,7 @@ You should be able to visit the development server in your browser:
 
 
 ### Testing FE with Selenium
-To run these tests, it is required that you perform the following two actions first:
+To run these tests, it is required that you perform the following actions first:
 1. Install selenium webdriver and add it to your path variable https://zwbetz.com/download-chromedriver-binary-and-add-to-your-path-for-automated-functional-testing/
 2. Start the server running locally at the URL "http://localhost:8000/"
 3. Extend all selenium testing classes from SeleniumTestBase

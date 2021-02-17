@@ -7,6 +7,7 @@ inputHandler = () => {
     { 'name': 'x', 'value': '' },
     { 'name': 'force', 'value': '' },
     { 'name': 'awg', 'value': '' },
+    { 'name': 'relative_permeability', 'value': ''}
   ]
 
   let blanks = []

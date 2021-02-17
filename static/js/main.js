@@ -7,7 +7,7 @@ const SolenoidParameters = {
   X: "x",
   FORCE: "force",
   AWG: "awg",
-  PERMEABILITY:"relative_permeability",
+  PERMEABILITY: "relative_permeability",
 }
 
 // TODO: Look at this later lol

@@ -47,7 +47,7 @@ def formHandle(request):
             compute = data['compute']
 
             data[compute] = None
-            data[compute] = solenoid_solve(data['voltage'], data['length'], data['r_0'],
+            data[compute] = solenoid_solve(data['voltage'], data['length'], data['r0'],
                                            data['ra'], data['awg'], data['x'], data['force'], data['relative_permeability'])
 
             for k, v in data.items():
@@ -134,6 +134,12 @@ def voltageChart(request):
                   labels.append(k)
                   graph.append(round(v,sigFigs))  
 
+            elif data['xGraph'] == 'relative_permeability':
+                x = 'Relative Permeability'
+                for k, v in solenoid_range(data['voltage'],data['length'], data['r0'], data['ra'], data['awg'], data['x'], data['force'], data['relative_permeability'], data['xGraph'], 100.0, 600.0, 10.0):
+                    labels.append(k)
+                    graph.append(round(v,sigFigs))
+            
             else: 
                 x = 'Voltage' 
                 for volts in range(0, 51):
