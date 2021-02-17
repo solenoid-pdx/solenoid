@@ -17,7 +17,7 @@ class TestSolver(SimpleTestCase):
 
     def tearDown(self) -> None:
         pass
-    
+
     def test_convert_from_imperial_to_SI(self):
         r0 = 4.3        #inch
         ra = 4.5        #inch
@@ -76,3 +76,26 @@ class TestSolver(SimpleTestCase):
         result = solenoid_convert(5, 27 * ureg.millimeter, 0.09055118 * ureg.inch, 0.0045 * ureg.meter, "30", 0 * ureg.millimeter, None, 'lbf')
         self.assertAlmostEqual(result,1.8013,4) #Comparing the result to the pre-converted answer from newton to lbl
 
+    """
+        -Similar to the above test function,
+        -force will be in lbf
+    """
+    def test_solve_for_volt_multiple_units(self):
+        result = solenoid_convert(None, 27 * ureg.millimeter, 0.09055118 * ureg.inch, 0.0045 * ureg.meter, "30", 0 * ureg.millimeter, 1.80131 * ureg.lbf, 'volt')
+        self.assertAlmostEqual(result,5.0,2)
+
+    """
+        -Similar to the above testings function
+        -Test the equation for solving location (newton's method)
+    """
+    def test_solve_for_length_multiple_units(self):
+        result = solenoid_convert(5, None, 0.09055118 * ureg.inch, 0.0045 * ureg.meter, "30", 0 * ureg.millimeter, 1.80131 * ureg.lbf, 'millimeter')
+        self.assertAlmostEqual(result,27.0,2)
+
+    """
+        -Testing for r0 with the expected output in millimeter
+    """
+    def test_solve_for_r0_multiple_units(self):
+        result = solenoid_convert(5, 27 * ureg.millimeter, None, 0.0045 * ureg.meter, "30", 0 * ureg.millimeter, 1.80131 * ureg.lbf, 'millimeter')
+        self.assertAlmostEqual(result, 2.3, 2)
+    
