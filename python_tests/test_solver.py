@@ -47,7 +47,7 @@ class TestSolver(SimpleTestCase):
         location.ito_base_units()
         location = float(location.magnitude)
 
-        force = force * ureg.pounds
+        force = force * ureg.lbf
         force.ito_base_units()
         force = float(force.magnitude)
         self.assertAlmostEqual(converted_r0,r0,4)
@@ -73,6 +73,6 @@ class TestSolver(SimpleTestCase):
         -The input units are all converted manually to their respective measurement based on the test set that we have.
     """
     def test_solve_for_force_multiple_units(self):
-        result = solenoid_convert(5, 27 * ureg.millimeter, 0.09055118 * ureg.inch, 0.0045 * ureg.meter, "30", 0 * ureg.millimeter, None, 'pound')
+        result = solenoid_convert(5, 27 * ureg.millimeter, 0.09055118 * ureg.inch, 0.0045 * ureg.meter, "30", 0 * ureg.millimeter, None, 'lbf')
         self.assertAlmostEqual(result,1.8013,4) #Comparing the result to the pre-converted answer from newton to lbl
 

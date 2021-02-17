@@ -26,7 +26,7 @@ SECRET_KEY = ')1168=glq@l^t+an+2r@1!&n)i)@b(!$a%(%_t+lpcoq%n+%po'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['solenoid.cs.pdx.edu', 'localhost']
+ALLOWED_HOSTS = ['solenoid.cs.pdx.edu', 'localhost', '127.0.0.1']
 
 
 # Application definition
