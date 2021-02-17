@@ -11,6 +11,10 @@ const formSubmitHandler = () => {
           flashHandler('PLEASE LEAVE A VALUE TO SOLVE FOR BLANK', 'no-solve-input-flash-err')
           return;
         }
+        if(inputs.toCompute === 'awg') {
+          flashHandler('YOU MUST CHOOSE A WIRE GAUGE', 'unsolved-awg-flash-err')
+          return;
+        }
 
         updateQueryString(inputs.inputs)
         

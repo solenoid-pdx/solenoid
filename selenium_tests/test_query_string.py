@@ -49,7 +49,7 @@ class TestUI(SeleniumTestBase):
         """ Test that on an invalid calculation request the query string is not updated. """
 
         testValue = "7"
-        formParameters = ["voltage", "length", "r0", "ra", "force", "awg"]
+        formParameters = ["voltage", "length", "r0", "ra", "force", "x"]
         for formParameter in formParameters:
             self.driver.find_element_by_id('input-text-' + formParameter).send_keys(testValue)
         self.driver.find_element_by_xpath('//*[@id="input-submit-form"]/input[2]').click()
