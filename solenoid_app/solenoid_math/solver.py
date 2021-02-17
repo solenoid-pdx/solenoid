@@ -313,7 +313,7 @@ Parameters:
     location (pint Quantity | None): Location (Stroke) of the solenoid core within the coil - Meters
     force (pint Quantity | None): The force produced by the solenoid - Newtons
     output_unit (string): unit identifier string the dependant variable - e.x.: "mm", "meters", "lbf", etc...
-    idv (string): Independent variable - one of ["volts", "length", "r0", "ra", "force", "gauge", "location"]
+    idv (string): Independent variable - one of ["volts", "length", "r0", "ra", "force", "awg", "location"]
     idv_unit (string): unit identifier string the independent variable
     start (int | float): Starting value of the independent variable range
     stop (int | float): Stopping value of the independent variable range
@@ -364,7 +364,7 @@ def solenoid_range(volts, length, r0, ra, gauge, location, force, output_unit,id
             except NoSolution:
                 pass
 
-    elif idv == "gauge":
+    elif idv == "awg":
         for item in AWG_DATA.keys():
             try:
                 result.append((item, solenoid_convert(volts, length, r0, ra, item, location, force, output_unit)))

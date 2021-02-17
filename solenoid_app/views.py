@@ -176,7 +176,7 @@ def voltageChart(request):
 
             elif data['xGraph'] == 'x':
                 x = 'x'
-                length = float(data['length']) + 1.0
+                length = data['length'].magnitude + 1.0
                 for k, v in solenoid_range(data['voltage'], data['length'], data['r0'], data['ra'], data['awg'],
                                            data['x'], data['force'], output_unit, data['xGraph'], idv_unit, 0.0, length,
                                            1.0):
