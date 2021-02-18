@@ -88,7 +88,6 @@ def voltageChart(request):
             data['relative_permeability'] = form.cleaned_data['relative_permeability']
             data['xGraph'] = form.cleaned_data['xGraph']
             compute = data['compute']
-            print(compute)
             data[compute.lower()] = None
             
             if data['xGraph'] == 'voltage':

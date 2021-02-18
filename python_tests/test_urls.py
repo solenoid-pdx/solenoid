@@ -6,15 +6,23 @@
 # https://docs.djangoproject.com/en/3.1/topics/testing/overview/
 
 import unittest
-from django.test import SimpleTestCase, Client, tag
+from django.test import SimpleTestCase, Client, tag, RequestFactory
 from django.urls import reverse, resolve
+# from django.http import HttpRequest
+from ast import literal_eval
+from django.http import QueryDict
 
-from solenoid_app.views import indexView
+from solenoid_app.views import indexView, voltageChart, formHandle
 
 
 @tag('unit')
 class TestUrls(SimpleTestCase):
     """Url Tests"""
+
+    def __init__(self, methodName):
+        super().__init__(methodName)
+        self.client = Client()
+        self.factory = RequestFactory()
 
     # This method is automatically invoked before each test case is run. Use when necessary
     def setUp(self):
@@ -34,6 +42,47 @@ class TestUrls(SimpleTestCase):
     def test_base_url_response_code(self):
         """Assert 200 response code on base '/' url request"""
 
-        client = Client()
-        response = client.get('')
+        response = self.client.get('')
+        self.assertEqual(response.status_code, 200)
+    
+    def test_form_handle_route_is_resolved(self):
+        """ [DPN-53] - Assert that the 'formHandle/' route resolves """
+
+        url = reverse('formHandle')
+        self.assertEqual(resolve(url).func, formHandle)
+    
+    def test_form_handle_200_status_code(self):
+        """ Assert 200 response code on 'formHandle' url request """
+
+        url = reverse('formHandle')
+        data = "[{'voltage': '5', 'length': '27', 'r0': '2.3', 'ra': '4.5', 'x': '0', 'force': '0', 'awg': '30', 'relative_permeability': '350', 'compute': 'force'}]"
+        data = literal_eval(data)
+        qd = QueryDict(mutable=True)
+        for item in data:
+            qd.update(item)
+        
+        request = self.factory.post(url)
+        request.POST = qd
+        response = formHandle(request)
+        self.assertEqual(response.status_code, 200)
+
+    def test_voltage_chart_route_is_resolved(self):
+        """ Assert that the 'voltageChart/' route resolves """
+
+        url = reverse('voltageChart')
+        self.assertEqual(resolve(url).func, voltageChart)
+    
+    def test_voltage_chart_200_status_code(self):
+        """ Assert 200 response code on 'voltageChart' url request """
+
+        url = reverse('voltageChart')
+        data = "[{'voltage': '5', 'length': '27', 'r0': '2.3', 'ra': '4.5', 'x': '0', 'force': '0', 'awg': '30', 'relative_permeability': '350', 'compute': 'force', 'xGraph': 'voltage'}]"
+        data = literal_eval(data)
+        qd = QueryDict(mutable=True)
+        for item in data:
+            qd.update(item)
+        
+        request = self.factory.post(url)
+        request.POST = qd
+        response = voltageChart(request)
         self.assertEqual(response.status_code, 200)
