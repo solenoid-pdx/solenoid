@@ -24,8 +24,7 @@ inputHandler = () => {
     }
     else input.value = element.value;
 
-    if(input.name == 'length' || input.name == 'r0' || input.name == 'ra'
-     || input.name == 'x'|| input.name == 'force') {
+    if(input.name !== 'voltage' && input.name !== 'awg') {
         input.unit = unit.value
     }
   });
