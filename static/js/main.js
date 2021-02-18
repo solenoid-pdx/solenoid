@@ -216,7 +216,7 @@ const dropDownPermeability = () =>{
         { 'name': 'electrical steel', 'value': '4000' },
         { 'name': 'iron (99.8% pure)', 'value': '5000' },
         { 'name': 'permalloy (75% nickel, 21.5% iron)', 'value': '8000' },
-        { 'name': 'mumetal (75% nickel, 2% chromium, 5% copper, 18% iron', 'value': '200000' },
+        { 'name': 'mumetal (75% nickel, 2% chromium, 5% copper, 18% iron)', 'value': '200000' },
     ];
 
     items.forEach( item => {
