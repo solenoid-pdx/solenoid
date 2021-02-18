@@ -98,4 +98,17 @@ class TestSolver(SimpleTestCase):
     def test_solve_for_r0_multiple_units(self):
         result = solenoid_convert(5, 27 * ureg.millimeter, None, 0.0045 * ureg.meter, "30", 0 * ureg.millimeter, 1.80131 * ureg.lbf, 'millimeter')
         self.assertAlmostEqual(result, 2.3, 2)
-    
+
+    """
+        -Solving for length with length that is non zero
+        -For even more sauce, we're doing it with mix ups units!!!
+        -r0 will be in inches 2.3 mm -> 0.0905518
+        -ra will be in standard millimeter
+        -force will be in pound force
+        -location will be in meter
+        -The resulting length will be in millimeter
+        -Implementing delta instead of correctness by decimal places since the conversion and inaccurary of newton method will affect the result
+    """ 
+    def test_solve_for_length_nonzero_location(self):
+        result = solenoid_convert(5, None, 0.09055118 * ureg.inch, 4.5 * ureg.millimeter, "30", 0.05 * ureg.meter, 0.00550422 * ureg.lbf, 'millimeter')
+        self.assertAlmostEqual(result,300.0,None,"Not equal",0.5)

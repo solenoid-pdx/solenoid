@@ -230,7 +230,7 @@ def solenoid_performance(volts, length, r0, ra, gauge, location, force):
                 fder = lambdify(x, funcPrime, modules=["scipy", "numpy"])
                 funcPrime2 = funcPrime.diff(x)
                 fder2 = lambdify(x, funcPrime2, modules=["scipy", "numpy"])
-                result = optimize.newton(fder, 0.5, fprime=fder, fprime2=fder2, maxiter=1000)
+                result = optimize.newton(f, 0.5, fprime=fder, fprime2=fder2, maxiter=1000)
             except OverflowError:
                 raise NoSolution
             except RuntimeError:
