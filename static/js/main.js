@@ -16,7 +16,8 @@ let previousY;
 
 const renderPage = () => {
     mountInputs();
-    add_awg_select_options();
+    addAwgSelectOptions();
+    dropDownPermeability();
 };
 
 const mountInputs = () => {
@@ -42,11 +43,52 @@ const createInputs = () => {
         { 'name': 'x', 'symbol': 'x', 'value': urlParams.get(SolenoidParameters.X) || '', 'unit': 'mm', 'html': '' },
         { 'name': 'force', 'symbol': 'F', 'value': urlParams.get(SolenoidParameters.FORCE) || '', 'unit': 'N', 'html': '' },
         { 'name': 'awg', 'symbol': 'AWG', 'value': urlParams.get(SolenoidParameters.AWG) || '', 'unit': 'gauge', 'html': '' },
-        { 'name': 'relative_permeability', 'symbol': 'PERMEABILITY', 'value': urlParams.get(SolenoidParameters.PERMEABILITY) || '', 'unit': 'mu', 'html': '' },
+        { 'name': 'relative_permeability', 'symbol': 'PERMEABILITY', 'value': urlParams.get(SolenoidParameters.PERMEABILITY) || '', 'unit': 'W/m^2', 'html': '' },
     ];
     inputs.forEach( element => {
-        if (element.name != 'awg') {
-            element.html = `
+        if (element.name == 'awg') {
+                element.html =`
+            <div id="input-${element.name}" class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text">${formatR(element.symbol)}</span>
+            </div>   
+            <input id = "input-text-awg"
+                   class = "form-control"
+                   list="dropdown-text-awg"
+                   value="${element.value}" 
+                   placeholder="Enter ${element.symbol}" 
+            >
+              <datalist id="dropdown-text-awg">
+              </datalist>           
+            <div class="input-group-append">
+              <span class="input-group-text">${element.unit}</span>
+              </div>
+            </div> 
+        `
+        }
+        else if(element.name == 'relative_permeability'){
+           element.html =`
+            <div id="input-${element.name}" class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text">${formatR(element.symbol)}</span>
+            </div>   
+            <input 
+                    id = "input-text-relative_permeability"
+                   class = "form-control"
+                   list="dropdown-text-relative_permeability"
+                   value="${element.value}" 
+                   placeholder="Enter ${element.symbol}" 
+            >
+              <datalist id="dropdown-text-relative_permeability">
+              </datalist>           
+            <div class="input-group-append">
+              <span class="input-group-text">${element.unit}</span>
+              </div>
+            </div> 
+        `
+        }
+        else {
+           element.html = `
         <div id="input-${element.name}" class="input-group mb-3">
         <div class="input-group-prepend">
           <span class="input-group-text">${formatR(element.symbol)}</span>
@@ -83,7 +125,7 @@ const createInputs = () => {
         `
             }
             if (element.name === 'force') {
-               element.html +=`
+                element.html += `
                <div class="input-group-append">
                  <select id="input-unit-${element.name}" class="input-group-text">
                    <option selected>N</option>
@@ -92,26 +134,6 @@ const createInputs = () => {
                </div>
         `
             }
-        }
-        else {
-            element.html =`
-            <div id="input-${element.name}" class="input-group mb-3">
-            <div class="input-group-prepend">
-              <span class="input-group-text">${formatR(element.symbol)}</span>
-            </div>   
-            <input id = "input-text-awg"
-                   class = "form-control"
-                   list="input-text"
-                   value="${element.value}" 
-                   placeholder="Enter ${element.symbol}" 
-            >
-              <datalist id="input-text">
-              </datalist>           
-            <div class="input-group-append">
-              <span class="input-group-text">${element.unit}</span>
-              </div>
-            </div> 
-        `
         }
     });
     return inputs;
@@ -175,14 +197,36 @@ const updateQueryString = formInputs => {
   window.history.pushState({}, document.title, newUrl);
 }
 
-const add_awg_select_options = () =>{
-    $('#input-text').append("<option>"+ '0000' + "</option>")
-    $('#input-text').append("<option>"+ '000' + "</option>")
-    $('#input-text').append("<option>"+ '00' + "</option>")
-    for(i=0; i<41; i++){
-        $("#input-text").append("<option>" + i + "</option>");
+const addAwgSelectOptions = () =>{
+    $('#dropdown-text-awg').append("<option>"+ '0000' + "</option>")
+    $('#dropdown-text-awg').append("<option>"+ '000' + "</option>")
+    $('#dropdown-text-awg').append("<option>"+ '00' + "</option>")
+    for(let i = 0; i<41; i++){
+        $("#dropdown-text-awg").append("<option>" + i + "</option>");
     }
 };
+
+
+const dropDownPermeability = () =>{
+    let items = [
+        { 'name': 'carbon steel', 'value': '100' },
+        { 'name': 'nickel', 'value': '100' },
+        { 'name': 'magnetic iron', 'value': '200' },
+        { 'name': 'ferrite (magnesium manganese zinc)', 'value': '350' },
+        { 'name': 'electrical steel', 'value': '4000' },
+        { 'name': 'iron (99.8% pure)', 'value': '5000' },
+        { 'name': 'permalloy (75% nickel, 21.5% iron)', 'value': '8000' },
+        { 'name': 'mumetal (75% nickel, 2% chromium, 5% copper, 18% iron', 'value': '200000' },
+    ];
+
+    items.forEach( item => {
+        let option = document.createElement('option')
+        option.text = item.name
+        option.value = item.value
+        $('#dropdown-text-relative_permeability').append(option)
+    })
+
+}
 
 
 (() => {
