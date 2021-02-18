@@ -8,12 +8,12 @@
 import unittest
 from django.test import SimpleTestCase, Client, tag, RequestFactory
 from django.urls import reverse, resolve
-# from django.http import HttpRequest
 from ast import literal_eval
 from django.http import QueryDict
-
 from solenoid_app.views import indexView, voltageChart, formHandle
+from solenoid.urls import INDEX_URL_NAME, FORM_HANDLE_URL_NAME, VOLTAGE_CHART_URL_NAME
 
+STATUS_CODE_200 = 200
 
 @tag('unit')
 class TestUrls(SimpleTestCase):
@@ -36,25 +36,26 @@ class TestUrls(SimpleTestCase):
         # You can use doc strings to give your tests a human readable name when executing
         """Test '/' url resolves"""
 
-        url = reverse('indexUrl')
+        url = reverse(INDEX_URL_NAME)
         self.assertEquals(resolve(url).func, indexView)
     
     def test_base_url_response_code(self):
         """Assert 200 response code on base '/' url request"""
 
-        response = self.client.get('')
-        self.assertEqual(response.status_code, 200)
+        url = reverse(INDEX_URL_NAME)       
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, STATUS_CODE_200)
     
     def test_form_handle_route_is_resolved(self):
         """ [DPN-53] - Assert that the 'formHandle/' route resolves """
 
-        url = reverse('formHandle')
+        url = reverse(FORM_HANDLE_URL_NAME)
         self.assertEqual(resolve(url).func, formHandle)
     
     def test_form_handle_200_status_code(self):
         """ Assert 200 response code on 'formHandle' url request """
 
-        url = reverse('formHandle')
+        url = reverse(FORM_HANDLE_URL_NAME)
         data = "[{'voltage': '5', 'length': '27', 'r0': '2.3', 'ra': '4.5', 'x': '0', 'force': '0', 'awg': '30', 'relative_permeability': '350', 'compute': 'force'}]"
         data = literal_eval(data)
         qd = QueryDict(mutable=True)
@@ -64,18 +65,18 @@ class TestUrls(SimpleTestCase):
         request = self.factory.post(url)
         request.POST = qd
         response = formHandle(request)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, STATUS_CODE_200)
 
     def test_voltage_chart_route_is_resolved(self):
         """ Assert that the 'voltageChart/' route resolves """
 
-        url = reverse('voltageChart')
+        url = reverse(VOLTAGE_CHART_URL_NAME)
         self.assertEqual(resolve(url).func, voltageChart)
     
     def test_voltage_chart_200_status_code(self):
         """ Assert 200 response code on 'voltageChart' url request """
 
-        url = reverse('voltageChart')
+        url = reverse(VOLTAGE_CHART_URL_NAME)
         data = "[{'voltage': '5', 'length': '27', 'r0': '2.3', 'ra': '4.5', 'x': '0', 'force': '0', 'awg': '30', 'relative_permeability': '350', 'compute': 'force', 'xGraph': 'voltage'}]"
         data = literal_eval(data)
         qd = QueryDict(mutable=True)
@@ -85,4 +86,4 @@ class TestUrls(SimpleTestCase):
         request = self.factory.post(url)
         request.POST = qd
         response = voltageChart(request)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, STATUS_CODE_200)
