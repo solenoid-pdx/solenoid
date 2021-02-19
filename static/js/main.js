@@ -142,7 +142,7 @@ const createInputs = () => {
 const createDropDown = () => {
   let select_X = document.getElementById("x-values-input")
   let select_Y = document.getElementById("y-values-input")
-  let inputs = ['Voltage', 'Length', SolenoidParameters.R0, SolenoidParameters.RA, SolenoidParameters.X, 'Force', SolenoidParameters.AWG.toUpperCase()]
+  let inputs = ['Voltage', 'Length', SolenoidParameters.R0, SolenoidParameters.RA, SolenoidParameters.X, 'Force', SolenoidParameters.AWG.toUpperCase(), SolenoidParameters.PERMEABILITY]
   inputs.forEach( element => {
     let option = document.createElement('option')
     option.text = `${element}`

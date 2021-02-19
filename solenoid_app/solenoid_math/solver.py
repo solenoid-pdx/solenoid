@@ -416,7 +416,7 @@ def solenoid_range(volts, length, r0, ra, gauge, location, force, relative_perme
     elif idv == "relative_permeability":
         for i in list(np.arange(start, stop, step)):
             try:
-                result.append((i, solenoid_performance(volts, length, r0, ra, gauge, location, force, i, output_unit)))
+                result.append((i, solenoid_convert(volts, length, r0, ra, gauge, location, force, i, output_unit)))
             except NoSolution:
                 pass
 

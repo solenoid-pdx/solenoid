@@ -29,7 +29,7 @@ const chartHandler = () => {
             x: values.inputs[4].value,
             force: values.inputs[5].value,
             awg: values.inputs[6].value,
-            relative_permeability: inputs.inputs[7].value, //Add new field DPN-31 FE
+            relative_permeability: values.inputs[7].value, //Add new field DPN-31 FE
             compute: yGraph, 
             xGraph: xGraph,
             csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
