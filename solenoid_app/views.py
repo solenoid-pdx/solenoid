@@ -205,9 +205,9 @@ def voltageChart(request):
             
             elif data['xGraph'] == 'relative_permeability':
                 x = 'Relative Permeability'
-                for k, v in solenoid_range(data['voltage'],data['length'], data['r0'], data['ra'], data['awg'], data['x'], data['force'], data['relative_permeability'], output_unit, data['xGraph'], idv_unit 100.0, 600.0, 10.0):
+                for k, v in solenoid_range(data['voltage'],data['length'], data['r0'], data['ra'], data['awg'], data['x'], data['force'], data['relative_permeability'], output_unit, data['xGraph'], idv_unit, 100.0, 600.0, 10.0):
                     labels.append(k)
-                    graph.append(round(v,sigFigs))
+                    graph.append(round(v, sig_figs))
     else:
         compute = "Unknown Value"
 

@@ -94,9 +94,9 @@ const chartHandler = () => {
 }
 
 const format = input => {
-  if(input === 'r0'){
+  if(input === SolenoidParameters.R0){
     return 'r\u2080'
-  }else if(input === 'ra'){
+  }else if(input === SolenoidParameters.RA){
     return "r\u2090" 
   }
 

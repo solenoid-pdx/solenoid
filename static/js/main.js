@@ -36,17 +36,17 @@ const createInputs = () => {
     const urlParams = new URLSearchParams(window.location.search)
 
     let inputs = [
-        { 'name': 'voltage', 'symbol': 'V', 'value': urlParams.get(SolenoidParameters.VOLTAGE) || '', 'unit': 'volts', 'html': '' },
-        { 'name': 'length', 'symbol': 'L', 'value': urlParams.get(SolenoidParameters.LENGTH) || '', 'unit': 'mm', 'html': '' },
-        { 'name': 'r0', 'symbol': 'r sub not', 'value': urlParams.get(SolenoidParameters.R_NOT) || '', 'unit': 'mm', 'html': '' },
-        { 'name': 'ra', 'symbol': 'r sub a', 'value': urlParams.get(SolenoidParameters.R_A) || '', 'unit': 'mm', 'html': '' },
-        { 'name': 'x', 'symbol': 'x', 'value': urlParams.get(SolenoidParameters.X) || '', 'unit': 'mm', 'html': '' },
-        { 'name': 'force', 'symbol': 'F', 'value': urlParams.get(SolenoidParameters.FORCE) || '', 'unit': 'N', 'html': '' },
-        { 'name': 'awg', 'symbol': 'AWG', 'value': urlParams.get(SolenoidParameters.AWG) || '', 'unit': 'gauge', 'html': '' },
-        { 'name': 'relative_permeability', 'symbol': 'PERMEABILITY', 'value': urlParams.get(SolenoidParameters.PERMEABILITY) || '', 'unit': 'W/m^2', 'html': '' },
+        { 'name': SolenoidParameters.VOLTAGE, 'symbol': 'V', 'value': urlParams.get(SolenoidParameters.VOLTAGE) || '', 'unit': 'volts', 'html': '' },
+        { 'name': SolenoidParameters.LENGTH, 'symbol': 'L', 'value': urlParams.get(SolenoidParameters.LENGTH) || '', 'unit': 'mm', 'html': '' },
+        { 'name': SolenoidParameters.R0, 'symbol': 'r sub not', 'value': urlParams.get(SolenoidParameters.R_NOT) || '', 'unit': 'mm', 'html': '' },
+        { 'name': SolenoidParameters.RA, 'symbol': 'r sub a', 'value': urlParams.get(SolenoidParameters.R_A) || '', 'unit': 'mm', 'html': '' },
+        { 'name': SolenoidParameters.X, 'symbol': 'x', 'value': urlParams.get(SolenoidParameters.X) || '', 'unit': 'mm', 'html': '' },
+        { 'name': SolenoidParameters.FORCE, 'symbol': 'F', 'value': urlParams.get(SolenoidParameters.FORCE) || '', 'unit': 'N', 'html': '' },
+        { 'name': SolenoidParameters.AWG, 'symbol': 'AWG', 'value': urlParams.get(SolenoidParameters.AWG) || '', 'unit': 'gauge', 'html': '' },
+        { 'name': SolenoidParameters.PERMEABILITY, 'symbol': 'PERMEABILITY', 'value': urlParams.get(SolenoidParameters.PERMEABILITY) || '', 'unit': 'W/m^2', 'html': '' },
     ];
     inputs.forEach( element => {
-        if (element.name == 'awg') {
+        if (element.name == SolenoidParameters.AWG) {
                 element.html =`
             <div id="input-${element.name}" class="input-group mb-3">
             <div class="input-group-prepend">
@@ -66,7 +66,7 @@ const createInputs = () => {
             </div> 
         `
         }
-        else if(element.name == 'relative_permeability'){
+        else if(element.name == SolenoidParameters.PERMEABILITY){
            element.html =`
             <div id="input-${element.name}" class="input-group mb-3">
             <div class="input-group-prepend">
@@ -101,17 +101,17 @@ const createInputs = () => {
                value="${element.value}"
         >
       `
-            if (element.name === 'voltage') {
+            if (element.name === SolenoidParameters.VOLTAGE) {
                 element.html +=`           
                 <div class="input-group-append">
                   <span class="input-group-text">volts</span>
                 </div> 
         `
             }
-            if (element.name === 'length'
-                || element.name === 'r0'
-                || element.name === 'ra'
-                || element.name === 'x') {
+            if (element.name === SolenoidParameters.LENGTH
+                || element.name === SolenoidParameters.R0
+                || element.name === SolenoidParameters.RA
+                || element.name === SolenoidParameters.X) {
                 element.html +=`
                 <div class="input-group-append">
                   <select id="input-unit-${element.name}" class="input-group-text">
@@ -124,7 +124,7 @@ const createInputs = () => {
                 </div>
         `
             }
-            if (element.name === 'force') {
+            if (element.name === SolenoidParameters.FORCE) {
                 element.html += `
                <div class="input-group-append">
                  <select id="input-unit-${element.name}" class="input-group-text">
@@ -142,7 +142,7 @@ const createInputs = () => {
 const createDropDown = () => {
   let select_X = document.getElementById("x-values-input")
   let select_Y = document.getElementById("y-values-input")
-  let inputs = ['Voltage', 'Length', 'r0', 'ra', 'x', 'Force', 'AWG']
+  let inputs = ['Voltage', 'Length', SolenoidParameters.R0, SolenoidParameters.RA, SolenoidParameters.X, 'Force', SolenoidParameters.AWG.toUpperCase()]
   inputs.forEach( element => {
     let option = document.createElement('option')
     option.text = `${element}`
@@ -160,14 +160,14 @@ const createDropDown = () => {
 }
 
 const populateDefaults = () => {
-  document.getElementById('input-text-relative_permeability').value = '350';
-  document.getElementById('input-text-voltage').value = '5';
-  document.getElementById('input-text-length').value = '27';
-  document.getElementById('input-text-r0').value = '2.3';
-  document.getElementById('input-text-ra').value = '4.5';
-  document.getElementById('input-text-x').value = '0';
-  document.getElementById('input-text-awg').value = '30';
-  document.getElementById('input-text-force').value = '';
+  document.getElementById(`input-text-${SolenoidParameters.PERMEABILITY}`).value = '350';
+  document.getElementById(`input-text-${SolenoidParameters.VOLTAGE}`).value = '5';
+  document.getElementById(`input-text-${SolenoidParameters.LENGTH}`).value = '27';
+  document.getElementById(`input-text-${SolenoidParameters.R0}`).value = '2.3';
+  document.getElementById(`input-text-${SolenoidParameters.RA}`).value = '4.5';
+  document.getElementById(`input-text-${SolenoidParameters.X}`).value = '0';
+  document.getElementById(`input-text-${SolenoidParameters.AWG}`).value = '30';
+  document.getElementById(`input-text-${SolenoidParameters.FORCE}`).value = '';
   document.getElementById('x-values-input').value = 'Voltage';
   document.getElementById('y-values-input').value = 'Force';
   previousX = $('#x-values-input')[0].value
@@ -223,7 +223,7 @@ const dropDownPermeability = () =>{
         let option = document.createElement('option')
         option.text = item.name
         option.value = item.value
-        $('#dropdown-text-relative_permeability').append(option)
+        $(`#dropdown-text-${SolenoidParameters.PERMEABILITY}`).append(option)
     })
 
 }

@@ -1,13 +1,13 @@
 inputHandler = () => {
   let inputs= [
-    { 'name': 'voltage', 'value': '' },
-    { 'name': 'length', 'value': '', 'unit': '' },
-    { 'name': 'r0', 'value': '', 'unit': '' },
-    { 'name': 'ra', 'value': '', 'unit': '' },
-    { 'name': 'x', 'value': '', 'unit': '' },
-    { 'name': 'force', 'value': '', 'unit': '' },
-    { 'name': 'awg', 'value': '' },
-    { 'name': 'relative_permeability', 'value': ''}
+    { 'name': SolenoidParameters.VOLTAGE, 'value': '' },
+    { 'name': SolenoidParameters.LENGTH, 'value': '', 'unit': '' },
+    { 'name': SolenoidParameters.R0, 'value': '', 'unit': '' },
+    { 'name': SolenoidParameters.RA, 'value': '', 'unit': '' },
+    { 'name': SolenoidParameters.X, 'value': '', 'unit': '' },
+    { 'name': SolenoidParameters.FORCE, 'value': '', 'unit': '' },
+    { 'name': SolenoidParameters.AWG, 'value': '' },
+    { 'name': SolenoidParameters.PERMEABILITY, 'value': ''}
   ]
 
   let blanks = []
@@ -25,7 +25,7 @@ inputHandler = () => {
     }
     else input.value = element.value;
 
-    if(input.name !== 'voltage' && input.name !== 'awg') {
+    if(input.name !== SolenoidParameters.VOLTAGE && input.name !== SolenoidParameters.AWG && input.name !== SolenoidParameters.PERMEABILITY) {
         input.unit = unit.value
     }
   });

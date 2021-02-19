@@ -231,7 +231,7 @@ def solenoid_performance(volts, length, r0, ra, gauge, location, force, relative
             # THIS IS NOT THE SOLUTION, TEMPORARY PLACE HOLDER UNTIL WE DISCOVER THE CORRECT WAY OF SOLVING THIS!!!
             try:
                 x = symbols('x')
-                func = (((volts ** 2) * PERM_FREE * PERM_RELATIVE) / (
+                func = (((volts ** 2) * PERM_FREE * relative_permeability) / (
                             8 * np.pi * ((AWG_DATA[gauge]["resistance"] / 1000) ** 2) * (x ** 2))) * (
                                (r0 / ra) ** 2) * a * np.e ** (-1 * (a / x) * location) - force
 
@@ -249,6 +249,7 @@ def solenoid_performance(volts, length, r0, ra, gauge, location, force, relative
                 raise NoSolution
 
     elif r0 is None:
+        a = np.log(relative_permeability)
         try:
             result = (2 * np.sqrt(2 * np.pi) * np.sqrt(force) * (
                         AWG_DATA[gauge]["resistance"] / 1000) * length * ra * np.e ** ((location * a) / (2 * length))) / (
@@ -263,6 +264,7 @@ def solenoid_performance(volts, length, r0, ra, gauge, location, force, relative
             raise NoSolution
 
     elif ra is None:
+        a = np.log(relative_permeability)
         try:
             result = (r0 * np.sqrt(relative_permeability) * np.sqrt(PERM_FREE)) * volts * np.sqrt(a) * np.e ** -(
                         (location * a) / (2 * length)) / (
@@ -276,7 +278,7 @@ def solenoid_performance(volts, length, r0, ra, gauge, location, force, relative
             raise NoSolution
 
     elif location is None:
-
+        a = np.log(relative_permeability)
         try:
             x = symbols('x')
             func = (((volts ** 2) * PERM_FREE * relative_permeability) / (
@@ -295,7 +297,7 @@ def solenoid_performance(volts, length, r0, ra, gauge, location, force, relative
             raise NoSolution
 
     elif force is None:
-
+        a = np.log(relative_permeability)
         try:
             result = ((volts ** 2) * relative_permeability * PERM_FREE) / (
                         8 * np.pi * ((AWG_DATA[gauge]["resistance"] / 1000) ** 2) * (length ** 2)) * (
@@ -303,6 +305,28 @@ def solenoid_performance(volts, length, r0, ra, gauge, location, force, relative
         except RuntimeError:
             raise NoSolution
         except RuntimeWarning:
+            raise NoSolution
+    
+    elif relative_permeability is None:
+        # In some circumstances this calculation is overflowing. This could just be a problem I'm facing locally but if it persists in production
+        # we will have to look for another solution such as potentially converting to km.
+        try:
+            x = symbols('x')
+            func = (((volts**2) * PERM_FREE * (np.e**x)) / (8 * np.pi * ((AWG_DATA[gauge]["resistance"] / 1000)**2) * ((length)**2))) * (
+                ((r0)/(ra))**2) * x * np.e**(-1 * (x / (length)) * (location)) - force
+
+            f = lambdify(x, func, modules=['numpy', 'scipy'])
+            funcPrime = func.diff(x)
+            fder = lambdify(x, funcPrime, modules=['numpy', 'scipy'])
+            funcPrime2 = funcPrime.diff(x)
+            fder2 = lambdify(x, funcPrime2, modules=['numpy','scipy'])
+
+            root = optimize.newton(f, 0.5, fprime=fder, fprime2=fder2, maxiter=1000)
+            result = np.e**root
+
+        except OverflowError:
+            raise NoSolution
+        except RuntimeError:
             raise NoSolution
 
     return result
@@ -421,7 +445,7 @@ Returns:
 """
 def solenoid_convert(volts, length, r0, ra, gauge, location, force, relative_permeability, output_unit):
     base_units, to_solve = conversion(
-        {"volts": volts, "length": length, "r0": r0, "ra": ra, "location": location, "force": force})
+        {"volts": volts, "length": length, "r0": r0, "ra": ra, "location": location, "force": force, "relative_permeability": relative_permeability})
 
     result = solenoid_performance(base_units["volts"], base_units["length"], base_units["r0"], base_units["ra"], gauge,
                                   base_units["location"], base_units["force"], relative_permeability)
