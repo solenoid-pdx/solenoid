@@ -1,8 +1,13 @@
-from sympy import symbols, solve
+from sympy import symbols, solve, lambdify
 import numpy as np
-from time import perf_counter
-from solenoid_app.solenoid_math.exceptions import TooManyVariables, IncorrectDataType
+from solenoid_app.solenoid_math.exceptions import TooManyVariables, IncorrectDataType, NoSolution
 from scipy import optimize
+from math import floor
+from . import ureg
+
+# Catch divide by 0 errors
+import warnings
+warnings.filterwarnings("error")
 
 # Wire Gauge constants for copper
 # Resistance per unit length and cross-sectional area
@@ -56,7 +61,7 @@ AWG_DATA = {
 
 # Permeability constants
 # TODO: allow variable relative permeabilities to allow users to match their core
-PERM_FREE = 1.257 * (10**-6)
+PERM_FREE = 1.257 * (10 ** -6)
 PERM_RELATIVE = 350
 
 """
@@ -78,7 +83,6 @@ Returns:
     result (float): The solved value of specified variable
 """
 def solenoid_solve(volts, length, r0, ra, gauge, location, force):
-    
     # verify only 1 argument is being solved for
     none_count = sum(isinstance(arg, type(None)) for arg in [volts, length, r0, ra, gauge, location, force])
     if none_count > 1:
@@ -92,14 +96,14 @@ def solenoid_solve(volts, length, r0, ra, gauge, location, force):
         raise IncorrectDataType(type(gauge).__name__, "gauge")
 
     result = None
-    a = np.log(PERM_RELATIVE) 
+    a = np.log(PERM_RELATIVE)
     f, v, l, R0, RA, x = symbols('f v l R0 RA x')
 
     # Generalized equation
     eq1 = ((v ** 2) * PERM_RELATIVE * PERM_FREE) / (
-                8 * np.pi * ((AWG_DATA[gauge]["resistance"] / 1000) ** 2) * ((l / 1000) ** 2))
-    eq2 = ((R0/1000)**2 / (RA/1000)**2)
-    eq3 = np.e**(-(a/(l / 1000)) * (x / 1000))
+            8 * np.pi * ((AWG_DATA[gauge]["resistance"] / 1000) ** 2) * ((l / 1000) ** 2))
+    eq2 = ((R0 / 1000) ** 2 / (RA / 1000) ** 2)
+    eq3 = np.e ** (-(a / (l / 1000)) * (x / 1000))
 
     # Set equation equal to 0
     origin_eq = (eq1 * eq2 * eq3 * a) - f
@@ -148,7 +152,7 @@ def solenoid_solve(volts, length, r0, ra, gauge, location, force):
         # result = solve(origin_eq, x)
         result = -1
 
-    elif force is None:  
+    elif force is None:
         origin_eq = origin_eq.subs(v, volts)
         origin_eq = origin_eq.subs(R0, r0)
         origin_eq = origin_eq.subs(RA, ra)
@@ -173,11 +177,11 @@ arguments are then required and cannot be None
 
 Parameters:
     volts (float | None): Voltage applied to the solenoid - Volts
-    length (float | None): Overall length of the solenoid coil - Millimeters
-    r0 (float | None): Inner radius of the solenoid coil - Millimeters
-    ra (float | None): Outer radius of the solenoid coil - Millimeters
+    length (float | None): Overall length of the solenoid coil - Meters
+    r0 (float | None): Inner radius of the solenoid coil - Meters
+    ra (float | None): Outer radius of the solenoid coil - Meters
     gauge (string): A value between "0000" -> "40"
-    location (float | None): Location (Stroke) of the solenoid core within the coil - Millimeters
+    location (float | None): Location (Stroke) of the solenoid core within the coil - Meters
     force (float | None): The force produced by the solenoid - Newtons
 
 Returns:
@@ -187,52 +191,109 @@ def solenoid_performance(volts, length, r0, ra, gauge, location, force):
     result = None
     a = np.log(PERM_RELATIVE)
 
+    # verify outer radius is not smaller than inner radius
+    if ra is not None and r0 is not None:
+        if ra < r0:
+            raise NoSolution
+
     if volts is None:
+        try:
+            result = (2 * np.sqrt(2 * np.pi) * np.sqrt(force) * (
+                        AWG_DATA[gauge]["resistance"] / 1000) * length * ra * np.e ** ((location * a) / (2 * length))) / (
+                                 r0 * np.sqrt(PERM_RELATIVE) * np.sqrt(PERM_FREE) * np.sqrt(a))
+        except RuntimeError:
+            raise NoSolution
+        except RuntimeWarning:
+            raise NoSolution
 
-        result = (2 * np.sqrt(2 * np.pi) * np.sqrt(force) * (AWG_DATA[gauge]["resistance"] / 1000) * (length / 1000) * (
-                    ra / 1000) * np.e ** (((location / 1000) * a) / (2 * (length / 1000)))) / (
-                             (r0 / 1000) * np.sqrt(PERM_RELATIVE) * np.sqrt(PERM_FREE) * np.sqrt(a))
-
-    # TODO: Find EQ or handle location != 0 case with error (probably frontend)
     elif length is None:
 
         if location == 0:
-            result = 1000 * (np.sqrt(a) * (r0 / 1000) * np.sqrt(PERM_FREE) * np.sqrt(PERM_RELATIVE) * volts) / (
-                    2 * np.sqrt(2 * np.pi) * np.sqrt(force) * (AWG_DATA[gauge]["resistance"] / 1000) * (ra / 1000))
+            try:
+                result = (np.sqrt(a) * r0 * np.sqrt(PERM_FREE) * np.sqrt(PERM_RELATIVE) * volts) / (
+                        2 * np.sqrt(2 * np.pi) * np.sqrt(force) * (AWG_DATA[gauge]["resistance"] / 1000) * ra)
+            except RuntimeError:
+                raise NoSolution
+            except RuntimeWarning:
+                raise NoSolution
+
         else:
-            result = -1
+            # THIS IS NOT THE SOLUTION, TEMPORARY PLACE HOLDER UNTIL WE DISCOVER THE CORRECT WAY OF SOLVING THIS!!!
+            try:
+                x = symbols('x')
+                func = (((volts ** 2) * PERM_FREE * PERM_RELATIVE) / (
+                            8 * np.pi * ((AWG_DATA[gauge]["resistance"] / 1000) ** 2) * (x ** 2))) * (
+                               (r0 / ra) ** 2) * a * np.e ** (-1 * (a / x) * location) - force
+
+                f = lambdify(x, func, modules=["scipy", "numpy"])
+                funcPrime = func.diff(x)
+                fder = lambdify(x, funcPrime, modules=["scipy", "numpy"])
+                funcPrime2 = funcPrime.diff(x)
+                fder2 = lambdify(x, funcPrime2, modules=["scipy", "numpy"])
+                result = optimize.newton(f, 0.5, fprime=fder, fprime2=fder2, maxiter=1000)
+            except OverflowError:
+                raise NoSolution
+            except RuntimeError:
+                raise NoSolution
+            except RuntimeWarning:
+                raise NoSolution
 
     elif r0 is None:
+        try:
+            result = (2 * np.sqrt(2 * np.pi) * np.sqrt(force) * (
+                        AWG_DATA[gauge]["resistance"] / 1000) * length * ra * np.e ** ((location * a) / (2 * length))) / (
+                                 np.sqrt(PERM_RELATIVE) * np.sqrt(PERM_FREE) * volts * np.sqrt(a))
 
-        result = 1000 * (2 * np.sqrt(2 * np.pi) * np.sqrt(force) * (AWG_DATA[gauge]["resistance"] / 1000) * (
-                    length / 1000) * (ra / 1000) * np.e ** (((location / 1000) * a) / (2 * (length / 1000)))) / (
-                             np.sqrt(PERM_RELATIVE) * np.sqrt(PERM_FREE) * volts * np.sqrt(a))
+            # verify outer radius is not smaller than inner radius
+            if ra < result:
+                raise NoSolution
+        except RuntimeError:
+            raise NoSolution
+        except RuntimeWarning:
+            raise NoSolution
 
     elif ra is None:
-
-        result = 1000 * ((r0 / 1000) * np.sqrt(PERM_RELATIVE) * np.sqrt(PERM_FREE) * volts * np.sqrt(a) * np.e ** -(
-                    ((location / 1000) * a) / (2 * (length / 1000)))) / (
-                             2 * np.sqrt(2 * np.pi) * np.sqrt(force) * (AWG_DATA[gauge]["resistance"] / 1000) * (
-                                 length / 1000))
+        try:
+            result = (r0 * np.sqrt(PERM_RELATIVE) * np.sqrt(PERM_FREE)) * volts * np.sqrt(a) * np.e ** -(
+                        (location * a) / (2 * length)) / (
+                                 2 * np.sqrt(2 * np.pi) * np.sqrt(force) * (AWG_DATA[gauge]["resistance"] / 1000) * length)
+            # verify outer radius is not smaller than inner radius
+            if result < r0:
+                raise NoSolution
+        except RuntimeError:
+            raise NoSolution
+        except RuntimeWarning:
+            raise NoSolution
 
     elif location is None:
 
-        constant_1 = ((volts ** 2) * PERM_RELATIVE * PERM_FREE) / (
-                    8 * np.pi * ((AWG_DATA[gauge]["resistance"] / 1000) ** 2) * ((length / 1000) ** 2)) * a
-        constant_2 = (((r0 / 1000)**2) / ((ra / 1000)**2))
-        product = constant_1 * constant_2
-        exponent = -1 * (a / (length/1000))
+        try:
+            x = symbols('x')
+            func = (((volts ** 2) * PERM_FREE * PERM_RELATIVE) / (
+                        8 * np.pi * ((AWG_DATA[gauge]["resistance"] / 1000) ** 2) * (length ** 2))) * (
+                               (r0 / ra) ** 2) * a * np.e ** (-1 * (a / length * x)) - force
 
-        f = lambda x, a, b: a * np.e**(b * x) - force
-        fder = lambda x, a, b: a * b * np.e**(b * x)
-        result = 1000 * abs(optimize.newton(f, 0, args=(product, exponent), fprime=fder, maxiter=1000))
+            f = lambdify(x, func, modules=["numpy", "scipy"])
+            funcPrime = func.diff(x)
+            fder = lambdify(x, funcPrime, modules=["numpy", "scipy"])
+            result = (optimize.newton(f, 0, fprime=fder, maxiter=1000))
+        except OverflowError:
+            raise NoSolution
+        except RuntimeError:
+            raise NoSolution
+        except RuntimeWarning:
+            raise NoSolution
 
     elif force is None:
 
-        result = ((volts ** 2) * PERM_RELATIVE * PERM_FREE) / (
-                    8 * np.pi * ((AWG_DATA[gauge]["resistance"] / 1000) ** 2) * ((length / 1000) ** 2)) * (
-                             (r0 / 1000) ** 2 / (ra / 1000) ** 2) * np.e ** (
-                             -(a / (length / 1000)) * (location / 1000)) * a
+        try:
+            result = ((volts ** 2) * PERM_RELATIVE * PERM_FREE) / (
+                        8 * np.pi * ((AWG_DATA[gauge]["resistance"] / 1000) ** 2) * (length ** 2)) * (
+                                 r0 ** 2 / ra ** 2) * np.e ** (-(a / length) * location) * a
+        except RuntimeError:
+            raise NoSolution
+        except RuntimeWarning:
+            raise NoSolution
 
     return result
 
@@ -245,13 +306,15 @@ variable is selected by entering variable the name for the idv argument.
 
 Parameters:
     volts (float | None): Voltage applied to the solenoid - Volts
-    length (float | None): Overall length of the solenoid coil - Millimeters
-    r0 (float | None): Inner radius of the solenoid coil - Millimeters
-    ra (float | None): Outer radius of the solenoid coil - Millimeters
+    length (pint Quantity | None): Overall length of the solenoid coil
+    r0 (pint Quantity | None): Inner radius of the solenoid coil
+    ra (pint Quantity | None): Outer radius of the solenoid coil
     gauge (string): A value between "0000" -> "40"
-    location (float | None): Location (Stroke) of the solenoid core within the coil - Millimeters
-    force (float | None): The force produced by the solenoid - Newtons
-    idv (string): Independent variable - one of ["volts", "length", "r0", "ra", "force", "gauge", "location"]
+    location (pint Quantity | None): Location (Stroke) of the solenoid core within the coil - Meters
+    force (pint Quantity | None): The force produced by the solenoid - Newtons
+    output_unit (string): unit identifier string the dependant variable - e.x.: "mm", "meters", "lbf", etc...
+    idv (string): Independent variable - one of ["volts", "length", "r0", "ra", "force", "awg", "location"]
+    idv_unit (string): unit identifier string the independent variable
     start (int | float): Starting value of the independent variable range
     stop (int | float): Stopping value of the independent variable range
     step (int | float): range granularity
@@ -259,35 +322,136 @@ Parameters:
 Returns:
     result (list of tuples): A list of tuples containing (x, y) pairs for graphing
 """
-def solenoid_range(volts, length, r0, ra, gauge, location, force, idv, start=0.0, stop=1.0, step=1.0):
+def solenoid_range(volts, length, r0, ra, gauge, location, force, output_unit,idv, idv_unit, start=0.0, stop=1.0, step=1.0):
     result = []
 
     if idv == "voltage":
         for i in list(np.arange(start, stop, step)):
-            result.append((i, solenoid_performance(i, length, r0, ra, gauge, location, force)))
+            try:
+                result.append((i, solenoid_convert(i, length, r0, ra, gauge, location, force, output_unit)))
+            except NoSolution:
+                pass
 
     elif idv == "length":
         for i in list(np.arange(start, stop, step)):
-            result.append((i, solenoid_performance(volts, i, r0, ra, gauge, location, force)))
+            value = i * ureg(idv_unit)
+            try:
+                result.append((i, solenoid_convert(volts, value, r0, ra, gauge, location, force, output_unit)))
+            except NoSolution:
+                pass
 
     elif idv == "r0":
         for i in list(np.arange(start, stop, step)):
-            result.append((i, np.around(solenoid_performance(volts, length, i, ra, gauge, location, force),decimals=2)))
+            value = i * ureg(idv_unit)
+            try:
+                result.append((i, np.around(solenoid_convert(volts, length, value, ra, gauge, location, force, output_unit), decimals=2)))
+            except NoSolution:
+                pass
 
     elif idv == "ra":
         for i in list(np.arange(start, stop, step)):
-            result.append((i, np.around(solenoid_performance(volts, length, r0, i, gauge, location, force),decimals=2)))
+            value = i * ureg(idv_unit)
+            try:
+                result.append((i, np.around(solenoid_convert(volts, length, r0, value, gauge, location, force, output_unit), decimals=2)))
+            except NoSolution:
+                pass
 
     elif idv == "force":
         for i in list(np.arange(start, stop, step)):
-            result.append((i, solenoid_performance(volts, length, r0, ra, gauge, location, i)))
+            value = i * ureg(idv_unit)
+            try:
+                result.append((i, solenoid_convert(volts, length, r0, ra, gauge, location, value, output_unit)))
+            except NoSolution:
+                pass
 
-    elif idv == "gauge":
+    elif idv == "awg":
         for item in AWG_DATA.keys():
-            result.append((item, solenoid_performance(volts, length, r0, ra, item, location, force)))
+            try:
+                result.append((item, solenoid_convert(volts, length, r0, ra, item, location, force, output_unit)))
+            except NoSolution:
+                pass
 
     elif idv == "x":
         for i in list(np.arange(start, stop, step)):
-            result.append((i, solenoid_performance(volts, length, r0, ra, gauge, i, force)))
+            value = i * ureg(idv_unit)
+            try:
+                result.append((i, solenoid_convert(volts, length, r0, ra, gauge, value, force, output_unit)))
+            except NoSolution:
+                pass
 
     return result
+
+
+"""
+Wrapper for solenoid_performance. This function takes in values of differing units, converts them to base SI units, then
+solves for the specified parameter. When a solution is found, it is converted back to the expected output units.
+
+The variable being solved for is inputted as a None value. All other
+arguments are then required and cannot be None
+
+Parameters:
+    volts (float | None): Voltage applied to the solenoid - Volts
+    length (pint Quantity | None): Overall length of the solenoid coil
+    r0 (pint Quantity | None): Inner radius of the solenoid coil
+    ra (pint Quantity | None): Outer radius of the solenoid coil
+    gauge (string): A value between "0000" -> "40"
+    location (pint Quantity | None): Location (Stroke) of the solenoid core within the coil
+    force (pint Quantity | None): The force produced by the solenoid
+    output_unit (string): unit identifier string the result - e.x.: "mm", "meters", "lbf", etc...
+
+Returns:
+    result (float): The solved value of specified variable
+"""
+def solenoid_convert(volts, length, r0, ra, gauge, location, force, output_unit):
+    base_units, to_solve = conversion(
+        {"volts": volts, "length": length, "r0": r0, "ra": ra, "location": location, "force": force})
+
+    result = solenoid_performance(base_units["volts"], base_units["length"], base_units["r0"], base_units["ra"], gauge,
+                                  base_units["location"], base_units["force"])
+
+    # convert result to expected units
+    if to_solve in ["length", "r0", "ra", "location"]:
+        result = result * ureg.meters
+        result.ito(ureg(output_unit))
+        result = float(result.magnitude)
+        if result < 0 and floor(abs(result)) != 0:
+            raise NoSolution
+        return abs(result)
+
+    elif to_solve == "force":
+        result = result * ureg.newtons
+        result.ito(ureg(output_unit))
+        result = float(result.magnitude)
+        if result < 0 and floor(abs(result)) != 0:
+            raise NoSolution
+        return abs(result)
+
+    elif to_solve == "volts":
+        result = float(result)
+        if result < 0 and floor(abs(result)) != 0:
+            raise NoSolution
+        return abs(result)
+
+
+""" 
+Helper function for Solenoid Convert
+
+Parameters: 
+    values (Dict): A dictionary containing all input variables to the solver function
+    
+Returns:
+    values (Dict): A dictionary containing all input variables converted to base SI units
+    to_solve (String): The name of the variable to solve for
+"""
+def conversion(values):
+    to_solve = None
+
+    for key in values.keys():
+        if values[key] is None:
+            to_solve = key
+        elif type(values[key]) == int or type(values[key]) == float or type(values[key]) == np.float64:
+            pass
+        else:
+            values[key] = values[key].to_base_units().magnitude
+
+    return values, to_solve

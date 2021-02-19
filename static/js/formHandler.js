@@ -10,16 +10,12 @@ const formSubmitHandler = () => {
         if(inputs.blanks.length <= 0) {
           flashHandler('PLEASE LEAVE A VALUE TO SOLVE FOR BLANK', 'no-solve-input-flash-err')
           return;
-        } 
-        if(inputs.toCompute !== 'force' && inputs.inputs[4].value != 0) {
-          flashHandler('X MUST EQUAL 0 FOR THIS SOLUTION.', 'x-eq-zero-flash-err')
+        }
+        if(inputs.toCompute === 'awg') {
+          flashHandler('YOU MUST CHOOSE A WIRE GAUGE', 'unsolved-awg-flash-err')
           return;
         }
-        if(inputs.toCompute === 'x') {
-          flashHandler('X CANNOT BE SOLVED FOR', 'unsolved-x-flash-err')
-          return;
-        }
-        
+
         updateQueryString(inputs.inputs)
         
         $.ajax({
@@ -36,6 +32,11 @@ const formSubmitHandler = () => {
             awg: inputs.inputs[6].value,
             compute: inputs.toCompute,
             csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+            length_unit: inputs.inputs[1].unit,
+            r0_unit: inputs.inputs[2].unit,
+            ra_unit: inputs.inputs[3].unit,
+            x_unit: inputs.inputs[4].unit,
+            force_unit: inputs.inputs[5].unit,
           },
             success: res => {
               result = res[res.compute];
