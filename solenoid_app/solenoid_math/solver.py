@@ -403,47 +403,14 @@ Returns:
     result (float): The solved value of specified variable
 """
 def solenoid_convert(volts, length, r0, ra, gauge, location, force, output_unit):
+    base_units, to_solve = conversion(
+        {"volts": volts, "length": length, "r0": r0, "ra": ra, "location": location, "force": force})
 
-    chosen = None
-
-    # convert all entered parameters to base SI units
-    if length is not None:
-        length = length.to_base_units()
-        length = float(length.magnitude)
-    else:
-        chosen = "length"
-
-    if r0 is not None:
-        r0 = r0.to_base_units()
-        r0 = float(r0.magnitude)
-    else:
-        chosen = "r0"
-
-    if ra is not None:
-        ra = ra.to_base_units()
-        ra = float(ra.magnitude)
-    else:
-        chosen = "ra"
-
-    if location is not None:
-        location = location.to_base_units()
-        location = float(location.magnitude)
-    else:
-        chosen = "location"
-
-    if force is not None:
-        force = force.to_base_units()
-        force = float(force.magnitude)
-    else:
-        chosen = "force"
-
-    if volts is None:
-        chosen = "volts"
-
-    result = solenoid_performance(volts, length, r0, ra, gauge, location, force)
+    result = solenoid_performance(base_units["volts"], base_units["length"], base_units["r0"], base_units["ra"], gauge,
+                                  base_units["location"], base_units["force"])
 
     # convert result to expected units
-    if chosen in ["length", "r0", "ra", "location"]:
+    if to_solve in ["length", "r0", "ra", "location"]:
         result = result * ureg.meters
         result.ito(ureg(output_unit))
         result = float(result.magnitude)
@@ -451,7 +418,7 @@ def solenoid_convert(volts, length, r0, ra, gauge, location, force, output_unit)
             raise NoSolution
         return abs(result)
 
-    elif chosen == "force":
+    elif to_solve == "force":
         result = result * ureg.newtons
         result.ito(ureg(output_unit))
         result = float(result.magnitude)
@@ -459,8 +426,32 @@ def solenoid_convert(volts, length, r0, ra, gauge, location, force, output_unit)
             raise NoSolution
         return abs(result)
 
-    elif chosen == "volts":
+    elif to_solve == "volts":
         result = float(result)
         if result < 0 and floor(abs(result)) != 0:
             raise NoSolution
         return abs(result)
+
+
+""" 
+Helper function for Solenoid Convert
+
+Parameters: 
+    values (Dict): A dictionary containing all input variables to the solver function
+    
+Returns:
+    values (Dict): A dictionary containing all input variables converted to base SI units
+    to_solve (String): The name of the variable to solve for
+"""
+def conversion(values):
+    to_solve = None
+
+    for key in values.keys():
+        if values[key] is None:
+            to_solve = key
+        elif type(values[key]) == int or type(values[key]) == float:
+            pass
+        else:
+            values[key] = values[key].to_base_units().magnitude
+
+    return values, to_solve
