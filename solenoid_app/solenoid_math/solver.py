@@ -449,7 +449,7 @@ def conversion(values):
     for key in values.keys():
         if values[key] is None:
             to_solve = key
-        elif type(values[key]) == int or type(values[key]) == float:
+        elif type(values[key]) == int or type(values[key]) == float or type(values[key]) == np.float64:
             pass
         else:
             values[key] = values[key].to_base_units().magnitude
