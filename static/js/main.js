@@ -47,17 +47,17 @@ const createInputsContextObj = () => {
       'html': ''
     },
     {
-      'name': 'r_not',
+      'name': 'r0',
       'symbol': 'r sub not',
-      'value': urlParams.get('r_not') || '',
+      'value': urlParams.get('r0') || '',
       'unit': 'mm',
       'description': 'Inner Coil Radius',
       'html': ''
     },
     {
-      'name': 'r_a',
+      'name': 'ra',
       'symbol': 'r sub a',
-      'value': urlParams.get('r_a') || '',
+      'value': urlParams.get('ra') || '',
       'unit': 'mm',
       'description': 'Outer Coil Radius',
       'html': ''
