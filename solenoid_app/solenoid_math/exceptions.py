@@ -8,6 +8,7 @@ class TooManyVariables(Exception):
         self.message = "Too many variables to solve: Only 1 variable can be None"
         super().__init__(self.message)
 
+
 class IncorrectDataType(Exception):
     """Exception raised when a variable is of the incorrect type
 
@@ -18,4 +19,15 @@ class IncorrectDataType(Exception):
         self.type = type_in
         self.variable = variable
         self.message = "Invalid data type (" + self.type + ") for '" + variable + "'"
+        super().__init__(self.message)
+
+
+class NoSolution(Exception):
+    """Exception raised when no valid solution can be calculated
+
+    Attributes:
+        message -- No Solution Found
+    """
+    def __init__(self):
+        self.message = "No Solution Found"
         super().__init__(self.message)

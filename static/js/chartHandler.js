@@ -33,6 +33,11 @@ const chartHandler = () => {
             compute: yGraph, 
             xGraph: xGraph,
             csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+            length_unit: values.inputs[1].unit,
+            r0_unit: values.inputs[2].unit,
+            ra_unit: values.inputs[3].unit,
+            x_unit: values.inputs[4].unit,
+            force_unit: values.inputs[5].unit,
           },
           success: function (data) {
             document.getElementById('graph-container').style = 'width: 100%; display: block;';

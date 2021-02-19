@@ -37,7 +37,7 @@ class TestUrls(SimpleTestCase):
         """Test '/' url resolves"""
 
         url = reverse(INDEX_URL_NAME)
-        self.assertEquals(resolve(url).func, indexView)
+        self.assertEqual(resolve(url).func, indexView)
     
     def test_base_url_response_code(self):
         """Assert 200 response code on base '/' url request"""

@@ -1,5 +1,6 @@
 from django import forms
 
+
 class DataSetForm(forms.Form):
     voltage = forms.FloatField()
     length = forms.FloatField()
@@ -10,6 +11,11 @@ class DataSetForm(forms.Form):
     awg = forms.CharField()
     compute = forms.CharField()
     relative_permeability = forms.FloatField()
+    length_unit = forms.CharField()
+    r0_unit = forms.CharField()
+    ra_unit = forms.CharField()
+    x_unit = forms.CharField()
+    force_unit = forms.CharField()
 
 
 class GraphForm(DataSetForm):
