@@ -36,7 +36,7 @@ jobs:
 
       # Execute test suite (unit & integration tests)
       - name: Unit/Integration Test Execution
-        run: python3 manage.py test tests/
+        run: python3 manage.py test python_tests/
 
       # Install ChromeDriver
       - name: Install ChromeDriver
@@ -47,6 +47,7 @@ jobs:
           unzip chromedriver_linux64.zip
           chmod +x chromedriver
           export PATH="${PATH}:${HOME}/bin"
+          
         
       # Start Server
       - name: Start Server

@@ -1,21 +1,42 @@
+let $voltageChart = $("#voltage-Chart")
+let compute = 'force' //Change later :) 
 
-const voltageChartAjax = (inputs, toGraph) => {
-  let $voltageChart = $("#voltage-Chart")
+const chartHandler = () => {
+  let values = inputHandler()
+  let xGraph = $('#x-values-input :selected').text().toLowerCase()
+  let yGraph = $('#y-values-input :selected').text().toLowerCase()
+  values.blanks = values.blanks.filter(i => i !== xGraph && i !== yGraph)
+
+  if(xGraph === 'Select X Value' || yGraph === 'Select Y Value'){
+    flashHandler('PLEASE SELECT X AND Y VALUES', 'same-selections-flash-err') 
+    return;
+  }
+
+  if(values.blanks.length >= 1) {
+    flashHandler(`ALL VALUES OTHER THAN ${xGraph} AND ${yGraph} NEED TO BE FILLED `, 'missing-input-flash-err')
+    return;
+  }
+
   $.ajax({
           type: 'POST',
           url: 'voltageChart',
           dataType: 'json',
           data: {
-            voltage: inputs[0].value,
-            length: inputs[1].value,
-            r_not: inputs[2].value,
-            r_a: inputs[3].value,
-            x: inputs[4].value,
-            force: inputs[5].value,
-            awg: inputs[6].value,
-            compute: 'force', //Change this later, currently just comparing vs force tho
-            toGraph: toGraph,
+            voltage: values.inputs[0].value,
+            length: values.inputs[1].value,
+            r0: values.inputs[2].value,
+            ra: values.inputs[3].value,
+            x: values.inputs[4].value,
+            force: values.inputs[5].value,
+            awg: values.inputs[6].value,
+            compute: yGraph, 
+            xGraph: xGraph,
             csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+            length_unit: values.inputs[1].unit,
+            r0_unit: values.inputs[2].unit,
+            ra_unit: values.inputs[3].unit,
+            x_unit: values.inputs[4].unit,
+            force_unit: values.inputs[5].unit,
           },
           success: function (data) {
             document.getElementById('graph-container').style = 'width: 100%; display: block;';
@@ -23,19 +44,31 @@ const voltageChartAjax = (inputs, toGraph) => {
             if(window.line != undefined){
               window.line.destroy()
             }
-            window.line = new Chart(ctx, {
+            let newChart = window.line = new Chart(ctx, {
              type: 'line',
               data: {
                 labels: data.labels,
                 datasets: [{
-                  label: 'Force',
+                  label: format(data.y),
                   backgroundColor: 'green',
                   borderColor: 'green',
                   data: data.data,
                   fill: false,
+                  pointRadius: 5,
+                  pointHoverRadius: 5, 
                }]          
              },
               options: {
+                'onClick': (evt, item) => {
+                  let activePoints = newChart.getElementsAtEvent(evt)
+                  if(activePoints[0]){
+                    let clickedElementIndex = activePoints[0]['_index']
+                    let label = newChart.data.labels[clickedElementIndex]
+                    let value = newChart.data.datasets[0].data[clickedElementIndex]
+                    document.getElementById(`input-text-${xGraph.toLowerCase()}`).value = label
+                    document.getElementById(`input-text-${yGraph.toLowerCase()}`).value = value 
+                  }
+                },
                 tooltips: {
                   mode: 'nearest',
                   intersect: false,
@@ -47,34 +80,24 @@ const voltageChartAjax = (inputs, toGraph) => {
                 title: {
                   display: true,
                   fontSize: 20,
-                  text: `Force vs ${format(data.x)}`
+                  text: `${format(data.y)} vs ${format(data.x)}`
                 },
                 scales: {
                    xAxes: [{ display: true, scaleLabel: { display: true, fontSize:20, labelString: format(data.x)}}],
-                   yAxes: [{ display: true, scaleLabel: { display: true, fontSize:20, labelString: 'Force'}}]
+                   yAxes: [{ display: true, scaleLabel: { display: true, fontSize:20, labelString: format(data.y)}}]
               }}
             });
-        //     $voltageChart.onClick = evt => {
-        //       let activePoints = window.line.getElementsAtEvent(evt);
-        //       if(activePoints[0]){
-        //         let chartData = activePoints[0]['_chart'].config.data;
-        //         let idx = activePoints[0]['_index'];
-        //         var label = chartData.labels[idx];
-        //       var value = chartData.datasets[0].data[idx];
-
-        // var url = "http://example.com/?label=" + label + "&value=" + value;
-        // alert(url);
-        //       }
-        //     }
           }
+          
         });
 }
 
 const format = input => {
-  if(input === 'r_not'){
+  if(input === 'r0'){
     return 'r\u2080'
-  }else if(input === 'r_a'){
+  }else if(input === 'ra'){
     return "r\u2090" 
   }
-  return input
+
+  return input.charAt(0).toUpperCase() + input.slice(1) 
 }
