@@ -92,15 +92,6 @@ const chartHandler = () => {
                    yAxes: [{ display: true, scaleLabel: { display: true, fontSize:20, labelString: format(data.y)}}]
               }}
             });
-            graphImageButton(newChart)
-            // let link = document.createElement('a');
-            // link.href = newChart.toBase64Image();
-            // link.download = 'IMAGE.png';
-            // if(navigator.userAgent.match(/Firefox/g)){
-            //   document.body.append(link);
-            //   link.click();
-            //   document.body.remove(link);
-            // }
           }
           
         });

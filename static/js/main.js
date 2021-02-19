@@ -172,7 +172,7 @@ const add_awg_select_options = () =>{
 
 const graphRange = x_value => {
   let ranges = [
-    {'name' : 'Voltage', 'min': '0', 'max': '25', 'dMin': '1', 'dMax': '30', 'step': '1',},
+    {'name' : 'Voltage', 'min': '0', 'max': '50', 'dMin': '1', 'dMax': '30', 'step': '1',},
     {'name' : 'Length', 'min': '0', 'max': '50', 'dMin': '10', 'dMax': '30', 'step':'1',},
     {'name' : 'r0', 'min': '0', 'max': '8.0', 'dMin': '2.0', 'dMax': '5.0', 'step': '0.1',},
     {'name' : 'ra', 'min': '0', 'max': '8.0', 'dMin': '3.0', 'dMax': '5.0', 'step': '0.1',},
