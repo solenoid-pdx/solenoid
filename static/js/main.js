@@ -170,14 +170,6 @@ const add_awg_select_options = () =>{
     }
 };
 
-
-/* TODO :: 
-1. Add the number above, or reduce slider size  http://jsfiddle.net/ykay/jL044k1c/
-2. Change bar color
-3. 
-4.  
-*/
-
 const graphRange = x_value => {
   let ranges = [
     {'name' : 'Voltage', 'min': '0', 'max': '25', 'dMin': '1', 'dMax': '30', 'step': '1',},
@@ -227,3 +219,5 @@ const findStep = x_value => {
     $(`#option-x-${previousY}`).hide()
   });   
 })();
+
+
