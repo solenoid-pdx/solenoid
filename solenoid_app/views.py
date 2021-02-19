@@ -71,7 +71,6 @@ def voltageChart(request):
 
     if (request.method == "POST"):
         form = DataSetForm(request.POST)
-        print(request.POST)
         if form.is_valid():
             data['voltage'] = form.cleaned_data['voltage']
             data['length'] = form.cleaned_data['length']

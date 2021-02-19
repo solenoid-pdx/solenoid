@@ -69,14 +69,14 @@ const createInputsContextObj = () => {
       'symbol': 'F',
       'value': urlParams.get('force') || '',
       'unit': 'N',
-      'description': 'Solenoid Generated Force',
+      'description': 'Force Generated',
       'html': ''
     },
     {
       'name': 'awg',
       'symbol': 'AWG',
       'value': urlParams.get('awg') || '',
-      'unit': 'guage',
+      'unit': 'gauge',
       'description': 'Gauge of Coil Wire',
       'html': ''
     },
@@ -87,75 +87,35 @@ const createInputsContextObj = () => {
 
 const createInputs = () => {
     let inputs = createInputsContextObj();
-
     inputs.forEach( element => {
-        if (element.name != 'awg') {
-          element.html =
-          `
+      element.html =
+        `
         <div id="input-${element.name}" class="input-group mb-3">
-        <div class="input-group-prepend">
-          <span
-              class="input-group-text" 
-              data-tooltip
-              data-placement="top"
-              title="Input For ${element.description}"
-          >
-            ${formatR(element.symbol)}
-          </span>
-          <div class="input-group-text">
-            <input
-              id="input-radio-${element.name}"
-              type="radio" onclick="clickMe(this.value)"
-              value="${element.name}"
-              aria-label="Radio button for following text input"
-              name="radAnswer"
-            >
-          </div>
-        </div>
-        <input type="text"
-              id="input-text-${element.name}"
-              class="form-control"
-              aria-label="Text input with radio button"
-              placeholder="${element.description}"
-              value="${element.value}"
-        >
-        <div class="input-group-append">
-            <span class="input-group-text">${element.unit}</span>
-          </div>
-        </div>
-      `
-        }
-        else {
-          element.html =
-          `
-            <div id="input-${element.name}" class="input-group mb-3">
-            <div class="input-group-prepend">
-              <span
+          <div class="input-group-prepend">
+            <span
                 class="input-group-text" 
                 data-tooltip
                 data-placement="top"
                 title="Input For ${element.description}"
-              >
-                ${formatR(element.symbol)}
-              </span>
-              <div class="input-group-text">
-                <input type="radio" aria-label="Radio button for following text input" name="radAnswer">
-              </div>
-            </div>   
-            <input id = "input-text-awg"
-                   class = "form-control"
-                   list="input-text"
-                   value="${element.value}" 
-                   placeholder="${element.description}" 
             >
-              <datalist id="input-text">
-              </datalist>           
-            <div class="input-group-append">
-              <span class="input-group-text">${element.unit}</span>
-              </div>
-            </div> 
-        `
-        }
+              ${formatR(element.symbol)}
+            </span>
+            <div class="input-group-text">
+              <input
+                id="input-radio-${element.name}"
+                type="radio"
+                value="${element.name}"
+                aria-label="Radio button for following text input"
+                name="radAnswer"
+              >
+            </div>
+          </div>
+          ${insertInputElement(element)}
+          <div class="input-group-append">
+            <span class="input-group-text">${element.unit}</span>
+          </div>
+        </div>
+      `
     });
     return inputs;
 };
@@ -177,6 +137,40 @@ const formatR = unit => {
   if (unit == 'r sub a')
     return 'r<sub>a</sub>';
   return unit;
+};
+
+const insertInputElement = element => {
+  if (element.name == 'awg') {
+    let inputHTML =
+      `
+        <input
+          id="input-text-${element.name}"
+          class="form-control"
+          list="input-text"
+          value="${element.value}" 
+          placeholder="${element.description}" 
+        >
+          <datalist id="input-text">
+          </datalist>   
+      `;
+
+    return inputHTML;
+  }
+  else {
+    let inputHTML =
+      `
+        <input
+          type="text"
+          id="input-text-${element.name}"
+          class="form-control"
+          aria-label="Text input with radio button"
+          placeholder="${element.description}"
+          value="${element.value}"
+        >
+      `;
+
+    return inputHTML;
+  }
 };
 
 const updateQueryString = inputs => {
