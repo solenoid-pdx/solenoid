@@ -308,8 +308,6 @@ def solenoid_performance(volts, length, r0, ra, gauge, location, force, relative
             raise NoSolution
     
     elif relative_permeability is None:
-        # In some circumstances this calculation is overflowing. This could just be a problem I'm facing locally but if it persists in production
-        # we will have to look for another solution such as potentially converting to km.
         try:
             x = symbols('x')
             func = (((volts**2) * PERM_FREE * (np.e**x)) / (8 * np.pi * ((AWG_DATA[gauge]["resistance"] / 1000)**2) * ((length)**2))) * (
@@ -321,9 +319,9 @@ def solenoid_performance(volts, length, r0, ra, gauge, location, force, relative
             funcPrime2 = funcPrime.diff(x)
             fder2 = lambdify(x, funcPrime2, modules=['numpy','scipy'])
 
-            root = optimize.newton(f, 0.5, fprime=fder, fprime2=fder2, maxiter=1000)
+            root = optimize.newton(f, 1.0, fprime=fder, fprime2=fder2, maxiter=1000)
             result = np.e**root
-
+        
         except OverflowError:
             raise NoSolution
         except RuntimeError:
