@@ -43,7 +43,7 @@ const createInputs = () => {
         { 'name': SolenoidParameters.X, 'symbol': 'x', 'value': urlParams.get(SolenoidParameters.X) || '', 'unit': 'mm', 'html': '' },
         { 'name': SolenoidParameters.FORCE, 'symbol': 'F', 'value': urlParams.get(SolenoidParameters.FORCE) || '', 'unit': 'N', 'html': '' },
         { 'name': SolenoidParameters.AWG, 'symbol': 'AWG', 'value': urlParams.get(SolenoidParameters.AWG) || '', 'unit': 'gauge', 'html': '' },
-        { 'name': SolenoidParameters.PERMEABILITY, 'symbol': 'PERMEABILITY', 'value': urlParams.get(SolenoidParameters.PERMEABILITY) || '', 'unit': 'W/m^2', 'html': '' },
+        { 'name': SolenoidParameters.PERMEABILITY, 'symbol': 'PERMEABILITY', 'value': urlParams.get(SolenoidParameters.PERMEABILITY) || '', 'unit': '', 'html': '' },
     ];
     inputs.forEach( element => {
         if (element.name == SolenoidParameters.AWG) {
@@ -146,12 +146,18 @@ const createDropDown = () => {
   inputs.forEach( element => {
     let option = document.createElement('option')
     option.text = `${element}`
+    if(element === SolenoidParameters.PERMEABILITY){
+        option.text = "Relative Permeability"
+    }
     option.value = `${element}`
     option.id = `option-x-${element}`
     select_X.add(option)
     if(element !== 'AWG'){
       let option1 = document.createElement('option')
       option1.text = `${element}`
+      if(element === SolenoidParameters.PERMEABILITY){
+        option1.text = "Relative Permeability"
+      }
       option1.value = `${element}`
       option1.id = `option-y-${element}`
       select_Y.add(option1)

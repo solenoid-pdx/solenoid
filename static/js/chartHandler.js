@@ -99,6 +99,9 @@ const format = input => {
   }else if(input === SolenoidParameters.RA){
     return "r\u2090" 
   }
+  else if(input === SolenoidParameters.PERMEABILITY){
+    return "Relative Permeability"
+  }
 
   return input.charAt(0).toUpperCase() + input.slice(1) 
 }

@@ -134,6 +134,8 @@ def voltageChart(request):
             data['force'] = data['force'] * ureg(data['force_unit'])
 
             compute = data['compute']
+            if compute == "relative permeability":
+                compute = "relative_permeability"
             data[compute] = None
 
             if compute in ['length', 'r0', 'ra', 'x', 'force']:
@@ -157,7 +159,7 @@ def voltageChart(request):
             elif data['xGraph'] == 'length':
                 x = 'Length (mm)'
                 for k, v in solenoid_range(data['voltage'], data['length'], data['r0'], data['ra'], data['awg'],
-                                           data['x'], data['force'], output_unit, data['xGraph'], idv_unit, 5.0, 26.0,
+                                           data['x'], data['force'], data['relative_permeability'], output_unit, data['xGraph'], idv_unit, 5.0, 26.0,
                                            1.0):
                     labels.append(k)
                     graph.append(round(v, sig_figs))
@@ -202,10 +204,10 @@ def voltageChart(request):
                                            1.0):
                     labels.append(k)
                     graph.append(round(v, sig_figs))
-            
-            elif data['xGraph'] == 'relative_permeability':
+
+            elif data['xGraph'] == 'relative permeability':
                 x = 'Relative Permeability'
-                for k, v in solenoid_range(data['voltage'],data['length'], data['r0'], data['ra'], data['awg'], data['x'], data['force'], data['relative_permeability'], output_unit, data['xGraph'], idv_unit, 100.0, 600.0, 10.0):
+                for k, v in solenoid_range(data['voltage'],data['length'], data['r0'], data['ra'], data['awg'], data['x'], data['force'], data['relative_permeability'], output_unit, "relative_permeability", idv_unit, 100.0, 600.0, 10.0):
                     labels.append(k)
                     graph.append(round(v, sig_figs))
     else:
