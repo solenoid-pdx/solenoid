@@ -38,8 +38,8 @@ const createInputs = () => {
     let inputs = [
         { 'name': SolenoidParameters.VOLTAGE, 'symbol': 'V', 'value': urlParams.get(SolenoidParameters.VOLTAGE) || '', 'unit': 'volts', 'html': '' },
         { 'name': SolenoidParameters.LENGTH, 'symbol': 'L', 'value': urlParams.get(SolenoidParameters.LENGTH) || '', 'unit': 'mm', 'html': '' },
-        { 'name': SolenoidParameters.R0, 'symbol': 'r sub not', 'value': urlParams.get(SolenoidParameters.R_NOT) || '', 'unit': 'mm', 'html': '' },
-        { 'name': SolenoidParameters.RA, 'symbol': 'r sub a', 'value': urlParams.get(SolenoidParameters.R_A) || '', 'unit': 'mm', 'html': '' },
+        { 'name': SolenoidParameters.R0, 'symbol': 'r sub not', 'value': urlParams.get(SolenoidParameters.R0) || '', 'unit': 'mm', 'html': '' },
+        { 'name': SolenoidParameters.RA, 'symbol': 'r sub a', 'value': urlParams.get(SolenoidParameters.RA) || '', 'unit': 'mm', 'html': '' },
         { 'name': SolenoidParameters.X, 'symbol': 'x', 'value': urlParams.get(SolenoidParameters.X) || '', 'unit': 'mm', 'html': '' },
         { 'name': SolenoidParameters.FORCE, 'symbol': 'F', 'value': urlParams.get(SolenoidParameters.FORCE) || '', 'unit': 'N', 'html': '' },
         { 'name': SolenoidParameters.AWG, 'symbol': 'AWG', 'value': urlParams.get(SolenoidParameters.AWG) || '', 'unit': 'gauge', 'html': '' },
