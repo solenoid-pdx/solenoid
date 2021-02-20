@@ -128,7 +128,7 @@ class TestSolver(SimpleTestCase):
         expected_integer_result = 350
 
         self.assertEqual(expected_integer_result,
-        int(solenoid_performance(volts, length, r0, ra, gauge, x, force, relative_permeability)))
+        solenoid_performance(volts, length, r0, ra, gauge, x, force, relative_permeability))
     
     def test_correct_permeability_custom_inputs(self):
         """ Test that relative permeability is calculated correctly using custom inputs """
@@ -141,7 +141,7 @@ class TestSolver(SimpleTestCase):
         length = 0.027
         relative_permeability = None
         
-        expected_float_result = 167.38667084667526
+        expected_integer_result = 167
 
-        self.assertEqual(expected_float_result,
+        self.assertEqual(expected_integer_result,
         solenoid_performance(volts, length, r0, ra, gauge, x, force, relative_permeability))
