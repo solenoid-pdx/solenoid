@@ -85,6 +85,7 @@ def formHandle(request):
 
 
 def voltageChart(request):
+    compute = ''
     sig_figs = 5
     labels = []
     x = ''

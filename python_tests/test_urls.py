@@ -77,7 +77,7 @@ class TestUrls(SimpleTestCase):
         """ Assert 200 response code on 'voltageChart' url request """
 
         url = reverse(VOLTAGE_CHART_URL_NAME)
-        data = "[{'voltage': '5', 'length': '27', 'r0': '2.3', 'ra': '4.5', 'x': '0', 'force': '', 'awg': '30', 'relative_permeability': '350', 'compute': 'force', 'xGraph': 'voltage', 'length_unit': 'mm', 'r0_unit': 'mm', 'ra_unit': 'mm', 'x_unit': 'mm', 'force_unit': 'newton'}]"
+        data = "[{'voltage': '5', 'length': '27', 'r0': '2.3', 'ra': '4.5', 'x': '0', 'force': '0', 'awg': '30', 'relative_permeability': '350', 'compute': 'force', 'xGraph': 'voltage', 'length_unit': 'mm', 'r0_unit': 'mm', 'ra_unit': 'mm', 'x_unit': 'mm', 'force_unit': 'newton'}]"
         data = literal_eval(data)
         qd = QueryDict(mutable=True)
         for item in data:
