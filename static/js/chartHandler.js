@@ -1,22 +1,30 @@
-let $voltageChart = $("#voltage-Chart")
+let $voltageChart = $("#voltage-Chart");
 let compute = 'force' //Change later :) 
+var newChart;
 
 const chartHandler = () => {
-  let values = inputHandler()
-  let xGraph = $('#x-values-input :selected').text().toLowerCase()
-  let yGraph = $('#y-values-input :selected').text().toLowerCase()
-  values.blanks = values.blanks.filter(i => i !== xGraph && i !== yGraph)
+  let values = inputHandler();
+  let xGraph = $('#x-values-input :selected').text().toLowerCase();
+  let yGraph = $('#y-values-input :selected').text().toLowerCase();
+  let xStart = $('#slider-range').slider("values")[0];
+  let xEnd = $('#slider-range').slider("values")[1];
+  let xStep = $('#step-input')[0].value
+
+  values.blanks = values.blanks.filter(i => i !== xGraph && i !== yGraph);
 
   if(xGraph === 'Select X Value' || yGraph === 'Select Y Value'){
-    flashHandler('PLEASE SELECT X AND Y VALUES', 'same-selections-flash-err') 
+    flashHandler('PLEASE SELECT X AND Y VALUES', 'same-selections-flash-err');
     return;
   }
 
   if(values.blanks.length >= 1) {
-    flashHandler(`ALL VALUES OTHER THAN ${xGraph} AND ${yGraph} NEED TO BE FILLED `, 'missing-input-flash-err')
+    flashHandler(`ALL VALUES OTHER THAN ${xGraph} AND ${yGraph} NEED TO BE FILLED `, 'missing-input-flash-err');
     return;
   }
-
+  if(xGraph === 'x' && yGraph === 'length'){
+    flashHandler(`UNABLE TO GRAPH X VS LENGTH, PLEASE CHOOSE OTHER VALUES `, 'x-vs-length-input-flash-err');
+    return;
+  }
   $.ajax({
           type: 'POST',
           url: 'voltageChart',
@@ -32,6 +40,9 @@ const chartHandler = () => {
             relative_permeability: values.inputs[7].value, //Add new field DPN-31 FE
             compute: yGraph, 
             xGraph: xGraph,
+            xStart: xStart,
+            xEnd:  xEnd,
+            xStep: xStep,
             csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
             length_unit: values.inputs[1].unit,
             r0_unit: values.inputs[2].unit,
@@ -41,11 +52,12 @@ const chartHandler = () => {
           },
           success: function (data) {
             document.getElementById('graph-container').style = 'width: 100%; display: block;';
+            $('#chart-download-button').show()
             var ctx = $voltageChart[0].getContext("2d");
             if(window.line != undefined){
               window.line.destroy()
             }
-            let newChart = window.line = new Chart(ctx, {
+            newChart = window.line = new Chart(ctx, {
              type: 'line',
               data: {
                 labels: data.labels,
@@ -92,7 +104,6 @@ const chartHandler = () => {
           
         });
 }
-
 const format = input => {
   if(input === SolenoidParameters.R0){
     return 'r\u2080'
