@@ -21,7 +21,7 @@ const chartHandler = () => {
     flashHandler(`ALL VALUES OTHER THAN ${xGraph} AND ${yGraph} NEED TO BE FILLED `, 'missing-input-flash-err');
     return;
   }
-
+  
   $.ajax({
           type: 'POST',
           url: 'voltageChart',
