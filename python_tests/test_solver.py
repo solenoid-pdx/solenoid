@@ -145,3 +145,10 @@ class TestSolver(SimpleTestCase):
 
         self.assertEqual(expected_integer_result,
         solenoid_performance(volts, length, r0, ra, gauge, x, force, relative_permeability))
+
+    """
+        -Mirroring the tests above with different units
+    """
+    def test_permeability_with_different_units(self):
+        result = solenoid_convert(5, 27 * ureg.millimeter, 0.09055118 * ureg.inch, 0.0045 * ureg.meter, "30", 0 * ureg.centimeter, 1.80131 * ureg.lbf, None, None)
+        self.assertEqual(result,350)
