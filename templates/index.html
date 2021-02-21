@@ -167,9 +167,7 @@
             <label id="x-value-range-label" for="x-value-range">X-Value range:</label>
             <input type="text" id="x-value-range" readonly style="border:0; color:#1f23f6; font-weight:bold;">
         </p>
-        <div id="slider-range" style="width: 35%; margin-bottom: 5%; margin-top: 2%">
-          
-        </div>
+        <div id="slider-range" style="width: 35%; margin-bottom: 5%; margin-top: 2%"></div> 
         <select
           name="x-values-input"
           id="x-values-input"
@@ -190,6 +188,11 @@
             Select Y Value
           </option>
         </select>
+        <!-- <label for="step-input">Step between 0.001 and 50</label> -->
+        <div class="input-group-prepend">
+          <span class="input-group-text">Step</span>
+          <input type='number' id='step-input' name='step-input' min='0.001' max='1000' step="any" placeholder="0.001">
+        </div>  
 
         <button
           class="btn btn-outline-primary"

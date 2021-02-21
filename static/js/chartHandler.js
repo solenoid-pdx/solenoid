@@ -7,6 +7,7 @@ const chartHandler = () => {
   let yGraph = $('#y-values-input :selected').text().toLowerCase();
   let xStart = $('#slider-range').slider("values")[0];
   let xEnd = $('#slider-range').slider("values")[1];
+  let xStep = $('#step-input')[0].value
 
   values.blanks = values.blanks.filter(i => i !== xGraph && i !== yGraph);
 
@@ -32,10 +33,12 @@ const chartHandler = () => {
             x: values.inputs[4].value,
             force: values.inputs[5].value,
             awg: values.inputs[6].value,
+            relative_permeability: values.inputs[7].value, //Add new field DPN-31 FE
             compute: yGraph, 
             xGraph: xGraph,
             xStart: xStart,
             xEnd:  xEnd,
+            xStep: xStep,
             csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
             length_unit: values.inputs[1].unit,
             r0_unit: values.inputs[2].unit,
@@ -49,7 +52,7 @@ const chartHandler = () => {
             if(window.line != undefined){
               window.line.destroy()
             }
-            let newChart = window.line = new Chart(ctx, {
+            var newChart = window.line = new Chart(ctx, {
              type: 'line',
               data: {
                 labels: data.labels,
@@ -96,12 +99,14 @@ const chartHandler = () => {
           
         });
 }
-
 const format = input => {
-  if(input === 'r0'){
+  if(input === SolenoidParameters.R0){
     return 'r\u2080'
-  }else if(input === 'ra'){
+  }else if(input === SolenoidParameters.RA){
     return "r\u2090" 
+  }
+  else if(input === SolenoidParameters.PERMEABILITY){
+    return "Relative Permeability"
   }
 
   return input.charAt(0).toUpperCase() + input.slice(1) 

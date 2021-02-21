@@ -30,6 +30,7 @@ const formSubmitHandler = () => {
             x: inputs.inputs[4].value,
             force: inputs.inputs[5].value,
             awg: inputs.inputs[6].value,
+            relative_permeability: inputs.inputs[7].value,
             compute: inputs.toCompute,
             csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
             length_unit: inputs.inputs[1].unit,
@@ -39,7 +40,7 @@ const formSubmitHandler = () => {
             force_unit: inputs.inputs[5].unit,
           },
             success: res => {
-              result = res[res.compute];
+                let result = res[res.compute];
               document.getElementById(`input-text-${res.compute}`).value = result;
             }
         });

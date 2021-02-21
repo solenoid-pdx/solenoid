@@ -62,7 +62,7 @@ AWG_DATA = {
 # Permeability constants
 # TODO: allow variable relative permeabilities to allow users to match their core
 PERM_FREE = 1.257 * (10 ** -6)
-PERM_RELATIVE = 350
+# PERM_RELATIVE = 350
 
 """
 Solves for a single missing variable within the solenoid force equation.
@@ -82,13 +82,14 @@ Parameters:
 Returns:
     result (float): The solved value of specified variable
 """
-def solenoid_solve(volts, length, r0, ra, gauge, location, force):
+def solenoid_solve(volts, length, r0, ra, gauge, location, force, relative_permeability):
+    
     # verify only 1 argument is being solved for
-    none_count = sum(isinstance(arg, type(None)) for arg in [volts, length, r0, ra, gauge, location, force])
+    none_count = sum(isinstance(arg, type(None)) for arg in [volts, length, r0, ra, gauge, location, force, relative_permeability])
     if none_count > 1:
         raise TooManyVariables
 
-    for arg in ['volts', 'length', 'r0', 'ra', 'location', 'force']:
+    for arg in ['volts', 'length', 'r0', 'ra', 'location', 'force', 'relative_permeability']:
         if not isinstance(locals()[arg], (type(None), int, float)):
             raise IncorrectDataType(type(arg).__name__, arg)
 
@@ -96,26 +97,27 @@ def solenoid_solve(volts, length, r0, ra, gauge, location, force):
         raise IncorrectDataType(type(gauge).__name__, "gauge")
 
     result = None
-    a = np.log(PERM_RELATIVE)
-    f, v, l, R0, RA, x = symbols('f v l R0 RA x')
+    # a = np.log(relative_permeability) 
+    f, v, l, R0, RA, x, a= symbols('f v l R0 RA x a')
 
     # Generalized equation
-    eq1 = ((v ** 2) * PERM_RELATIVE * PERM_FREE) / (
-            8 * np.pi * ((AWG_DATA[gauge]["resistance"] / 1000) ** 2) * ((l / 1000) ** 2))
-    eq2 = ((R0 / 1000) ** 2 / (RA / 1000) ** 2)
-    eq3 = np.e ** (-(a / (l / 1000)) * (x / 1000))
-
+    eq1 = ((v ** 2) * (np.e**(a)) * PERM_FREE) / (
+                8 * np.pi * ((AWG_DATA[gauge]["resistance"] / 1000) ** 2) * ((l / 1000) ** 2))
+    eq2 = ((R0/1000)**2 / (RA/1000)**2)
+    #eq3 = np.log(rp)
+    eq4 = np.e**(-(a/(l / 1000)) * (x / 1000))
+    
     # Set equation equal to 0
-    origin_eq = (eq1 * eq2 * eq3 * a) - f
-
+    origin_eq = (eq1 * eq2 * a * eq4) - f
+    
     # Solve for specified variable
-
     if volts is None:
         origin_eq = origin_eq.subs(l, length)
         origin_eq = origin_eq.subs(R0, r0)
         origin_eq = origin_eq.subs(RA, ra)
         origin_eq = origin_eq.subs(x, location)
         origin_eq = origin_eq.subs(f, force)
+        origin_eq = origin_eq.subs(a, np.log(relative_permeability))
         result = solve(origin_eq, v)
 
     elif length is None:
@@ -124,6 +126,7 @@ def solenoid_solve(volts, length, r0, ra, gauge, location, force):
         origin_eq = origin_eq.subs(RA, ra)
         origin_eq = origin_eq.subs(x, location)
         origin_eq = origin_eq.subs(f, force)
+        origin_eq = origin_eq.subs(a, np.log(relative_permeability))
         result = solve(origin_eq, l)
 
     elif r0 is None:
@@ -132,6 +135,7 @@ def solenoid_solve(volts, length, r0, ra, gauge, location, force):
         origin_eq = origin_eq.subs(l, length)
         origin_eq = origin_eq.subs(x, location)
         origin_eq = origin_eq.subs(f, force)
+        origin_eq = origin_eq.subs(a, np.log(relative_permeability))
         result = solve(origin_eq, R0)
 
     elif ra is None:
@@ -140,6 +144,7 @@ def solenoid_solve(volts, length, r0, ra, gauge, location, force):
         origin_eq = origin_eq.subs(l, length)
         origin_eq = origin_eq.subs(x, location)
         origin_eq = origin_eq.subs(f, force)
+        origin_eq = origin_eq.subs(a, np.log(relative_permeability))
         result = solve(origin_eq, RA)
 
     elif location is None:
@@ -149,6 +154,7 @@ def solenoid_solve(volts, length, r0, ra, gauge, location, force):
         origin_eq = origin_eq.subs(RA, ra)
         origin_eq = origin_eq.subs(l, length)
         origin_eq = origin_eq.subs(f, force)
+        origin_eq = origin_eq.subs(a, np.log(relative_permeability))
         # result = solve(origin_eq, x)
         result = -1
 
@@ -158,13 +164,17 @@ def solenoid_solve(volts, length, r0, ra, gauge, location, force):
         origin_eq = origin_eq.subs(RA, ra)
         origin_eq = origin_eq.subs(x, location)
         origin_eq = origin_eq.subs(l, length)
+        origin_eq = origin_eq.subs(a, np.log(relative_permeability))
         result = solve(origin_eq, f)
+
+    elif relative_permeability is None:
+        return solenoid_performance(volts, length, r0, ra, gauge, location, force, relative_permeability)
 
     # Return the correctly signed value due to solving squares in function
     if len(result) == 2:
-        return float(result[1])
+        return np.e**(float(result[1])) if relative_permeability is None else float(result[1])
     else:
-        return float(result[0])
+        return np.e**(float(result[0])) if relative_permeability is None else float(result[0])
 
 
 """
@@ -187,9 +197,8 @@ Parameters:
 Returns:
     result (float): The solved value of specified variable
 """
-def solenoid_performance(volts, length, r0, ra, gauge, location, force):
+def solenoid_performance(volts, length, r0, ra, gauge, location, force, relative_permeability):
     result = None
-    a = np.log(PERM_RELATIVE)
 
     # verify outer radius is not smaller than inner radius
     if ra is not None and r0 is not None:
@@ -197,20 +206,21 @@ def solenoid_performance(volts, length, r0, ra, gauge, location, force):
             raise NoSolution
 
     if volts is None:
+        a = np.log(relative_permeability)
         try:
             result = (2 * np.sqrt(2 * np.pi) * np.sqrt(force) * (
                         AWG_DATA[gauge]["resistance"] / 1000) * length * ra * np.e ** ((location * a) / (2 * length))) / (
-                                 r0 * np.sqrt(PERM_RELATIVE) * np.sqrt(PERM_FREE) * np.sqrt(a))
+                                 r0 * np.sqrt(relative_permeability) * np.sqrt(PERM_FREE) * np.sqrt(a))
         except RuntimeError:
             raise NoSolution
         except RuntimeWarning:
             raise NoSolution
 
     elif length is None:
-
+        a = np.log(relative_permeability)
         if location == 0:
             try:
-                result = (np.sqrt(a) * r0 * np.sqrt(PERM_FREE) * np.sqrt(PERM_RELATIVE) * volts) / (
+                result = (np.sqrt(a) * r0 * np.sqrt(PERM_FREE) * np.sqrt(relative_permeability) * volts) / (
                         2 * np.sqrt(2 * np.pi) * np.sqrt(force) * (AWG_DATA[gauge]["resistance"] / 1000) * ra)
             except RuntimeError:
                 raise NoSolution
@@ -221,7 +231,7 @@ def solenoid_performance(volts, length, r0, ra, gauge, location, force):
             # THIS IS NOT THE SOLUTION, TEMPORARY PLACE HOLDER UNTIL WE DISCOVER THE CORRECT WAY OF SOLVING THIS!!!
             try:
                 x = symbols('x')
-                func = (((volts ** 2) * PERM_FREE * PERM_RELATIVE) / (
+                func = (((volts ** 2) * PERM_FREE * relative_permeability) / (
                             8 * np.pi * ((AWG_DATA[gauge]["resistance"] / 1000) ** 2) * (x ** 2))) * (
                                (r0 / ra) ** 2) * a * np.e ** (-1 * (a / x) * location) - force
 
@@ -239,10 +249,11 @@ def solenoid_performance(volts, length, r0, ra, gauge, location, force):
                 raise NoSolution
 
     elif r0 is None:
+        a = np.log(relative_permeability)
         try:
             result = (2 * np.sqrt(2 * np.pi) * np.sqrt(force) * (
                         AWG_DATA[gauge]["resistance"] / 1000) * length * ra * np.e ** ((location * a) / (2 * length))) / (
-                                 np.sqrt(PERM_RELATIVE) * np.sqrt(PERM_FREE) * volts * np.sqrt(a))
+                                 np.sqrt(relative_permeability) * np.sqrt(PERM_FREE) * volts * np.sqrt(a))
 
             # verify outer radius is not smaller than inner radius
             if ra < result:
@@ -253,8 +264,9 @@ def solenoid_performance(volts, length, r0, ra, gauge, location, force):
             raise NoSolution
 
     elif ra is None:
+        a = np.log(relative_permeability)
         try:
-            result = (r0 * np.sqrt(PERM_RELATIVE) * np.sqrt(PERM_FREE)) * volts * np.sqrt(a) * np.e ** -(
+            result = (r0 * np.sqrt(relative_permeability) * np.sqrt(PERM_FREE)) * volts * np.sqrt(a) * np.e ** -(
                         (location * a) / (2 * length)) / (
                                  2 * np.sqrt(2 * np.pi) * np.sqrt(force) * (AWG_DATA[gauge]["resistance"] / 1000) * length)
             # verify outer radius is not smaller than inner radius
@@ -266,10 +278,10 @@ def solenoid_performance(volts, length, r0, ra, gauge, location, force):
             raise NoSolution
 
     elif location is None:
-
+        a = np.log(relative_permeability)
         try:
             x = symbols('x')
-            func = (((volts ** 2) * PERM_FREE * PERM_RELATIVE) / (
+            func = (((volts ** 2) * PERM_FREE * relative_permeability) / (
                         8 * np.pi * ((AWG_DATA[gauge]["resistance"] / 1000) ** 2) * (length ** 2))) * (
                                (r0 / ra) ** 2) * a * np.e ** (-1 * (a / length * x)) - force
 
@@ -285,11 +297,33 @@ def solenoid_performance(volts, length, r0, ra, gauge, location, force):
             raise NoSolution
 
     elif force is None:
-
+        a = np.log(relative_permeability)
         try:
-            result = ((volts ** 2) * PERM_RELATIVE * PERM_FREE) / (
+            result = ((volts ** 2) * relative_permeability * PERM_FREE) / (
                         8 * np.pi * ((AWG_DATA[gauge]["resistance"] / 1000) ** 2) * (length ** 2)) * (
                                  r0 ** 2 / ra ** 2) * np.e ** (-(a / length) * location) * a
+        except RuntimeError:
+            raise NoSolution
+        except RuntimeWarning:
+            raise NoSolution
+    
+    elif relative_permeability is None:
+        try:
+            x = symbols('x')
+            func = (((volts**2) * PERM_FREE * (np.e**x)) / (8 * np.pi * ((AWG_DATA[gauge]["resistance"] / 1000)**2) * ((length)**2))) * (
+                ((r0)/(ra))**2) * x * np.e**(-1 * (x / (length)) * (location)) - force
+
+            f = lambdify(x, func, modules=['numpy', 'scipy'])
+            funcPrime = func.diff(x)
+            fder = lambdify(x, funcPrime, modules=['numpy', 'scipy'])
+            funcPrime2 = funcPrime.diff(x)
+            fder2 = lambdify(x, funcPrime2, modules=['numpy','scipy'])
+
+            root = optimize.newton(f, 1.0, fprime=fder, fprime2=fder2, maxiter=1000)
+            result = np.round((np.e**root))
+        
+        except OverflowError:
+            raise NoSolution
         except RuntimeError:
             raise NoSolution
         except RuntimeWarning:
@@ -322,13 +356,13 @@ Parameters:
 Returns:
     result (list of tuples): A list of tuples containing (x, y) pairs for graphing
 """
-def solenoid_range(volts, length, r0, ra, gauge, location, force, output_unit,idv, idv_unit, start=0.0, stop=1.0, step=1.0):
+def solenoid_range(volts, length, r0, ra, gauge, location, force, relative_permeability, output_unit,idv, idv_unit, start=0.0, stop=1.0, step=1.0):
     result = []
 
     if idv == "voltage":
         for i in list(np.arange(start, stop, step)):
             try:
-                result.append((i, solenoid_convert(i, length, r0, ra, gauge, location, force, output_unit)))
+                result.append((i, solenoid_convert(i, length, r0, ra, gauge, location, force, relative_permeability, output_unit)))
             except NoSolution:
                 pass
 
@@ -336,7 +370,7 @@ def solenoid_range(volts, length, r0, ra, gauge, location, force, output_unit,id
         for i in list(np.arange(start, stop, step)):
             value = i * ureg(idv_unit)
             try:
-                result.append((i, solenoid_convert(volts, value, r0, ra, gauge, location, force, output_unit)))
+                result.append((i, solenoid_convert(volts, value, r0, ra, gauge, location, force, relative_permeability, output_unit)))
             except NoSolution:
                 pass
 
@@ -344,7 +378,7 @@ def solenoid_range(volts, length, r0, ra, gauge, location, force, output_unit,id
         for i in list(np.arange(start, stop, step)):
             value = i * ureg(idv_unit)
             try:
-                result.append((i, np.around(solenoid_convert(volts, length, value, ra, gauge, location, force, output_unit), decimals=2)))
+                result.append((i, np.around(solenoid_convert(volts, length, value, ra, gauge, location, force, relative_permeability, output_unit), decimals=2)))
             except NoSolution:
                 pass
 
@@ -352,7 +386,7 @@ def solenoid_range(volts, length, r0, ra, gauge, location, force, output_unit,id
         for i in list(np.arange(start, stop, step)):
             value = i * ureg(idv_unit)
             try:
-                result.append((i, np.around(solenoid_convert(volts, length, r0, value, gauge, location, force, output_unit), decimals=2)))
+                result.append((i, np.around(solenoid_convert(volts, length, r0, value, gauge, location, force, relative_permeability, output_unit), decimals=2)))
             except NoSolution:
                 pass
 
@@ -360,14 +394,14 @@ def solenoid_range(volts, length, r0, ra, gauge, location, force, output_unit,id
         for i in list(np.arange(start, stop, step)):
             value = i * ureg(idv_unit)
             try:
-                result.append((i, solenoid_convert(volts, length, r0, ra, gauge, location, value, output_unit)))
+                result.append((i, solenoid_convert(volts, length, r0, ra, gauge, location, value, relative_permeability, output_unit)))
             except NoSolution:
                 pass
 
     elif idv == "awg":
         for item in AWG_DATA.keys():
             try:
-                result.append((item, solenoid_convert(volts, length, r0, ra, item, location, force, output_unit)))
+                result.append((item, solenoid_convert(volts, length, r0, ra, item, location, force, relative_permeability, output_unit)))
             except NoSolution:
                 pass
 
@@ -375,7 +409,14 @@ def solenoid_range(volts, length, r0, ra, gauge, location, force, output_unit,id
         for i in list(np.arange(start, stop, step)):
             value = i * ureg(idv_unit)
             try:
-                result.append((i, solenoid_convert(volts, length, r0, ra, gauge, value, force, output_unit)))
+                result.append((i, solenoid_convert(volts, length, r0, ra, gauge, value, force, relative_permeability, output_unit)))
+            except NoSolution:
+                pass
+    
+    elif idv == "relative_permeability":
+        for i in list(np.arange(start, stop, step)):
+            try:
+                result.append((i, solenoid_convert(volts, length, r0, ra, gauge, location, force, i, output_unit)))
             except NoSolution:
                 pass
 
@@ -402,12 +443,12 @@ Parameters:
 Returns:
     result (float): The solved value of specified variable
 """
-def solenoid_convert(volts, length, r0, ra, gauge, location, force, output_unit):
+def solenoid_convert(volts, length, r0, ra, gauge, location, force, relative_permeability, output_unit):
     base_units, to_solve = conversion(
-        {"volts": volts, "length": length, "r0": r0, "ra": ra, "location": location, "force": force})
+        {"volts": volts, "length": length, "r0": r0, "ra": ra, "location": location, "force": force, "relative_permeability": relative_permeability})
 
     result = solenoid_performance(base_units["volts"], base_units["length"], base_units["r0"], base_units["ra"], gauge,
-                                  base_units["location"], base_units["force"])
+                                  base_units["location"], base_units["force"], relative_permeability)
 
     # convert result to expected units
     if to_solve in ["length", "r0", "ra", "location"]:
@@ -426,7 +467,7 @@ def solenoid_convert(volts, length, r0, ra, gauge, location, force, output_unit)
             raise NoSolution
         return abs(result)
 
-    elif to_solve == "volts":
+    elif to_solve == "volts" or to_solve == "relative_permeability":
         result = float(result)
         if result < 0 and floor(abs(result)) != 0:
             raise NoSolution

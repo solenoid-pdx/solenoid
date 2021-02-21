@@ -19,11 +19,15 @@ from django.urls import path, include
 #from .views import line_chart, line_chart_json
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
+INDEX_URL_NAME = 'indexUrl'
+FORM_HANDLE_URL_NAME = 'formHandle'
+VOLTAGE_CHART_URL_NAME = 'voltageChart'
+
 urlpatterns = [
     # path('admin/', admin.site.urls, name='adminUrl'),
-    path('', indexView, name='indexUrl'),
-    path('voltageChart', voltageChart, name='voltageChart'),
-    path('formHandle', formHandle, name='formHandle')
+    path('', indexView, name=INDEX_URL_NAME),
+    path('voltageChart', voltageChart, name=VOLTAGE_CHART_URL_NAME),
+    path('formHandle', formHandle, name=FORM_HANDLE_URL_NAME)
 ]
 
 urlpatterns += staticfiles_urlpatterns()
