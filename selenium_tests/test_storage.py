@@ -46,7 +46,7 @@ class TestStorage(SeleniumTestBase):
 
         self.chrome_options.add_experimental_option("prefs", prefs)
         test_value = "10"
-        query_parameters = ["voltage", "length", "r0", "ra", "x", "force", "awg"]
+        query_parameters = ["voltage", "length", "r0", "ra", "x", "force", "awg", "relative_permeability"]
         query_string = "?"
         for query_parameter in query_parameters:
             query_string += query_parameter + "=" + test_value + "&"

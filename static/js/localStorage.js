@@ -10,13 +10,13 @@ const download = (filename, text) => {
 
 const savingData = () => {
     let inputs = [
-          { 'name': 'voltage', 'value': '' },
-          { 'name': 'length', 'value': '' },
-          { 'name': 'r0', 'value': '' },
-          { 'name': 'ra', 'value': '' },
-          { 'name': 'x', 'value': '' },
-          { 'name': 'force', 'value': '' },
-          { 'name': 'awg', 'value': '' },
+          { 'name': SolenoidParameters.VOLTAGE, 'value': '' },
+          { 'name': SolenoidParameters.LENGTH, 'value': '' },
+          { 'name': SolenoidParameters.R0, 'value': '' },
+          { 'name': SolenoidParameters.RA, 'value': '' },
+          { 'name': SolenoidParameters.X, 'value': '' },
+          { 'name': SolenoidParameters.FORCE, 'value': '' },
+          { 'name': SolenoidParameters.AWG, 'value': '' },
         ];
 
     inputs.forEach( (input, _index) => {

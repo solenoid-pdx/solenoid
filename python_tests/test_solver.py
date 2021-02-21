@@ -7,7 +7,7 @@
 
 import unittest
 from django.test import SimpleTestCase
-
+from solenoid_app.solenoid_math.solver import solenoid_performance
 from solenoid_app.solenoid_math.solver import solenoid_convert
 from . import ureg
 
@@ -61,7 +61,7 @@ class TestSolver(SimpleTestCase):
         -Simple test case for solving for force
     """
     def test_solve_for_force_mm_n(self):
-        result = solenoid_convert(5, 27 * ureg.millimeter, 2.3 * ureg.millimeter, 4.5 * ureg.millimeter,"30", 0 * ureg.millimeter,None,'newton')
+        result = solenoid_convert(5, 27 * ureg.millimeter, 2.3 * ureg.millimeter, 4.5 * ureg.millimeter,"30", 0 * ureg.millimeter,None, 350, 'newton')
         self.assertAlmostEqual(result,8.01266,4)
 
 
@@ -73,7 +73,7 @@ class TestSolver(SimpleTestCase):
         -The input units are all converted manually to their respective measurement based on the test set that we have.
     """
     def test_solve_for_force_multiple_units(self):
-        result = solenoid_convert(5, 27 * ureg.millimeter, 0.09055118 * ureg.inch, 0.0045 * ureg.meter, "30", 0 * ureg.millimeter, None, 'lbf')
+        result = solenoid_convert(5, 27 * ureg.millimeter, 0.09055118 * ureg.inch, 0.0045 * ureg.meter, "30", 0 * ureg.millimeter, None, 350, 'lbf')
         self.assertAlmostEqual(result,1.8013,4) #Comparing the result to the pre-converted answer from newton to lbl
 
     """
@@ -81,7 +81,7 @@ class TestSolver(SimpleTestCase):
         -force will be in lbf
     """
     def test_solve_for_volt_multiple_units(self):
-        result = solenoid_convert(None, 27 * ureg.millimeter, 0.09055118 * ureg.inch, 0.0045 * ureg.meter, "30", 0 * ureg.millimeter, 1.80131 * ureg.lbf, 'volt')
+        result = solenoid_convert(None, 27 * ureg.millimeter, 0.09055118 * ureg.inch, 0.0045 * ureg.meter, "30", 0 * ureg.millimeter, 1.80131 * ureg.lbf, 350, 'volt')
         self.assertAlmostEqual(result,5.0,2)
 
     """
@@ -89,14 +89,14 @@ class TestSolver(SimpleTestCase):
         -Test the equation for solving location (newton's method)
     """
     def test_solve_for_length_multiple_units(self):
-        result = solenoid_convert(5, None, 0.09055118 * ureg.inch, 0.0045 * ureg.meter, "30", 0 * ureg.millimeter, 1.80131 * ureg.lbf, 'millimeter')
+        result = solenoid_convert(5, None, 0.09055118 * ureg.inch, 0.0045 * ureg.meter, "30", 0 * ureg.millimeter, 1.80131 * ureg.lbf, 350, 'millimeter')
         self.assertAlmostEqual(result,27.0,2)
 
     """
         -Testing for r0 with the expected output in millimeter
     """
     def test_solve_for_r0_multiple_units(self):
-        result = solenoid_convert(5, 27 * ureg.millimeter, None, 0.0045 * ureg.meter, "30", 0 * ureg.millimeter, 1.80131 * ureg.lbf, 'millimeter')
+        result = solenoid_convert(5, 27 * ureg.millimeter, None, 0.0045 * ureg.meter, "30", 0 * ureg.millimeter, 1.80131 * ureg.lbf, 350, 'millimeter')
         self.assertAlmostEqual(result, 2.3, 2)
 
     """
@@ -110,5 +110,45 @@ class TestSolver(SimpleTestCase):
         -Implementing delta instead of correctness by decimal places since the conversion and inaccurary of newton method will affect the result
     """ 
     def test_solve_for_length_nonzero_location(self):
-        result = solenoid_convert(5, None, 0.09055118 * ureg.inch, 4.5 * ureg.millimeter, "30", 0.05 * ureg.meter, 0.00550422 * ureg.lbf, 'millimeter')
+        result = solenoid_convert(5, None, 0.09055118 * ureg.inch, 4.5 * ureg.millimeter, "30", 0.05 * ureg.meter, 0.00550422 * ureg.lbf, 350, 'millimeter')
         self.assertAlmostEqual(result,300.0,None,"Not equal",0.5)
+
+    def test_correct_permeability_sample_inputs(self):
+        """ Test that relative permeability is calculated correctly using sample inputs """
+
+        force = 8.01267
+        volts = 5
+        r0 = 0.0023
+        ra = 0.0045
+        x = 0
+        gauge = "30"
+        length = 0.027
+        relative_permeability = None
+        
+        expected_integer_result = 350
+
+        self.assertEqual(expected_integer_result,
+        solenoid_performance(volts, length, r0, ra, gauge, x, force, relative_permeability))
+    
+    def test_correct_permeability_custom_inputs(self):
+        """ Test that relative permeability is calculated correctly using custom inputs """
+        force = 8.0120314
+        volts = 5
+        r0 = 0.0043
+        ra = 0.0045
+        x = 0.002
+        gauge = "30"
+        length = 0.027
+        relative_permeability = None
+        
+        expected_integer_result = 167
+
+        self.assertEqual(expected_integer_result,
+        solenoid_performance(volts, length, r0, ra, gauge, x, force, relative_permeability))
+
+    """
+        -Mirroring the tests above with different units
+    """
+    def test_permeability_with_different_units(self):
+        result = solenoid_convert(5, 27 * ureg.millimeter, 0.09055118 * ureg.inch, 0.0045 * ureg.meter, "30", 0 * ureg.centimeter, 1.80131 * ureg.lbf, None, None)
+        self.assertEqual(result,350)

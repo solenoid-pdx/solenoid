@@ -29,6 +29,7 @@ const chartHandler = () => {
             x: values.inputs[4].value,
             force: values.inputs[5].value,
             awg: values.inputs[6].value,
+            relative_permeability: values.inputs[7].value, //Add new field DPN-31 FE
             compute: yGraph, 
             xGraph: xGraph,
             csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
@@ -93,10 +94,13 @@ const chartHandler = () => {
 }
 
 const format = input => {
-  if(input === 'r0'){
+  if(input === SolenoidParameters.R0){
     return 'r\u2080'
-  }else if(input === 'ra'){
+  }else if(input === SolenoidParameters.RA){
     return "r\u2090" 
+  }
+  else if(input === SolenoidParameters.PERMEABILITY){
+    return "Relative Permeability"
   }
 
   return input.charAt(0).toUpperCase() + input.slice(1) 

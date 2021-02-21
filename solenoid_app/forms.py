@@ -10,6 +10,7 @@ class DataSetForm(forms.Form):
     force = forms.FloatField()
     awg = forms.CharField()
     compute = forms.CharField()
+    relative_permeability = forms.FloatField()
     length_unit = forms.CharField()
     r0_unit = forms.CharField()
     ra_unit = forms.CharField()
