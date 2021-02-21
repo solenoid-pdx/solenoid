@@ -217,12 +217,12 @@ const addAwgSelectOptions = () =>{
 
 const graphRange = x_value => {
   let ranges = [
-    {'name' : 'Voltage', 'min': '0', 'max': '100', 'dMin': '1', 'dMax': '30', 'step': '1',},
-    {'name' : 'Length', 'min': '0', 'max': '100', 'dMin': '10', 'dMax': '30', 'step':'1',},
-    {'name' : 'r0', 'min': '0', 'max': '100.0', 'dMin': '2.0', 'dMax': '5.0', 'step': '0.1',},
-    {'name' : 'ra', 'min': '0', 'max': '100.0', 'dMin': '3.0', 'dMax': '5.0', 'step': '0.1',},
-    {'name' : 'x', 'min': '0', 'max': '100', 'dMin': '0', 'dMax': '10', 'step': '1',},
-    {'name' : 'Force', 'min': '0', 'max': '100', 'dMin': '5', 'dMax': '20', 'step': '1',},
+    {'name' : 'Voltage', 'min': '0', 'max': '99', 'dMin': '1', 'dMax': '30', 'step': '1',},
+    {'name' : 'Length', 'min': '0', 'max': '99', 'dMin': '10', 'dMax': '30', 'step':'1',},
+    {'name' : 'r0', 'min': '0', 'max': '99', 'dMin': '2', 'dMax': '25', 'step': '0.1',},
+    {'name' : 'ra', 'min': '0', 'max': '99', 'dMin': '3', 'dMax': '5', 'step': '0.1',},
+    {'name' : 'x', 'min': '0', 'max': '99', 'dMin': '0', 'dMax': '10', 'step': '1',},
+    {'name' : 'Force', 'min': '0', 'max': '99', 'dMin': '5', 'dMax': '20', 'step': '1',},
     {'name' : 'AWG', 'min': '0', 'max': '40', 'dMin': '26', 'dMax': '40', 'step': '1',},
     {'name' : 'relative_permeability', 'min': '0', 'max': '200000', 'dMin':'100', 'dMax': '10000', 'step': '100'},
   ]
