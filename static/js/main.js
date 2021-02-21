@@ -181,6 +181,7 @@ const populateDefaults = () => {
   $(`#option-y-${previousX}`).hide();
   previousY = $('#y-values-input')[0].value;
   $(`#option-x-${previousY}`).hide();
+  $('#x-value-range-label')[0].textContent = 'Voltage range';
   graphRange(0);
 }
 
@@ -246,11 +247,16 @@ const findStep = x_value => {
     return .1;
   }
   if(x_value === 7 ){
-    return 10;
+    return 100;
   }
   return 1;
 }
-
+const chartDownload = () => {
+  let a = document.createElement('a');
+  a.href = newChart.toBase64Image();
+  a.download = 'chart.png';
+  a.click()
+}
 const dropDownPermeability = () =>{
     let items = [
         { 'name': 'carbon steel', 'value': '100' },

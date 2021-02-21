@@ -1,5 +1,6 @@
 let $voltageChart = $("#voltage-Chart");
 let compute = 'force' //Change later :) 
+var newChart;
 
 const chartHandler = () => {
   let values = inputHandler();
@@ -48,11 +49,12 @@ const chartHandler = () => {
           },
           success: function (data) {
             document.getElementById('graph-container').style = 'width: 100%; display: block;';
+            $('#chart-download-button').show()
             var ctx = $voltageChart[0].getContext("2d");
             if(window.line != undefined){
               window.line.destroy()
             }
-            var newChart = window.line = new Chart(ctx, {
+            newChart = window.line = new Chart(ctx, {
              type: 'line',
               data: {
                 labels: data.labels,

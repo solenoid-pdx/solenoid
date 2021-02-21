@@ -198,9 +198,18 @@
           class="btn btn-outline-primary"
           style="margin-bottom: 0%"
           type="button"
-          onclick="chartHandler()"
-        >
+          onclick="chartHandler()">
           Graph
+        </button>
+
+        <button
+          class="btn btn-outline-primary"
+          style="display: none ;margin-bottom: 0%; float: right"
+          id="chart-download-button"
+          type="button"
+          onclick="chartDownload()"
+        >
+          Download
         </button>
       </div>
       <div id="graph-container" style="width: 100%; display: none">
