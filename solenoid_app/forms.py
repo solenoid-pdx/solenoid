@@ -20,3 +20,6 @@ class DataSetForm(forms.Form):
 
 class GraphForm(DataSetForm):
     xGraph = forms.CharField()
+    xStart = forms.FloatField()
+    xEnd = forms.FloatField()
+    xStep = forms.FloatField()
