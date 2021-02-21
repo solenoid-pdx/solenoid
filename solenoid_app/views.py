@@ -163,7 +163,7 @@ def voltageChart(request):
                     graph.append(round(v, sig_figs))
 
             elif data['xGraph'] == 'length':
-                x = 'Length (mm)'
+                x = 'Length'
                 for k, v in solenoid_range(data['voltage'], data['length'], data['r0'], data['ra'], data['awg'],
                                            data['x'], data['force'], data['relative_permeability'], output_unit, data['xGraph'], idv_unit, data['xStart'], data['xEnd'],
                                            data['xStep']):
@@ -187,8 +187,12 @@ def voltageChart(request):
                     graph.append(v)
 
             elif data['xGraph'] == 'x':
+                print(data['xStart'])
                 x = 'x'
-                length = data['length'].magnitude + 1.0
+                if data['length'] is None:
+                    length = 10.0
+                else: 
+                    length = data['length'].magnitude + 1.0 
                 for k, v in solenoid_range(data['voltage'], data['length'], data['r0'], data['ra'], data['awg'],
                                            data['x'], data['force'], data['relative_permeability'], output_unit, data['xGraph'], idv_unit, data['xStart'], length,
                                            data['xStep']):
