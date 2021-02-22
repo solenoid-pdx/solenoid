@@ -203,7 +203,7 @@ const createInputs = () => {
       }
     }
   });
-  $(function () {
+  $(() => {
     $('[data-toggle="tooltip"]').tooltip();
   });
   return inputs;
