@@ -294,7 +294,7 @@ const formatR = (unit) => {
 
 const updateQueryString = (inputs) => {
   const newUrl = new URL(window.location);
-  inputs.forEach((input) => {
+  inputs.forEach( input => {
     newUrl.searchParams.delete(input.name);
     newUrl.searchParams.set(input.name, input.value);
     if (input.unit) {

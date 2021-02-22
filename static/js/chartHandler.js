@@ -26,7 +26,7 @@ const chartHandler = () => {
     return;
   }
 
-  const queryStringInputs = [
+  const graphInputs = [
     {'name': 'x_graph', 'value': xGraph},
     {'name': 'y_graph', 'value': yGraph},
     {'name': 'x_start', 'value': xStart},
@@ -34,7 +34,8 @@ const chartHandler = () => {
     {'name': 'step', 'value': xStep}
   ]
   
-  updateQueryString(queryStringInputs)
+  updateQueryString(values.inputs)
+  updateQueryString(graphInputs)
 
   $.ajax({
           type: 'POST',
