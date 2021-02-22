@@ -38,56 +38,64 @@ const createInputs = () => {
     {
       name: SolenoidParameters.VOLTAGE,
       symbol: 'V',
-      value: urlParams.get(SolenoidParameters.VOLTAGE) || '',
+      value: urlParams.get('voltage') || '',
       unit: 'volts',
+      description: 'Voltage Applied',
       html: '',
     },
     {
       name: SolenoidParameters.LENGTH,
       symbol: 'L',
-      value: urlParams.get(SolenoidParameters.LENGTH) || '',
+      value: urlParams.get('length') || '',
       unit: 'mm',
+      description: 'Coil Length',
       html: '',
     },
     {
       name: SolenoidParameters.R0,
       symbol: 'r sub not',
-      value: urlParams.get(SolenoidParameters.R0) || '',
+      value: urlParams.get('r0') || '',
       unit: 'mm',
+      description: 'Inner Coil Radius',
       html: '',
     },
     {
       name: SolenoidParameters.RA,
       symbol: 'r sub a',
-      value: urlParams.get(SolenoidParameters.RA) || '',
+      value: urlParams.get('ra') || '',
       unit: 'mm',
+      description: 'Outer Coil Radius',
       html: '',
     },
     {
       name: SolenoidParameters.X,
       symbol: 'x',
-      value: urlParams.get(SolenoidParameters.X) || '',
+      value: urlParams.get('x') || '',
       unit: 'mm',
+      description: 'Stroke Position (0 = Stroke Start)',
       html: '',
     },
     {
       name: SolenoidParameters.FORCE,
       symbol: 'F',
-      value: urlParams.get(SolenoidParameters.FORCE) || '',
+      value: urlParams.get('force') || '',
       unit: 'N',
+      description: 'Force Generated',
       html: '',
     },
     {
       name: SolenoidParameters.AWG,
       symbol: 'AWG',
-      value: urlParams.get(SolenoidParameters.AWG) || '',
+      value: urlParams.get('awg') || '',
       unit: 'gauge',
+      description: 'Gauge of Coil Wire',
       html: '',
     },
     {
       name: SolenoidParameters.PERMEABILITY,
-      symbol: 'PERMEABILITY',
+      symbol: 'μ',
       value: urlParams.get(SolenoidParameters.PERMEABILITY) || '',
+      description: 'Permeability of the Core',
       unit: '',
       html: '',
     },
@@ -97,7 +105,11 @@ const createInputs = () => {
       element.html = `
             <div id="input-${element.name}" class="input-group mb-3">
             <div class="input-group-prepend">
-              <span class="input-group-text">${formatR(element.symbol)}</span>
+              <span class="input-group-text"
+                data-toggle="tooltip"
+                data-placement="left"
+                title="${element.description}"
+              >${formatR(element.symbol)}</span>
             </div>   
             <input id = "input-text-awg"
                    class = "form-control"
@@ -116,7 +128,11 @@ const createInputs = () => {
       element.html = `
             <div id="input-${element.name}" class="input-group mb-3">
             <div class="input-group-prepend">
-              <span class="input-group-text">${formatR(element.symbol)}</span>
+              <span class="input-group-text"
+                data-toggle="tooltip"
+                data-placement="left"
+                title="${element.description}"
+              >${formatR(element.symbol)}</span>
             </div>   
             <input 
                     id = "input-text-relative_permeability"
@@ -136,7 +152,11 @@ const createInputs = () => {
       element.html = `
         <div id="input-${element.name}" class="input-group mb-3">
         <div class="input-group-prepend">
-          <span class="input-group-text">${formatR(element.symbol)}</span>
+          <span class="input-group-text"
+                data-toggle="tooltip"
+                data-placement="left"
+                title="${element.description}"
+          >${formatR(element.symbol)}</span>
         </div>
         <input type="text"
                id="input-text-${element.name}"
@@ -182,6 +202,9 @@ const createInputs = () => {
         `;
       }
     }
+  });
+  $(function () {
+    $('[data-toggle="tooltip"]').tooltip();
   });
   return inputs;
 };

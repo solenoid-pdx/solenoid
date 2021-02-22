@@ -1,0 +1,62 @@
+<div
+  id="link-equation-flex-container"
+  class="container d-flex p-2 bd-highlight justify-content-between"
+  style="margin-top: 5%; margin-bottom: 2%"
+>
+  <div
+    id="link-instructions-container"
+    class="d-flex p-2 bd-highlight flex-column"
+    style="width: 25%"
+  >
+    <div style="display: block; overflow: hidden">
+      <h5>Helpful Diagrams</h5>
+      <div
+        style="display: inline-block; width: 75%"
+        data-toggle="tooltip"
+        data-placement="right"
+        title="Armature coordinate system"
+      >
+        {% load static %}
+        <img
+          src="{% static 'img/solenoid_l_x.png' %}"
+          class="img-fluid"
+          alt="Figure 4. Armature coordinate system"
+        />
+      </div>
+      <div
+        style="display: inline-block; width: 75%"
+        data-toggle="tooltip"
+        data-placement="right"
+        title="Coil radius vs. average turn radius"
+      >
+        {% load static %}
+        <img
+          src="{% static 'img/solenoid_ra_ro.png' %}"
+          class="img-fluid"
+          alt="Figure 5. Coil radius vs. average turn radius"
+        />
+      </div>
+    </div>
+  </div>
+  <div
+    id="equation-container"
+    class="d-flex align-items-center flex-column"
+    style="width: 35%; text-align: center"
+  >
+    <h5 style="margin-bottom: 5%">Equation Applied</h5>
+    {% load static %}
+    <img
+      src="{% static 'img/equation_22.png' %}"
+      class="img-fluid"
+      alt="Calculation applied by application"
+    />
+    <a
+      href="https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.428.9647&rep=rep1&type=pdf"
+      style="margin-top: 5%"
+      target="_blank"
+    >
+      Additional Info and Proof
+    </a>
+  </div>
+  </div>
+</div>

@@ -1,0 +1,67 @@
+<div id="graph-select" style="margin-bottom: 5">
+  <p>
+    <label id="x-value-range-label" for="x-value-range">X-Value range:</label>
+    <input
+      type="text"
+      id="x-value-range"
+      readonly
+      style="border: 0; color: #1f23f6; font-weight: bold"
+    />
+  </p>
+  <div
+    id="slider-range"
+    style="width: 35%; margin-bottom: 5%; margin-top: 2%"
+  ></div>
+  <select
+    name="x-values-input"
+    id="x-values-input"
+    class="custom-select"
+    style="width: 15%"
+  >
+    <option id="x_active" value="" disabled selected>Select X Value</option>
+  </select>
+  <select
+    name="y-values-input"
+    id="y-values-input"
+    class="custom-select"
+    style="width: 15%"
+  >
+    <option id="y_active" value="" disabled selected>Select Y Value</option>
+  </select>
+  <!-- <label for="step-input">Step between 0.001 and 50</label> -->
+  <div class="input-group-prepend">
+    <span class="input-group-text">Step</span>
+    <input
+      type="number"
+      id="step-input"
+      name="step-input"
+      min="0.001"
+      max="1000"
+      step="any"
+      placeholder="0.001"
+    />
+  </div>
+
+  <button
+    class="btn btn-outline-primary"
+    style="margin-bottom: 0%"
+    type="button"
+    onclick="chartHandler()"
+  >
+    Graph
+  </button>
+
+  <button
+    class="btn btn-outline-primary"
+    style="display: none; margin-bottom: 0%; float: right"
+    id="chart-download-button"
+    type="button"
+    onclick="chartDownload()"
+  >
+    Download
+  </button>
+</div>
+<div id="graph-container" style="width: 100%; display: none">
+  <h3>Graph</h3>
+  <div>{% include 'voltageChart.html' %}</div>
+</div>
