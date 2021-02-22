@@ -6,6 +6,7 @@
 from selenium import webdriver
 from django.test import LiveServerTestCase, tag
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.select import Select
 from selenium_tests.selenium_test_base import SeleniumTestBase
 
 
@@ -35,13 +36,29 @@ class TestUI(SeleniumTestBase):
         """ Test that query string is updated after performing calculation """
 
         testValue = "6"
-        formParameters = ["voltage", "length", "r0", "ra", "x", "awg", "relative_permeability"]
-        for formParameter in formParameters:
-            self.driver.find_element_by_id('input-text-' + formParameter).send_keys(testValue)
-        self.driver.find_element_by_xpath('//*[@id="input-submit-form"]/input[2]').click()
         queryString = "?"
-        for queryParameter in formParameters:
-            queryString += queryParameter + "=" + testValue + "&"
+        data = [
+            {'name': 'voltage', 'value': testValue},
+            {'name': 'length', 'value': testValue, 'unit': 'mm'},
+            {'name': 'r0', 'value': testValue, 'unit': 'mm'},
+            {'name': 'ra', 'value': testValue, 'unit': 'mm'},
+            {'name': 'x', 'value': testValue, 'unit': 'mm'},
+            {'name': 'force', 'value': '', 'unit': 'N'},
+            {'name': 'awg', 'value': testValue},
+            {'name': 'relative_permeability', 'value': testValue}
+        ]
+
+        for d in data:
+            name = d.get('name')
+            value = d.get('value')
+            unit = d.get('unit')
+            self.driver.find_element_by_id('input-text-' + name).send_keys(value)
+            queryString += name + "=" + (value if name != 'force' else '0') + "&"
+            if unit:
+                self.driver.find_element_by_id('input-unit-' + name).send_keys(unit)
+                queryString += name + "_unit=" + unit + "&"
+        self.driver.find_element_by_xpath('//*[@id="input-submit-form"]/input[2]').click()
+        
         queryString = queryString[:-1]
         self.assertEqual(self.driver.current_url, URL + queryString)
     
@@ -54,3 +71,21 @@ class TestUI(SeleniumTestBase):
             self.driver.find_element_by_id('input-text-' + formParameter).send_keys(testValue)
         self.driver.find_element_by_xpath('//*[@id="input-submit-form"]/input[2]').click()
         self.assertEqual(self.driver.current_url, URL)
+
+    def test_query_string_sets_graph_values(self):
+        """ Test queery string correctly sets all graphing fields """
+
+        x_value = "Voltage"
+        y_value = "Force"
+        step = '2'
+        x_start = '2'
+        x_end = '30'
+        newUrl = URL + '?x_graph=' + x_value.lower() + '&y_graph=' + y_value.lower() + "&step=" + step + "&x_start=" + x_start + '&x_end=' + x_end
+
+        self.driver.get(newUrl)
+        x_input = Select(self.driver.find_element_by_id('x-values-input'))
+        y_input = Select(self.driver.find_element_by_id('y-values-input'))
+        self.assertEqual(x_input.first_selected_option.text, x_value)
+        self.assertEqual(y_input.first_selected_option.text, y_value)
+        self.assertEqual(self.driver.find_element_by_id('step-input').get_attribute('value'), step)
+        self.assertEqual(self.driver.find_element_by_id('x-value-range').get_attribute('value'), x_start + ' - ' + x_end)
