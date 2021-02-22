@@ -25,6 +25,17 @@ const chartHandler = () => {
     flashHandler(`UNABLE TO GRAPH X VS LENGTH, PLEASE CHOOSE OTHER VALUES `, 'x-vs-length-input-flash-err');
     return;
   }
+
+  const queryStringInputs = [
+    {'name': 'x_graph', 'value': xGraph},
+    {'name': 'y_graph', 'value': yGraph},
+    {'name': 'x_start', 'value': xStart},
+    {'name': 'x_end', 'value': xEnd},
+    {'name': 'step', 'value': xStep}
+  ]
+  
+  updateQueryString(queryStringInputs)
+
   $.ajax({
           type: 'POST',
           url: 'voltageChart',

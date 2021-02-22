@@ -47,7 +47,7 @@ const createInputs = () => {
       name: SolenoidParameters.LENGTH,
       symbol: 'L',
       value: urlParams.get('length') || '',
-      unit: 'mm',
+      unit: urlParams.get(`${SolenoidParameters.LENGTH}_unit`) || 'mm',
       description: 'Coil Length',
       html: '',
     },
@@ -55,7 +55,7 @@ const createInputs = () => {
       name: SolenoidParameters.R0,
       symbol: 'r sub not',
       value: urlParams.get('r0') || '',
-      unit: 'mm',
+      unit: urlParams.get(`${SolenoidParameters.R0}_unit`) || 'mm',
       description: 'Inner Coil Radius',
       html: '',
     },
@@ -63,7 +63,7 @@ const createInputs = () => {
       name: SolenoidParameters.RA,
       symbol: 'r sub a',
       value: urlParams.get('ra') || '',
-      unit: 'mm',
+      unit: urlParams.get(`${SolenoidParameters.RA}_unit`) || 'mm',
       description: 'Outer Coil Radius',
       html: '',
     },
@@ -71,7 +71,7 @@ const createInputs = () => {
       name: SolenoidParameters.X,
       symbol: 'x',
       value: urlParams.get('x') || '',
-      unit: 'mm',
+      unit: urlParams.get(`${SolenoidParameters.X}_unit`) || 'mm',
       description: 'Stroke Position (0 = Stroke Start)',
       html: '',
     },
@@ -79,7 +79,7 @@ const createInputs = () => {
       name: SolenoidParameters.FORCE,
       symbol: 'F',
       value: urlParams.get('force') || '',
-      unit: 'N',
+      unit: urlParams.get(`${SolenoidParameters.FORCE}_unit`) || 'N',
       description: 'Force Generated',
       html: '',
     },
@@ -182,11 +182,11 @@ const createInputs = () => {
         element.html += `
                 <div class="input-group-append">
                   <select id="input-unit-${element.name}" class="input-group-text">
-                    <option selected>mm</option>
-                    <option>cm</option>
-                    <option>m</option>
-                    <option>inch</option>
-                    <option>feet</option>
+                    <option ${element.unit === 'mm' ? 'selected' : ''}>mm</option>
+                    <option ${element.unit === 'cm' ? 'selected' : ''}>cm</option>
+                    <option ${element.unit === 'm' ? 'selected' : ''}>m</option>
+                    <option ${element.unit === 'inch' ? 'selected' : ''}>inch</option>
+                    <option ${element.unit === 'feet' ? 'selected' : ''}>feet</option>
                   </select>
                 </div>
         `;
@@ -195,8 +195,8 @@ const createInputs = () => {
         element.html += `
                <div class="input-group-append">
                  <select id="input-unit-${element.name}" class="input-group-text">
-                   <option selected>N</option>
-                   <option>lbf</option>
+                   <option ${element.unit === 'N' ? 'selected' : ''}>N</option>
+                   <option ${element.unit === 'lbf' ? 'selected' : ''}>lbf</option>
                  </select>
                </div>
         `;
@@ -210,6 +210,7 @@ const createInputs = () => {
 };
 
 const createDropDown = () => {
+  const urlParams = new URLSearchParams(window.location.search);
   let select_X = document.getElementById('x-values-input');
   let select_Y = document.getElementById('y-values-input');
   let inputs = [
@@ -231,6 +232,13 @@ const createDropDown = () => {
     option.value = `${element}`;
     option.id = `option-x-${element}`;
     select_X.add(option);
+    if (urlParams.get('x_graph') === element.toLowerCase()) {
+      select_X.value = element
+      previousX = $('#x-values-input')[0].value;
+      $(`#option-y-${previousX}`).hide();
+      $('#x-value-range-label')[0].textContent = `${element} range`;
+      graphRange($('select[name=x-values-input')[0].selectedIndex - 1);
+    }
     if (element !== 'AWG') {
       let option1 = document.createElement('option');
       option1.text = `${element}`;
@@ -240,8 +248,18 @@ const createDropDown = () => {
       option1.value = `${element}`;
       option1.id = `option-y-${element}`;
       select_Y.add(option1);
+      if (urlParams.get('y_graph') === element.toLowerCase()) {
+        select_Y.value = element
+        previousY = $('#y-values-input')[0].value;
+        $(`#option-x-${previousY}`).hide();
+      }
     }
   });
+
+  const stepInput = urlParams.get('step')
+  if (stepInput) {
+    document.getElementById('step-input').value = stepInput
+  }
 };
 
 const populateDefaults = () => {
@@ -274,14 +292,14 @@ const formatR = (unit) => {
   return unit;
 };
 
-const updateQueryString = (formInputs) => {
+const updateQueryString = (inputs) => {
   const newUrl = new URL(window.location);
-  newUrl.searchParams.forEach((value, key) => {
-    newUrl.searchParams.delete(key);
-  });
-  formInputs.forEach((variable) => {
-    if (variable.value) {
-      newUrl.searchParams.set(variable.name, variable.value);
+  inputs.forEach((input) => {
+    newUrl.searchParams.delete(input.name);
+    newUrl.searchParams.set(input.name, input.value);
+    if (input.unit) {
+      newUrl.searchParams.delete(`${input.name}_unit`);
+      newUrl.searchParams.set(`${input.name}_unit`, input.unit);
     }
   });
   window.history.pushState({}, document.title, newUrl);
@@ -322,12 +340,16 @@ const graphRange = (x_value) => {
   if (x_value === 4) {
     ranges[4].max = $('#input-text-length')[0].value;
   }
+  const urlParams = new URLSearchParams(window.location.search);
   $('#slider-range').slider({
     range: true,
     min: ranges[x_value].min,
     max: ranges[x_value].max,
-    step: findStep(x_value),
-    values: [ranges[x_value].dMin, ranges[x_value].dMax],
+    step: urlParams.get('step') ? parseFloat(urlParams.get('step')) : findStep(x_value),
+    values: [
+      urlParams.get('x_start') ? parseFloat(urlParams.get('x_start')) : ranges[x_value].dMin,
+      urlParams.get('x_end') ? parseFloat(urlParams.get('x_end')) : ranges[x_value].dMax
+    ],
     slide: function (event, ui) {
       //Maybe add a symbol to the range values so that it can say 7N, or 8 Volts - 20 Volts
       if (event.originalEvent) {
