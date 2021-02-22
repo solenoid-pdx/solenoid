@@ -1,0 +1,25 @@
+<div id="storage-manage-container" style="margin-top: 5%">
+  <button
+    id="saving-data"
+    class="btn btn-light"
+    data-toggle="tooltip"
+    data-placement="bottom"
+    title="Export to Json Object"
+    onclick="savingData()"
+  >
+    <i class="fa fa-file"></i>
+  </button>
+
+  <button
+    id="copy-link"
+    class="btn btn-light"
+    data-toggle="tooltip"
+    data-placement="bottom"
+    title="Copy current Link"
+    onclick="copyLink()"
+  >
+    <i class="fa fa-link"></i>
+  </button>
+
+  <input id="upload-data" type="file" accept=".json" onchange="upload(this)" />
+</div>

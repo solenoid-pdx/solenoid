@@ -64,7 +64,3 @@ const copyTextToClipboard = (text) => {
 const copyLink = () => {
   copyTextToClipboard(location.href);
 };
-
-$(function () {
-  $('[data-toggle="tooltip"]').tooltip();
-});

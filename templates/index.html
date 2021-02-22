@@ -13,6 +13,10 @@
       crossorigin="anonymous"
     />
     <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link
       rel="shortcut icon"
       type="image/png"
       href="{% static 'img/favicon.ico' %}"
@@ -23,10 +27,12 @@
       integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
       crossorigin="anonymous"
     ></script>
-  
-      <link href = "https://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css"
-         rel = "stylesheet">
-      <script src = "https://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+
+    <link
+      href="https://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
 
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
@@ -51,61 +57,8 @@
         Solenoid Force Calculator
       </h2>
     </div>
+    {% include 'diagrams.html' %}
 
-    <div
-      id="link-equation-flex-container"
-      class="container d-flex p-2 bd-highlight justify-content-between"
-      style="margin-top: 5%; margin-bottom: 2%"
-    >
-      <div
-        id="link-instructions-container"
-        class="d-flex p-2 bd-highlight flex-column"
-        style="width: 50%"
-      >
-        <h5>Usage Instructions</h5>
-        <div id="instructions-container">
-          <ol>
-            <li>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt
-            </li>
-            <li>
-              ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-              nostrud exercitation ullamco
-            </li>
-            <li>
-              laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure
-              dolor in reprehenderit in voluptate
-            </li>
-            <li>
-              velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
-              occaecat cupidatat non proident, sunt in
-            </li>
-            <li>culpa qui officia deserunt mollit anim id est laborum.</li>
-          </ol>
-        </div>
-      </div>
-      <div
-        id="equation-container"
-        class="d-flex align-items-center flex-column"
-        style="width: 35%; text-align: center"
-      >
-        <h5 style="margin-bottom: 5%">Equation Applied</h5>
-        {% load static %}
-        <img
-          src="{% static 'img/equation_22.png' %}"
-          class="img-fluid"
-          alt="Calculation applied by application"
-        />
-        <a
-          href="https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.428.9647&rep=rep1&type=pdf"
-          style="margin-top: 5%"
-          target="_blank"
-        >
-          Additional Info and Proof
-        </a>
-      </div>
-    </div>
     <div
       id="calc-graph-container"
       class="container d-flex justify-content-between border-bottom flex-column"
@@ -131,30 +84,7 @@
         </form>
         <!--end data set form-->
 
-        <div id="storage-manage-container"
-                 style="margin-top: 5%"
-            >
-                 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-                 <button id = "saving-data"
-                         class="btn btn-light"
-                         data-toggle="tooltip" data-placement="bottom" title="Export to Json Object"
-                         onclick="savingData()">
-                     <i class="fa fa-file"></i></button>
-
-                 <button id = "copy-link"
-                         class="btn btn-light"
-                         data-toggle="tooltip" data-placement="bottom" title="Copy current Link"
-                         onclick="copyLink()">
-                     <i class="fa fa-link"></i></button>
-
-                 <input id = "upload-data"
-                        type="file" accept=".json"
-                        onchange="upload(this)" />
-            </div>
-
-
-
-
+        {% include 'storage.html' %}
 
         <div
           id="flash-container"
@@ -162,86 +92,34 @@
           style="width: 100%; margin-top: 2%"
         ></div>
       </div>
-      <div id="graph-select" style="margin-bottom: 5">
-        <p>
-            <label id="x-value-range-label" for="x-value-range">X-Value range:</label>
-            <input type="text" id="x-value-range" readonly style="border:0; color:#1f23f6; font-weight:bold;">
-        </p>
-        <div id="slider-range" style="width: 35%; margin-bottom: 5%; margin-top: 2%"></div> 
-        <select
-          name="x-values-input"
-          id="x-values-input"
-          class="custom-select"
-          style="width: 15%"
-        >
-          <option id="x_active" value="" disabled selected>
-            Select X Value
-          </option>
-        </select>
-        <select
-          name="y-values-input"
-          id="y-values-input"
-          class="custom-select"
-          style="width: 15%"
-        >
-          <option id="y_active" value="" disabled selected>
-            Select Y Value
-          </option>
-        </select>
-        <!-- <label for="step-input">Step between 0.001 and 50</label> -->
-        <div class="input-group-prepend">
-          <span class="input-group-text">Step</span>
-          <input type='number' id='step-input' name='step-input' min='0.001' max='1000' step="any" placeholder="0.001">
-        </div>  
-
-        <button
-          class="btn btn-outline-primary"
-          style="margin-bottom: 0%"
-          type="button"
-          onclick="chartHandler()">
-          Graph
-        </button>
-
-        <button
-          class="btn btn-outline-primary"
-          style="display: none ;margin-bottom: 0%; float: right"
-          id="chart-download-button"
-          type="button"
-          onclick="chartDownload()"
-        >
-          Download
-        </button>
-      </div>
-      <div id="graph-container" style="width: 100%; display: none">
-        <h3>Graph</h3>
-        <div>{% include 'voltageChart.html' %}</div>
-      </div>
+      <div id="charts-container">{% include 'charts.html' %}</div>
     </div>
-    <div id="awg-container" class="container" style="text-align: center">
-      <div id="awg-header" style="margin-bottom: 6%">
-        <div
-          id="awg-toggle"
-          data-target="#awg-toggle-container"
-          data-toggle="collapse"
-          class="btn btn-outline-primary"
-        >
-          <h2>Wire Guage Size Chart</h2>
-        </div>
-      </div>
-      <div id="awg-toggle-container" class="collapse" style="margin-bottom: 5%">
-        <div id="awg-table-container"></div>
-      </div>
-    </div>
+    {%include 'awg.html' %}
   </body>
 
   {% load static %}
   <script src="{% static 'js/table.js' %}" type="text/javascript"></script>
-  <script src="{% static 'js/flashHandler.js' %}" type="text/javascript"></script>
-  <script src="{% static 'js/inputHandler.js' %}" type="text/javascript"></script>
-  <script src="{% static 'js/chartHandler.js' %}" type="text/javascript"></script>
-  <script src="{% static 'js/formHandler.js' %}" type="text/javascript"></script>
+  <script
+    src="{% static 'js/flashHandler.js' %}"
+    type="text/javascript"
+  ></script>
+  <script
+    src="{% static 'js/inputHandler.js' %}"
+    type="text/javascript"
+  ></script>
+  <script
+    src="{% static 'js/chartHandler.js' %}"
+    type="text/javascript"
+  ></script>
+  <script
+    src="{% static 'js/formHandler.js' %}"
+    type="text/javascript"
+  ></script>
   <script src="{% static 'js/main.js' %}" type="text/javascript"></script>
-  <script src="{% static 'js/localStorage.js' %}" type="text/javascript"></script>
+  <script
+    src="{% static 'js/localStorage.js' %}"
+    type="text/javascript"
+  ></script>
   <script>
     $(document).on('submit', '#input-submit-form', (form) => {
       form.preventDefault();
