@@ -333,14 +333,16 @@ const graphRange = (x_value) => {
     },
   ];
 
+  const urlParams = new URLSearchParams(window.location.search);
+  const notLoaded = $('#input-text-ra')[0] === undefined
   if (x_value === 2) {
-    ranges[2].max = $('#input-text-ra')[0].value;
-    ranges[2].dMax = $('#input-text-ra')[0].value;
+      ranges[2].max = notLoaded ? urlParams.get('ra') : $('#input-text-ra')[0].value
+      ranges[2].dMax = notLoaded ? urlParams.get('ra') : $('#input-text-ra')[0].value
   }
   if (x_value === 4) {
-    ranges[4].max = $('#input-text-length')[0].value;
+    ranges[4].max = notLoaded ? urlParams.get('length') : $('#input-text-length')[0].value 
+    ranges[4].dMax = notLoaded ? urlParams.get('length') : $('#input-text-length')[0].value 
   }
-  const urlParams = new URLSearchParams(window.location.search);
   $('#slider-range').slider({
     range: true,
     min: ranges[x_value].min,
