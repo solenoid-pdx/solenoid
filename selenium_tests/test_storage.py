@@ -15,13 +15,14 @@ class TestStorage(SeleniumTestBase):
     def test_if_upload_successfully(self):
         """ Test that upload file that assign correct value to input section """
         inputs = [
-            {'name': 'voltage', 'value': '5'},
-            {'name': 'length', 'value': '5'},
-            {'name': 'r0', 'value': '5'},
-            {'name': 'ra', 'value': '5'},
-            {'name': 'x', 'value': '5'},
-            {'name': 'force', 'value': '5'},
-            {'name': 'awg', 'value': '5'},
+            {'name': 'voltage', 'value': '5', 'unit': ''},
+            {'name': 'length', 'value': '5','unit': 'mm'},
+            {'name': 'r0', 'value': '5', 'unit': 'mm'},
+            {'name': 'ra', 'value': '5', 'unit': 'mm'},
+            {'name': 'x', 'value': '5', 'unit': 'mm'},
+            {'name': 'force', 'value': '5', 'unit': 'N'},
+            {'name': 'awg', 'value': '5', 'unit': ''},
+            {'name': 'relative_permeability', 'value': '5'},
         ]
         path = str(pathlib.Path().absolute()) + '/selenium_tests/'
 
@@ -30,10 +31,16 @@ class TestStorage(SeleniumTestBase):
             json.dump(inputs, outfile)
 
         self.driver.find_element_by_id('upload-data').send_keys(path + filename)
-        variable = ["voltage", "length", "r0", "ra", "x", "force", "awg"]
+        variable = ["voltage", "length", "r0", "ra", "x", "force", "awg","relative_permeability"]
 
         for _ in variable:
             self.assertEqual(self.driver.find_element_by_id("input-text-" + _).get_attribute('value'), '5')
+
+            if _ in ['length', 'r0', 'ra', 'x']:
+                self.assertEqual(self.driver.find_element_by_id("input-unit-" + _).get_attribute('value'), 'mm')
+
+            if _ == 'force':
+                self.assertEqual(self.driver.find_element_by_id("input-unit-force").get_attribute('value'), 'N')
 
         os.remove(path + filename)
 
@@ -62,6 +69,12 @@ class TestStorage(SeleniumTestBase):
             data = json.load(f)
             for item in data:
                 self.assertEqual(item['value'], test_value)
+
+                if item['name'] in ['length', 'r0', 'ra', 'x']:
+                    self.assertEqual(item['unit'], 'mm')
+
+                if item['name'] == 'force':
+                    self.assertEqual(item['unit'], 'N')
 
         os.remove(path + '/parameters.json')
 

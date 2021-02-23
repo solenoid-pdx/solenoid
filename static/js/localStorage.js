@@ -13,20 +13,26 @@ const download = (filename, text) => {
 
 const savingData = () => {
   let inputs = [
-    { name: SolenoidParameters.VOLTAGE, value: '' },
-    { name: SolenoidParameters.LENGTH, value: '' },
-    { name: SolenoidParameters.R0, value: '' },
-    { name: SolenoidParameters.RA, value: '' },
-    { name: SolenoidParameters.X, value: '' },
-    { name: SolenoidParameters.FORCE, value: '' },
-    { name: SolenoidParameters.AWG, value: '' },
+    { name: SolenoidParameters.VOLTAGE, value: '', unit:''},
+    { name: SolenoidParameters.LENGTH, value: '',unit:''},
+    { name: SolenoidParameters.R0, value: '',unit:''},
+    { name: SolenoidParameters.RA, value: '', unit:''},
+    { name: SolenoidParameters.X, value: '', unit:''},
+    { name: SolenoidParameters.FORCE, value: '',unit:''},
+    { name: SolenoidParameters.AWG, value: '',unit:'' },
+    { name: SolenoidParameters.PERMEABILITY, value: '',unit:'' },
   ];
 
   inputs.forEach((input, _index) => {
     let element = document.getElementById(`input-text-${input.name}`);
+    let unit = document.getElementById(`input-unit-${input.name}`);
     if (element.value === '') {
       input.value = 0;
     } else input.value = element.value;
+
+    if(input.name !== SolenoidParameters.VOLTAGE && input.name !== SolenoidParameters.AWG && input.name !== SolenoidParameters.PERMEABILITY) {
+        input.unit = unit.value
+    }
   });
 
   let myJSON = JSON.stringify(inputs);
@@ -44,9 +50,23 @@ const upload = (input) => {
       let text = this.result;
       let obj = JSON.parse(text);
 
+      let url = new URL(window.location);
       obj.forEach((item) => {
-        document.getElementById(`input-text-${item.name}`).value = item.value;
+       if (item.name === SolenoidParameters.LENGTH ||
+        item.name === SolenoidParameters.R0 ||
+        item.name === SolenoidParameters.RA ||
+        item.name === SolenoidParameters.X
+      ) {
+         url.searchParams.delete(`${item.name}_unit`);
+         url.searchParams.set(`${item.name}_unit`, item.unit);
+       }
+        url.searchParams.delete(item.name);
+        url.searchParams.set(item.name, item.value);
+
       });
+
+      window.history.pushState({}, document.title, url);
+      location.reload()
     };
     reader.readAsText(file);
   }
