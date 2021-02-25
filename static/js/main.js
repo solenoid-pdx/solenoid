@@ -352,7 +352,7 @@ const graphRange = (x_value) => {
       urlParams.get('x_start') ? parseFloat(urlParams.get('x_start')) : ranges[x_value].dMin,
       urlParams.get('x_end') ? parseFloat(urlParams.get('x_end')) : ranges[x_value].dMax
     ],
-    slide: function (event, ui) {
+    slide: (event, ui) => {
       //Maybe add a symbol to the range values so that it can say 7N, or 8 Volts - 20 Volts
       if (event.originalEvent) {
         $('#x-value-range').val(ui.values[0] + ' - ' + ui.values[1]);
@@ -408,7 +408,7 @@ const dropDownPermeability = () => {
 };
 
 (() => {
-  $('select[name=x-values-input]').change(function () {
+  $('select[name=x-values-input]').change(() => {
     $(`#option-y-${previousX}`).show();
     previousX = this.value;
     $('#x-value-range-label').text(`${previousX} range:`);
@@ -416,7 +416,7 @@ const dropDownPermeability = () => {
     $(`#option-y-${previousX}`).hide();
   });
 
-  $('select[name=y-values-input]').change(function () {
+  $('select[name=y-values-input]').change(() => {
     $(`#option-x-${previousY}`).show();
     previousY = this.value;
     $(`#option-x-${previousY}`).hide();
