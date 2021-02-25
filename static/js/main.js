@@ -15,13 +15,13 @@ let previousY;
 
 const renderPage = () => {
   mountInputs();
+  createDropDown();
   addAwgSelectOptions();
   dropDownPermeability();
 };
 
 const mountInputs = () => {
   let form = document.getElementById('input-submit-form');
-  createDropDown();
   let inputs = createInputs();
   let submit_button =
     '<input class="btn btn-outline-primary" type="submit" value="Calculate">';
@@ -31,9 +31,8 @@ const mountInputs = () => {
   form.insertAdjacentHTML('beforeend', submit_button);
 };
 
-const createInputs = () => {
+const createInputContextObj = () => {
   const urlParams = new URLSearchParams(window.location.search);
-
   let inputs = [
     {
       name: SolenoidParameters.VOLTAGE,
@@ -87,7 +86,7 @@ const createInputs = () => {
       name: SolenoidParameters.AWG,
       symbol: 'AWG',
       value: urlParams.get('awg') || '',
-      unit: 'gauge',
+      unit: 'ga',
       description: 'Gauge of Coil Wire',
       html: '',
     },
@@ -100,113 +99,104 @@ const createInputs = () => {
       html: '',
     },
   ];
+  return inputs;
+};
+
+const createInputs = () => {
+  let inputs = createInputContextObj();
   inputs.forEach((element) => {
-    if (element.name == SolenoidParameters.AWG) {
-      element.html = `
-            <div id="input-${element.name}" class="input-group mb-3">
-            <div class="input-group-prepend">
-              <span class="input-group-text"
-                data-toggle="tooltip"
-                data-placement="left"
-                title="${element.description}"
-              >${formatR(element.symbol)}</span>
-            </div>   
-            <input id = "input-text-awg"
-                   class = "form-control"
-                   list="dropdown-text-awg"
-                   value="${element.value}" 
-                   placeholder="Enter ${element.symbol}" 
-            >
-              <datalist id="dropdown-text-awg">
-              </datalist>           
-            <div class="input-group-append">
-              <span class="input-group-text">${element.unit}</span>
-              </div>
-            </div> 
-        `;
-    } else if (element.name == SolenoidParameters.PERMEABILITY) {
-      element.html = `
-            <div id="input-${element.name}" class="input-group mb-3">
-            <div class="input-group-prepend">
-              <span class="input-group-text"
-                data-toggle="tooltip"
-                data-placement="left"
-                title="${element.description}"
-              >${formatR(element.symbol)}</span>
-            </div>   
-            <input 
-                    id = "input-text-relative_permeability"
-                   class = "form-control"
-                   list="dropdown-text-relative_permeability"
-                   value="${element.value}" 
-                   placeholder="Enter ${element.symbol}" 
-            >
-              <datalist id="dropdown-text-relative_permeability">
-              </datalist>           
-            <div class="input-group-append">
-              <span class="input-group-text">${element.unit}</span>
-              </div>
-            </div> 
-        `;
-    } else {
       element.html = `
         <div id="input-${element.name}" class="input-group mb-3">
-        <div class="input-group-prepend">
-          <span class="input-group-text"
-                data-toggle="tooltip"
-                data-placement="left"
-                title="${element.description}"
-          >${formatR(element.symbol)}</span>
+          <div class="input-group-prepend">
+            <span class="input-group-text"
+              data-toggle="tooltip"
+              data-placement="left"
+              title="${element.description}"
+            >${formatR(element.symbol)}</span>
+          </div>   
+          ${formatInputs(element)} 
         </div>
-        <input type="text"
-               id="input-text-${element.name}"
-               class="form-control"
-               aria-label="Text input with radio button"
-               placeholder="Enter ${element.symbol}"
-               value="${element.value}"
-        >
       `;
-      if (element.name === SolenoidParameters.VOLTAGE) {
-        element.html += `           
-                <div class="input-group-append">
-                  <span class="input-group-text">volts</span>
-                </div> 
-        `;
-      }
-      if (
-        element.name === SolenoidParameters.LENGTH ||
-        element.name === SolenoidParameters.R0 ||
-        element.name === SolenoidParameters.RA ||
-        element.name === SolenoidParameters.X
-      ) {
-        element.html += `
-                <div class="input-group-append">
-                  <select id="input-unit-${element.name}" class="input-group-text">
-                    <option ${element.unit === 'mm' ? 'selected' : ''}>mm</option>
-                    <option ${element.unit === 'cm' ? 'selected' : ''}>cm</option>
-                    <option ${element.unit === 'm' ? 'selected' : ''}>m</option>
-                    <option ${element.unit === 'inch' ? 'selected' : ''}>inch</option>
-                    <option ${element.unit === 'feet' ? 'selected' : ''}>feet</option>
-                  </select>
-                </div>
-        `;
-      }
-      if (element.name === SolenoidParameters.FORCE) {
-        element.html += `
-               <div class="input-group-append">
-                 <select id="input-unit-${element.name}" class="input-group-text">
-                   <option ${element.unit === 'N' ? 'selected' : ''}>N</option>
-                   <option ${element.unit === 'lbf' ? 'selected' : ''}>lbf</option>
-                 </select>
-               </div>
-        `;
-      }
-    }
   });
+
   $(() => {
     $('[data-toggle="tooltip"]').tooltip();
   });
   return inputs;
+};
+
+const formatInputs = (element) => {
+  let name = element.name;
+
+  let default_input = `
+    <input type="text"
+      id="input-text-${element.name}"
+      class="form-control"
+      placeholder="Enter ${element.symbol}"
+      value="${element.value}"
+    >
+    ${formatVariableUnits(element)}
+  `;
+
+  let datalist_input = `
+    <input id = "input-text-${element.name}"
+      class = "form-control"
+      list="dropdown-text-${element.name}"
+      value="${element.value}" 
+      placeholder="Enter ${element.symbol}" 
+    >
+    <datalist id="dropdown-text-${element.name}">
+    </datalist>           
+  `
+  if (name === SolenoidParameters.AWG) {
+    datalist_input += `
+      <div class="input-group-append">
+        <span class="input-group-text">${element.unit}</span>
+      </div>
+    `;
+  }
+  return (name === SolenoidParameters.AWG || name === SolenoidParameters.PERMEABILITY) ? datalist_input : default_input;
+};
+
+const formatVariableUnits = (element) => {
+  if (element.name === SolenoidParameters.VOLTAGE) {
+     let voltage_units = `           
+            <div class="input-group-append">
+              <span class="input-group-text">volts</span>
+            </div> 
+    `;
+    return voltage_units;
+  }
+  if (
+    element.name === SolenoidParameters.LENGTH ||
+    element.name === SolenoidParameters.R0 ||
+    element.name === SolenoidParameters.RA ||
+    element.name === SolenoidParameters.X
+  ) {
+    let variable_units = `
+            <div class="input-group-append">
+              <select id="input-unit-${element.name}" class="input-group-text">
+                <option ${element.unit === 'mm' ? 'selected' : ''}>mm</option>
+                <option ${element.unit === 'cm' ? 'selected' : ''}>cm</option>
+                <option ${element.unit === 'm' ? 'selected' : ''}>m</option>
+                <option ${element.unit === 'inch' ? 'selected' : ''}>inch</option>
+                <option ${element.unit === 'feet' ? 'selected' : ''}>feet</option>
+              </select>
+            </div>
+    `;
+    return variable_units;
+  }
+  if (element.name === SolenoidParameters.FORCE) {
+    let force_units = `
+            <div class="input-group-append">
+              <select id="input-unit-${element.name}" class="input-group-text">
+                <option ${element.unit === 'N' ? 'selected' : ''}>N</option>
+                <option ${element.unit === 'lbf' ? 'selected' : ''}>lbf</option>
+              </select>
+            </div>
+    `;
+    return force_units;
+  }
 };
 
 const createDropDown = () => {
@@ -378,12 +368,14 @@ const findStep = (x_value) => {
   }
   return 1;
 };
+
 const chartDownload = () => {
   let a = document.createElement('a');
   a.href = newChart.toBase64Image();
   a.download = 'chart.png';
   a.click();
 };
+
 const dropDownPermeability = () => {
   let items = [
     { name: 'carbon steel', value: '100' },
