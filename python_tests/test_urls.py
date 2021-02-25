@@ -10,7 +10,7 @@ from django.test import SimpleTestCase, Client, tag, RequestFactory
 from django.urls import reverse, resolve
 from ast import literal_eval
 from django.http import QueryDict
-from solenoid_app.views import indexView, voltageChart, formHandle
+from solenoid_app.views import indexView, chartHandle, formHandle
 from solenoid.urls import INDEX_URL_NAME, FORM_HANDLE_URL_NAME, VOLTAGE_CHART_URL_NAME
 
 STATUS_CODE_200 = 200
@@ -67,16 +67,16 @@ class TestUrls(SimpleTestCase):
         response = formHandle(request)
         self.assertEqual(response.status_code, STATUS_CODE_200)
 
-    def test_voltage_chart_route_is_resolved(self):
+    def test_chart_handle_route_is_resolved(self):
         """ Assert that the 'voltageChart/' route resolves """
 
-        url = reverse(VOLTAGE_CHART_URL_NAME)
-        self.assertEqual(resolve(url).func, voltageChart)
+        url = reverse(CHART_HANDLE_URL_NAME)
+        self.assertEqual(resolve(url).func, chartHandle)
     
     def test_voltage_chart_200_status_code(self):
-        """ Assert 200 response code on 'voltageChart' url request """
+        """ Assert 200 response code on 'chartHandle' url request """
 
-        url = reverse(VOLTAGE_CHART_URL_NAME)
+        url = reverse(CHART_HANDLE_URL_NAME)
         data = "[{'voltage': '5', 'length': '27', 'r0': '2.3', 'ra': '4.5', 'x': '0', 'force': '0', 'awg': '30', 'relative_permeability': '350', 'compute': 'force', 'xGraph': 'voltage', 'length_unit': 'mm', 'r0_unit': 'mm', 'ra_unit': 'mm', 'x_unit': 'mm', 'force_unit': 'newton'}]"
         data = literal_eval(data)
         qd = QueryDict(mutable=True)
@@ -85,5 +85,5 @@ class TestUrls(SimpleTestCase):
         
         request = self.factory.post(url)
         request.POST = qd
-        response = voltageChart(request)
+        response = chartHandle(request)
         self.assertEqual(response.status_code, STATUS_CODE_200)

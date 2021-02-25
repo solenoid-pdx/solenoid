@@ -19,7 +19,7 @@ class DataSetForm(forms.Form):
 
 
 class GraphForm(DataSetForm):
-    xGraph = forms.CharField()
-    xStart = forms.FloatField()
-    xEnd = forms.FloatField()
-    xStep = forms.FloatField()
+    x_graph = forms.CharField()
+    x_start = forms.FloatField()
+    x_end = forms.FloatField()
+    x_step = forms.FloatField()

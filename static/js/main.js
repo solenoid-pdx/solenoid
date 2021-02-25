@@ -263,13 +263,9 @@ const createDropDown = () => {
 };
 
 const populateDefaults = () => {
-  document.getElementById(
-    `input-text-${SolenoidParameters.PERMEABILITY}`
-  ).value = '350';
-  document.getElementById(`input-text-${SolenoidParameters.VOLTAGE}`).value =
-    '5';
-  document.getElementById(`input-text-${SolenoidParameters.LENGTH}`).value =
-    '27';
+  document.getElementById(`input-text-${SolenoidParameters.PERMEABILITY}`).value = '350';
+  document.getElementById(`input-text-${SolenoidParameters.VOLTAGE}`).value = '5';
+  document.getElementById(`input-text-${SolenoidParameters.LENGTH}`).value = '27';
   document.getElementById(`input-text-${SolenoidParameters.R0}`).value = '2.3';
   document.getElementById(`input-text-${SolenoidParameters.RA}`).value = '4.5';
   document.getElementById(`input-text-${SolenoidParameters.X}`).value = '0';
@@ -314,76 +310,7 @@ const addAwgSelectOptions = () => {
   }
 };
 
-const graphRange = (x_value) => {
-  let ranges = [
-    { name: 'Voltage', min: '0', max: '99', dMin: '1', dMax: '30', step: '1' },
-    { name: 'Length', min: '0', max: '99', dMin: '10', dMax: '30', step: '1' },
-    { name: 'r0', min: '0', max: '99', dMin: '2', dMax: '25', step: '0.1' },
-    { name: 'ra', min: '0', max: '99', dMin: '3', dMax: '5', step: '0.1' },
-    { name: 'x', min: '0', max: '99', dMin: '0', dMax: '10', step: '1' },
-    { name: 'Force', min: '0', max: '99', dMin: '5', dMax: '20', step: '1' },
-    { name: 'AWG', min: '0', max: '40', dMin: '26', dMax: '40', step: '1' },
-    {
-      name: 'relative_permeability',
-      min: '0',
-      max: '200000',
-      dMin: '100',
-      dMax: '10000',
-      step: '100',
-    },
-  ];
 
-  const urlParams = new URLSearchParams(window.location.search);
-  const notLoaded = $('#input-text-ra')[0] === undefined
-  if (x_value === 2) {
-      ranges[2].max = notLoaded ? urlParams.get('ra') : $('#input-text-ra')[0].value
-      ranges[2].dMax = notLoaded ? urlParams.get('ra') : $('#input-text-ra')[0].value
-  }
-  if (x_value === 4) {
-    ranges[4].max = notLoaded ? urlParams.get('length') : $('#input-text-length')[0].value 
-    ranges[4].dMax = notLoaded ? urlParams.get('length') : $('#input-text-length')[0].value 
-  }
-  $('#slider-range').slider({
-    range: true,
-    min: ranges[x_value].min,
-    max: ranges[x_value].max,
-    step: urlParams.get('step') ? parseFloat(urlParams.get('step')) : findStep(x_value),
-    values: [
-      urlParams.get('x_start') ? parseFloat(urlParams.get('x_start')) : ranges[x_value].dMin,
-      urlParams.get('x_end') ? parseFloat(urlParams.get('x_end')) : ranges[x_value].dMax
-    ],
-    slide: (event, ui) => {
-      //Maybe add a symbol to the range values so that it can say 7N, or 8 Volts - 20 Volts
-      if (event.originalEvent) {
-        $('#x-value-range').val(ui.values[0] + ' - ' + ui.values[1]);
-      }
-    },
-  });
-  $('#x-value-range').val(
-    $('#slider-range').slider('values', 0) +
-      ' - ' +
-      $('#slider-range').slider('values', 1)
-  );
-  let slider_min = $('#slider-range').slider('values', 0);
-  let slider_max = $('#slider-range').slider('values', 1);
-  $('#step-input')[0].max = slider_max - slider_min - 0.01;
-};
-
-const findStep = (x_value) => {
-  if (x_value === 2 || x_value === 3) {
-    return 0.1;
-  }
-  if (x_value === 7) {
-    return 100;
-  }
-  return 1;
-};
-const chartDownload = () => {
-  let a = document.createElement('a');
-  a.href = newChart.toBase64Image();
-  a.download = 'chart.png';
-  a.click();
-};
 const dropDownPermeability = () => {
   let items = [
     { name: 'carbon steel', value: '100' },
