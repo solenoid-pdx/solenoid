@@ -11,7 +11,7 @@ from django.urls import reverse, resolve
 from ast import literal_eval
 from django.http import QueryDict
 from solenoid_app.views import indexView, chartHandle, formHandle
-from solenoid.urls import INDEX_URL_NAME, FORM_HANDLE_URL_NAME, VOLTAGE_CHART_URL_NAME
+from solenoid.urls import INDEX_URL_NAME, FORM_HANDLE_URL_NAME, CHART_HANDLE_URL_NAME
 
 STATUS_CODE_200 = 200
 
