@@ -1,6 +1,6 @@
 // download file, pass in filename and text
 const download = (filename, text) => {
-  let element = document.createElement('a');
+  const element = document.createElement('a');
   element.setAttribute(
     'href',
     'data:text/plain;charset=utf-8,' + encodeURIComponent(text)
@@ -15,7 +15,7 @@ const download = (filename, text) => {
 // create a Json object contains data from user inputs
 const saveParametersToJson = () => {
   // create a Json obj
-  let inputs = [
+  const inputs = [
     { name: SolenoidParameters.VOLTAGE, value: '', unit:''},
     { name: SolenoidParameters.LENGTH, value: '',unit:''},
     { name: SolenoidParameters.R0, value: '',unit:''},
@@ -34,14 +34,14 @@ const saveParametersToJson = () => {
       input.value = 0;
     } else input.value = element.value;
     // check if unit exits
-    if(unit != null) {
+    if(unit !== null) {
         input.unit = unit.value
     }
   });
 
-  let myJSON = JSON.stringify(inputs);
-  let text = myJSON;
-  let filename = 'parameters.json';
+  const myJSON = JSON.stringify(inputs);
+  const text = myJSON;
+  const filename = 'parameters.json';
   // Pass file name & text(Json obj) to download function
   download(filename, text);
 };
@@ -49,9 +49,9 @@ const saveParametersToJson = () => {
 // function allows upload a Json file to input data
 const upload = (input) => {
   if (window.FileReader) {
-    let file = input.files[0];
-    let filename = file.name.split('.')[0];
-    let reader = new FileReader();
+    const file = input.files[0];
+    const filename = file.name.split('.')[0];
+    const reader = new FileReader();
     // get file contents
     reader.onload = function () {
       const text = this.result;
@@ -84,7 +84,7 @@ const upload = (input) => {
 
 // function to copy text to Clipboard, pass in text that to be copied
 const copyTextToClipboard = (text) => {
-  let textArea = document.createElement('textarea');
+  const textArea = document.createElement('textarea');
   textArea.value = text;
   document.body.appendChild(textArea);
   textArea.select();
