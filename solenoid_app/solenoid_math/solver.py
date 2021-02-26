@@ -115,17 +115,19 @@ def solenoid_performance(volts, length, r0, ra, gauge, location, force, relative
 
         else:
             try:
+                """ Solving for length using Scipy's Newton-Halley Method.
+                    Utilizing Sympy for the convenient of symbolic solving """
                 x = symbols('x')
                 func = (((volts ** 2) * PERM_FREE * relative_permeability) / (
                             8 * np.pi * ((AWG_DATA[gauge]["resistance"] / 1000) ** 2) * (x ** 2))) * (
                                (r0 / ra) ** 2) * a * np.e ** (-1 * (a / x) * location) - force
 
-                f = lambdify(x, func, modules=["scipy", "numpy"])
-                funcPrime = func.diff(x)
+                f = lambdify(x, func, modules=["scipy", "numpy"])               # Turn the equation above into lambda function
+                funcPrime = func.diff(x)                                        # First derivative
                 fder = lambdify(x, funcPrime, modules=["scipy", "numpy"])
-                funcPrime2 = funcPrime.diff(x)
+                funcPrime2 = funcPrime.diff(x)                                  # Second derivative
                 fder2 = lambdify(x, funcPrime2, modules=["scipy", "numpy"])
-                result = optimize.newton(f, 0.5, fprime=fder, fprime2=fder2, maxiter=1000)
+                result = optimize.newton(f, 0.5, fprime=fder, fprime2=fder2, maxiter=1000)      # Halley's method with 1000 iterations
             except OverflowError:
                 raise NoSolution
             except RuntimeError:
@@ -165,15 +167,17 @@ def solenoid_performance(volts, length, r0, ra, gauge, location, force, relative
     elif location is None:
         a = np.log(relative_permeability)
         try:
+            """ Solving for location using Scipy's Newton Method.
+                Utilizing Sympy for the convenient of symbolic solving """
             x = symbols('x')
             func = (((volts ** 2) * PERM_FREE * relative_permeability) / (
                         8 * np.pi * ((AWG_DATA[gauge]["resistance"] / 1000) ** 2) * (length ** 2))) * (
                                (r0 / ra) ** 2) * a * np.e ** (-1 * (a / length * x)) - force
 
-            f = lambdify(x, func, modules=["numpy", "scipy"])
-            funcPrime = func.diff(x)
+            f = lambdify(x, func, modules=["numpy", "scipy"])               # Turn the equation above into a lambda function
+            funcPrime = func.diff(x)            
             fder = lambdify(x, funcPrime, modules=["numpy", "scipy"])
-            result = (optimize.newton(f, 0, fprime=fder, maxiter=1000))
+            result = (optimize.newton(f, 0, fprime=fder, maxiter=1000))     # Instead of Halley's method, this uses the basic Newton's method
         except OverflowError:
             raise NoSolution
         except RuntimeError:
@@ -194,17 +198,19 @@ def solenoid_performance(volts, length, r0, ra, gauge, location, force, relative
     
     elif relative_permeability is None:
         try:
+            """ Solving for loc using Scipy's Newton-Halley Method.
+                Utilizing Sympy for the convenient of symbolic solving """
             x = symbols('x')
             func = (((volts**2) * PERM_FREE * (np.e**x)) / (8 * np.pi * ((AWG_DATA[gauge]["resistance"] / 1000)**2) * ((length)**2))) * (
                 ((r0)/(ra))**2) * x * np.e**(-1 * (x / (length)) * (location)) - force
 
             f = lambdify(x, func, modules=['numpy', 'scipy'])
-            funcPrime = func.diff(x)
+            funcPrime = func.diff(x)                                                    # First Derivative
             fder = lambdify(x, funcPrime, modules=['numpy', 'scipy'])
-            funcPrime2 = funcPrime.diff(x)
+            funcPrime2 = funcPrime.diff(x)                                              # Second Derivative
             fder2 = lambdify(x, funcPrime2, modules=['numpy','scipy'])
 
-            root = optimize.newton(f, 1.0, fprime=fder, fprime2=fder2, maxiter=1000)
+            root = optimize.newton(f, 1.0, fprime=fder, fprime2=fder2, maxiter=1000)    # Halley's method 
             result = np.round((np.e**root))
         
         except OverflowError:
@@ -242,7 +248,12 @@ Returns:
     result (list of tuples): A list of tuples containing (x, y) pairs for graphing
 """
 def solenoid_range(volts, length, r0, ra, gauge, location, force, relative_permeability, output_unit,idv, idv_unit, start=0.0, stop=1.0, step=1.0):
-    result = []
+    result = [] 
+
+    """ Note on conversion: Pint perform conversion on object of type Quantity. Thus,
+        We must convert the magnitude of our measurement into a Quantity object. Example:
+                magnitude_in_meter = magnitude_in_meter * ureg(meter)
+        The above effectively turn the 'magnitude_in_meter' into a Quantity object that Pint can work with. """
 
     if idv == "voltage":
         for i in list(np.arange(start, stop, step)):
