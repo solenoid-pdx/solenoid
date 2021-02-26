@@ -1,17 +1,10 @@
 from django.shortcuts import render
-from django.http import HttpResponseRedirect
-from django.http import HttpResponse
 from django.http import JsonResponse
-from subprocess import check_output
-from django.views.generic import TemplateView
-from chartjs.views.lines import BaseLineChartView
 from .forms import DataSetForm, GraphForm
 from solenoid_app.solenoid_math.solver import solenoid_convert, solenoid_range
 from solenoid_app.solenoid_math.exceptions import *
 from solenoid_app.solenoid_math import ureg
-import os
-import time
-import numpy as np
+
 # Create your views here.
 
 def indexView(request):
@@ -39,6 +32,7 @@ def formHandle(request):
     if request.method == "POST":
         form = DataSetForm(request.POST)
         if form.is_valid():
+            # Variable Data
             data['voltage'] = form.cleaned_data['voltage']
             data['length'] = form.cleaned_data['length']
             data['r0'] = form.cleaned_data['r0']
@@ -49,19 +43,21 @@ def formHandle(request):
             data['compute'] = form.cleaned_data['compute']
             data['relative_permeability'] = form.cleaned_data['relative_permeability']
 
+            # Unit data
             data['length_unit'] = form.cleaned_data['length_unit']
             data['r0_unit'] = form.cleaned_data['r0_unit']
             data['ra_unit'] = form.cleaned_data['ra_unit']
             data['x_unit'] = form.cleaned_data['x_unit']
             data['force_unit'] = form.cleaned_data['force_unit']
 
-            # convert to unit objects
+            # Convert variables to corresponding unit objects
             data['length'] = data['length'] * ureg(data['length_unit'])
             data['r0'] = data['r0'] * ureg(data['r0_unit'])
             data['ra'] = data['ra'] * ureg(data['ra_unit'])
             data['x'] = data['x'] * ureg(data['x_unit'])
             data['force'] = data['force'] * ureg(data['force_unit'])
 
+            # Set compute variable to None so backend will solve for it
             compute = data['compute']
             data[compute] = None
 
@@ -113,6 +109,7 @@ def voltageChart(request):
     if request.method == "POST":
         form = GraphForm(request.POST)
         if form.is_valid():
+            # Variable Data
             data['voltage'] = form.cleaned_data['voltage']
             data['length'] = form.cleaned_data['length']
             data['r0'] = form.cleaned_data['r0']
@@ -122,23 +119,28 @@ def voltageChart(request):
             data['awg'] = form.cleaned_data['awg']
             data['compute'] = form.cleaned_data['compute']
             data['relative_permeability'] = form.cleaned_data['relative_permeability']
+
+            # Graph Data
             data['xGraph'] = form.cleaned_data['xGraph']
             data['xStart'] = form.cleaned_data['xStart']
             data['xEnd'] = form.cleaned_data['xEnd']
             data['xStep'] = form.cleaned_data['xStep']
+
+            # Unit data
             data['length_unit'] = form.cleaned_data['length_unit']
             data['r0_unit'] = form.cleaned_data['r0_unit']
             data['ra_unit'] = form.cleaned_data['ra_unit']
             data['x_unit'] = form.cleaned_data['x_unit']
             data['force_unit'] = form.cleaned_data['force_unit']
 
-            # convert to unit objects
+            # Convert variables to corresponding unit objects
             data['length'] = data['length'] * ureg(data['length_unit'])
             data['r0'] = data['r0'] * ureg(data['r0_unit'])
             data['ra'] = data['ra'] * ureg(data['ra_unit'])
             data['x'] = data['x'] * ureg(data['x_unit'])
             data['force'] = data['force'] * ureg(data['force_unit'])
 
+            # Set compute variable to None so backend will solve for it
             compute = data['compute']
             if compute == "relative permeability":
                 compute = "relative_permeability"
@@ -153,6 +155,8 @@ def voltageChart(request):
                 idv_unit = data[data['xGraph'] + "_unit"]
             else:
                 idv_unit = None
+
+            # Calculate data over the specified range using the given independent variable
 
             if data['xGraph'] == 'voltage':
                 x = 'Voltage'
@@ -190,7 +194,7 @@ def voltageChart(request):
                 print(data['xStart'])
                 x = 'x'
                 if data['length'] is None:
-                    length = 10.0
+                    length = data['length']
                 else: 
                     length = data['length'].magnitude + 1.0 
                 for k, v in solenoid_range(data['voltage'], data['length'], data['r0'], data['ra'], data['awg'],
