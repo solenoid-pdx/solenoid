@@ -104,8 +104,6 @@ const chartHandler = () => {
   const graphInputs = [
     {'name': 'x_graph', 'value': x_graph},
     {'name': 'y_graph', 'value': y_graph},
-    {'name': 'x_start', 'value': x_start},
-    {'name': 'x_end', 'value': x_end},
     {'name': 'step', 'value': x_step}
   ];
   

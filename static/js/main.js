@@ -18,6 +18,7 @@ const renderPage = () => {
   createDropDown();
   addAwgSelectOptions();
   dropDownPermeability();
+  setQueryStringValues();
 };
 
 const mountInputs = () => {
@@ -37,7 +38,6 @@ const createInputContextObj = () => {
     {
       name: SolenoidParameters.VOLTAGE,
       symbol: 'V',
-      value: urlParams.get('voltage') || '',
       unit: 'volts',
       description: 'Voltage Applied',
       html: '',
@@ -45,47 +45,41 @@ const createInputContextObj = () => {
     {
       name: SolenoidParameters.LENGTH,
       symbol: 'L',
-      value: urlParams.get('length') || '',
-      unit: urlParams.get(`${SolenoidParameters.LENGTH}_unit`) || 'mm',
+      unit: 'mm',
       description: 'Coil Length',
       html: '',
     },
     {
       name: SolenoidParameters.R0,
       symbol: 'r sub not',
-      value: urlParams.get('r0') || '',
-      unit: urlParams.get(`${SolenoidParameters.R0}_unit`) || 'mm',
+      unit: 'mm',
       description: 'Inner Coil Radius',
       html: '',
     },
     {
       name: SolenoidParameters.RA,
       symbol: 'r sub a',
-      value: urlParams.get('ra') || '',
-      unit: urlParams.get(`${SolenoidParameters.RA}_unit`) || 'mm',
+      unit: 'mm',
       description: 'Outer Coil Radius',
       html: '',
     },
     {
       name: SolenoidParameters.X,
       symbol: 'x',
-      value: urlParams.get('x') || '',
-      unit: urlParams.get(`${SolenoidParameters.X}_unit`) || 'mm',
+      unit: 'mm',
       description: 'Stroke Position (0 = Stroke Start)',
       html: '',
     },
     {
       name: SolenoidParameters.FORCE,
       symbol: 'F',
-      value: urlParams.get('force') || '',
-      unit: urlParams.get(`${SolenoidParameters.FORCE}_unit`) || 'N',
+      unit: 'N',
       description: 'Force Generated',
       html: '',
     },
     {
       name: SolenoidParameters.AWG,
       symbol: 'AWG',
-      value: urlParams.get('awg') || '',
       unit: 'ga',
       description: 'Gauge of Coil Wire',
       html: '',
@@ -93,7 +87,6 @@ const createInputContextObj = () => {
     {
       name: SolenoidParameters.PERMEABILITY,
       symbol: 'μ',
-      value: urlParams.get(SolenoidParameters.PERMEABILITY) || '',
       description: 'Permeability of the Core',
       unit: '',
       html: '',
@@ -133,7 +126,6 @@ const formatInputs = (element) => {
       id="input-text-${element.name}"
       class="form-control"
       placeholder="Enter ${element.symbol}"
-      value="${element.value}"
     >
     ${formatVariableUnits(element)}
   `;
@@ -142,7 +134,6 @@ const formatInputs = (element) => {
     <input id = "input-text-${element.name}"
       class = "form-control"
       list="dropdown-text-${element.name}"
-      value="${element.value}" 
       placeholder="Enter ${element.symbol}" 
     >
     <datalist id="dropdown-text-${element.name}">
@@ -176,11 +167,11 @@ const formatVariableUnits = (element) => {
     let variable_units = `
             <div class="input-group-append">
               <select id="input-unit-${element.name}" class="input-group-text">
-                <option ${element.unit === 'mm' ? 'selected' : ''}>mm</option>
-                <option ${element.unit === 'cm' ? 'selected' : ''}>cm</option>
-                <option ${element.unit === 'm' ? 'selected' : ''}>m</option>
-                <option ${element.unit === 'inch' ? 'selected' : ''}>inch</option>
-                <option ${element.unit === 'feet' ? 'selected' : ''}>feet</option>
+                <option selected>mm</option>
+                <option>cm</option>
+                <option>m</option>
+                <option>inch</option>
+                <option>feet</option>
               </select>
             </div>
     `;
@@ -190,8 +181,8 @@ const formatVariableUnits = (element) => {
     let force_units = `
             <div class="input-group-append">
               <select id="input-unit-${element.name}" class="input-group-text">
-                <option ${element.unit === 'N' ? 'selected' : ''}>N</option>
-                <option ${element.unit === 'lbf' ? 'selected' : ''}>lbf</option>
+                <option selected>N</option>
+                <option>lbf</option>
               </select>
             </div>
     `;
@@ -279,18 +270,41 @@ const formatR = (unit) => {
   return unit;
 };
 
-//Updates the query string from 'onClick()' functions in 'Graph' and 'Calculate'
+// Updates the query string from 'onClick()' functions in 'Graph' and 'Calculate'
 const updateQueryString = (inputs) => {
   const newUrl = new URL(window.location);
   inputs.forEach( input => {
     newUrl.searchParams.delete(input.name);
     newUrl.searchParams.set(input.name, input.value);
-    if (input.unit) {
+    if (input.unit) { // Check if value has a unit to be set
       newUrl.searchParams.delete(`${input.name}_unit`);
       newUrl.searchParams.set(`${input.name}_unit`, input.unit);
     }
   });
+  // Update the url
   window.history.pushState({}, document.title, newUrl);
+};
+
+// Sets the values on the page equal to that in the query string
+const setQueryStringValues = () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  // Set form values
+  Object.values(SolenoidParameters).forEach( (solenoidParameter) => {
+    const queryStringValue = urlParams.get(solenoidParameter)
+    if (queryStringValue !== null) {
+      document.getElementById(`input-text-${solenoidParameter}`).value = queryStringValue
+    }
+    // Set unit values
+    const queryStringUnitValue = urlParams.get(`${solenoidParameter}_unit`)
+    if (queryStringUnitValue !== null) {
+      document.getElementById(`input-unit-${solenoidParameter}`).value = queryStringUnitValue
+    }
+  })
+  // Set graphing values
+  const stepValue = urlParams.get('step')
+  if(stepValue !== null) {
+    document.getElementById('step-input').value = stepValue
+  }
 };
 
 const addAwgSelectOptions = () => {
