@@ -161,32 +161,32 @@ def voltageChart(request):
             if data['xGraph'] == 'voltage':
                 x = 'Voltage'
                 for k, v in solenoid_range(data['voltage'], data['length'], data['r0'], data['ra'], data['awg'],
-                                           data['x'], data['force'], data['relative_permeability'], output_unit, data['xGraph'], idv_unit, data['xStart'], data['xEnd'],
-                                           data['xStep']):
+                                           data['x'], data['force'], data['relative_permeability'], output_unit,
+                                           data['xGraph'], idv_unit, data['xStart'], data['xEnd'], data['xStep']):
                     labels.append(k)
                     graph.append(round(v, sig_figs))
 
             elif data['xGraph'] == 'length':
                 x = 'Length'
                 for k, v in solenoid_range(data['voltage'], data['length'], data['r0'], data['ra'], data['awg'],
-                                           data['x'], data['force'], data['relative_permeability'], output_unit, data['xGraph'], idv_unit, data['xStart'], data['xEnd'],
-                                           data['xStep']):
+                                           data['x'], data['force'], data['relative_permeability'], output_unit,
+                                           data['xGraph'], idv_unit, data['xStart'], data['xEnd'], data['xStep']):
                     labels.append(k)
                     graph.append(round(v, sig_figs))
 
             elif data['xGraph'] == 'r0':
                 x = 'r0'
                 for k, v in solenoid_range(data['voltage'], data['length'], data['r0'], data['ra'], data['awg'],
-                                           data['x'], data['force'], data['relative_permeability'], output_unit, data['xGraph'], idv_unit, data['xStart'], data['xEnd'],
-                                           data['xStep']):
+                                           data['x'], data['force'], data['relative_permeability'], output_unit,
+                                           data['xGraph'], idv_unit, data['xStart'], data['xEnd'], data['xStep']):
                     labels.append(round(k, sig_figs))
                     graph.append(v)
 
             elif data['xGraph'] == 'ra':
                 x = 'ra'
                 for k, v in solenoid_range(data['voltage'], data['length'], data['r0'], data['ra'], data['awg'],
-                                           data['x'], data['force'], data['relative_permeability'], output_unit, data['xGraph'], idv_unit, data['xStart'], data['xEnd'],
-                                           data['xStep']):
+                                           data['x'], data['force'], data['relative_permeability'], output_unit,
+                                           data['xGraph'], idv_unit, data['xStart'], data['xEnd'], data['xStep']):
                     labels.append(round(k, sig_figs))
                     graph.append(v)
 
@@ -196,33 +196,35 @@ def voltageChart(request):
                 if data['length'] is None:
                     length = data['length']
                 else: 
-                    length = data['length'].magnitude + 1.0 
+                    length = data['length'].magnitude + 1.0
                 for k, v in solenoid_range(data['voltage'], data['length'], data['r0'], data['ra'], data['awg'],
-                                           data['x'], data['force'], data['relative_permeability'], output_unit, data['xGraph'], idv_unit, data['xStart'], length,
-                                           data['xStep']):
+                                           data['x'], data['force'], data['relative_permeability'], output_unit,
+                                           data['xGraph'], idv_unit, data['xStart'], length, data['xStep']):
                     labels.append(k)
                     graph.append(round(v, sig_figs))
 
             elif data['xGraph'] == 'awg':
                 x = 'American Wire Gauge'
                 for k, v in solenoid_range(data['voltage'], data['length'], data['r0'], data['ra'], data['awg'],
-                                           data['x'], data['force'], data['relative_permeability'], output_unit, data['xGraph'], idv_unit, data['xStart'], data['xEnd'],
-                                           data['xStep']):
+                                           data['x'], data['force'], data['relative_permeability'], output_unit,
+                                           data['xGraph'], idv_unit, data['xStart'], data['xEnd'], data['xStep']):
                     labels.append(k)
                     graph.append(round(v, sig_figs))
 
             elif data['xGraph'] == 'force':
                 x = 'Force'
                 for k, v in solenoid_range(data['voltage'], data['length'], data['r0'], data['ra'], data['awg'],
-                                           data['x'], data['force'], data['relative_permeability'], output_unit, data['xGraph'], idv_unit, data['xStart'], data['xEnd'],
-                                           data['xStep']):
+                                           data['x'], data['force'], data['relative_permeability'], output_unit,
+                                           data['xGraph'], idv_unit, data['xStart'], data['xEnd'], data['xStep']):
                     labels.append(k)
                     graph.append(round(v, sig_figs))
 
             elif data['xGraph'] == 'relative permeability':
                 x = 'Relative Permeability'
-                for k, v in solenoid_range(data['voltage'],data['length'], data['r0'], data['ra'], data['awg'], data['x'], data['force'], data['relative_permeability'],
-                                           output_unit, "relative_permeability", idv_unit, data['xStart'], data['xEnd'], data['xStep']):
+                for k, v in solenoid_range(data['voltage'], data['length'], data['r0'], data['ra'], data['awg'],
+                                           data['x'], data['force'], data['relative_permeability'], output_unit,
+                                           "relative_permeability", idv_unit, data['xStart'], data['xEnd'],
+                                           data['xStep']):
                     labels.append(k)
                     graph.append(round(v, sig_figs))
     else:
