@@ -12,14 +12,15 @@ from solenoid_app.solenoid_math import ureg
 import os
 import time
 import numpy as np
-# Create your views here.
+
+#The resulting significant figures in the outputs, change for more or less precise answers. 
+sig_figs = 5
 
 def indexView(request):
     return render(request, 'index.html')
 
-
+#This handles the request of a single calculation with the 'Calculate' button. 
 def formHandle(request):
-    sig_figs = 5
     data = {
         'voltage': '',
         'length': '',
@@ -86,7 +87,6 @@ def formHandle(request):
 #Recieves the ajax request from the frontend, then asks for data from solve.py
 def chartHandle(request):
     compute = ''
-    sig_figs = 5
     labels = []
     x = ''
     graph = []
@@ -109,12 +109,10 @@ def chartHandle(request):
         'x_unit': '',
         'force_unit': ''
     }
-#Form validation
+    #Form validation
     if request.method == "POST":
         form = GraphForm(request.POST)
-        print(request.POST)
         if form.is_valid():
-            # print('\n \n hi')
             data['voltage'] = form.cleaned_data['voltage']
             data['length'] = form.cleaned_data['length']
             data['r0'] = form.cleaned_data['r0']
@@ -157,7 +155,9 @@ def chartHandle(request):
             else:
                 idv_unit = None
 
-            #Adding graph data from backend
+            #This chain of elifs calls the solenoid_range() function which will return an dictionary of data which we use for the graph.
+            #k is the x axis value which is defined by the user by the 'slider' on the frontend.
+            #v is the result, or y-axis value.
             if data['x_graph'] == 'voltage':
                 x = 'Voltage'
                 for k, v in solenoid_range(data['voltage'], data['length'], data['r0'], data['ra'], data['awg'],

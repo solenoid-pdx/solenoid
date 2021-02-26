@@ -252,6 +252,7 @@ const createDropDown = () => {
   }
 };
 
+//This sets all the values to values gathered from the research paper, which allows for quick initial use
 const populateDefaults = () => {
   document.getElementById(`input-text-${SolenoidParameters.PERMEABILITY}`).value = '350';
   document.getElementById(`input-text-${SolenoidParameters.VOLTAGE}`).value = '5';
@@ -278,6 +279,7 @@ const formatR = (unit) => {
   return unit;
 };
 
+//Updates the query string from 'onClick()' functions in 'Graph' and 'Calculate'
 const updateQueryString = (inputs) => {
   const newUrl = new URL(window.location);
   inputs.forEach( input => {
@@ -324,57 +326,6 @@ const dropDownPermeability = () => {
   });
 };
 
-
-const graphRange = (x_value) => {
-  let ranges = [
-    { name: 'Voltage', min: '0', max: '99', dMin: '1', dMax: '30', step: '1' },
-    { name: 'Length', min: '0', max: '99', dMin: '10', dMax: '30', step: '1' },
-    { name: 'r0', min: '0', max: '99', dMin: '2', dMax: '25', step: '0.1' },
-    { name: 'ra', min: '0', max: '99', dMin: '3', dMax: '5', step: '0.1' },
-    { name: 'x', min: '0', max: '99', dMin: '0', dMax: '10', step: '1' },
-    { name: 'Force', min: '0', max: '99', dMin: '5', dMax: '20', step: '1' },
-    { name: 'AWG', min: '0', max: '40', dMin: '26', dMax: '40', step: '1' },
-    { name: 'relative_permeability', min: '0', max: '200000', dMin: '100', dMax: '10000', step: '100'},
-  ];
-
-  const urlParams = new URLSearchParams(window.location.search);
-  const not_loaded = $('#input-text-ra')[0] === undefined;
-  if (x_value === 2) {
-      ranges[2].max = not_loaded ? urlParams.get('ra') : $('#input-text-ra')[0].value;
-      ranges[2].dMax = not_loaded ? urlParams.get('ra') : $('#input-text-ra')[0].value;
-  }
-  if (x_value === 4) {
-    ranges[4].max = not_loaded ? urlParams.get('length') : $('#input-text-length')[0].value;
-    ranges[4].dMax = not_loaded ? urlParams.get('length') : $('#input-text-length')[0].value;
-  }
-  $('#slider-range').slider({
-    range: true,
-    min: ranges[x_value].min,
-    max: ranges[x_value].max,
-    step: urlParams.get('step') ? parseFloat(urlParams.get('step')) : findStep(x_value),
-    values: [ ranges[x_value].dMin, ranges[x_value].dMax ],
-    slide: (event, ui) => {
-      if (event.originalEvent) {
-        $('#x-value-range').val(ui.values[0] + ' - ' + ui.values[1]);
-      }
-    },
-  });
-  $('#x-value-range').val(
-    $('#slider-range').slider('values', 0) +' - ' + $('#slider-range').slider('values', 1));
-  let slider_min = $('#slider-range').slider('values', 0);
-  let slider_max = $('#slider-range').slider('values', 1);
-  $('#step-input')[0].max = slider_max - slider_min - 0.01;
-};
-
-const findStep = (x_value) => {
-  if (x_value === 2 || x_value === 3) {
-    return 0.1;
-  }
-  if (x_value === 7) {
-    return 100;
-  }
-  return 1;
-};
 
 (() => {
   $('select[name=x-values-input]').change(() => {
