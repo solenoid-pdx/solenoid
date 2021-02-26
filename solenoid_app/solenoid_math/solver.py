@@ -1,8 +1,9 @@
-from sympy import symbols, solve, lambdify
+from sympy import symbols, lambdify
 import numpy as np
-from solenoid_app.solenoid_math.exceptions import TooManyVariables, IncorrectDataType, NoSolution
+from solenoid_app.solenoid_math.exceptions import NoSolution
 from scipy import optimize
-from math import floor
+
+# import common unit registry
 from . import ureg
 
 # Catch divide by 0 errors
@@ -59,123 +60,8 @@ AWG_DATA = {
     "40":   {"resistance": 3441,   "area": 0.00501}
 }
 
-# Permeability constants
-# TODO: allow variable relative permeabilities to allow users to match their core
+# Permeability Constant
 PERM_FREE = 1.257 * (10 ** -6)
-# PERM_RELATIVE = 350
-
-"""
-Solves for a single missing variable within the solenoid force equation.
-
-The variable being solved for is inputted as a None value. All other
-arguments are then required and cannot be None
-
-Parameters:
-    volts (float | None): Voltage applied to the solenoid - Volts
-    length (float | None): Overall length of the solenoid coil - Millimeters
-    r0 (float | None): Inner radius of the solenoid coil - Millimeters
-    ra (float | None): Outer radius of the solenoid coil - Millimeters
-    gauge (string): A value between "0000" -> "40"
-    location (float | None): Location (Stroke) of the solenoid core within the coil - Millimeters
-    force (float | None): The force produced by the solenoid - Newtons
-
-Returns:
-    result (float): The solved value of specified variable
-"""
-def solenoid_solve(volts, length, r0, ra, gauge, location, force, relative_permeability):
-    
-    # verify only 1 argument is being solved for
-    none_count = sum(isinstance(arg, type(None)) for arg in [volts, length, r0, ra, gauge, location, force, relative_permeability])
-    if none_count > 1:
-        raise TooManyVariables
-
-    for arg in ['volts', 'length', 'r0', 'ra', 'location', 'force', 'relative_permeability']:
-        if not isinstance(locals()[arg], (type(None), int, float)):
-            raise IncorrectDataType(type(arg).__name__, arg)
-
-    if type(gauge) is not str:
-        raise IncorrectDataType(type(gauge).__name__, "gauge")
-
-    result = None
-    # a = np.log(relative_permeability) 
-    f, v, l, R0, RA, x, a= symbols('f v l R0 RA x a')
-
-    # Generalized equation
-    eq1 = ((v ** 2) * (np.e**(a)) * PERM_FREE) / (
-                8 * np.pi * ((AWG_DATA[gauge]["resistance"] / 1000) ** 2) * ((l / 1000) ** 2))
-    eq2 = ((R0/1000)**2 / (RA/1000)**2)
-    #eq3 = np.log(rp)
-    eq4 = np.e**(-(a/(l / 1000)) * (x / 1000))
-    
-    # Set equation equal to 0
-    origin_eq = (eq1 * eq2 * a * eq4) - f
-    
-    # Solve for specified variable
-    if volts is None:
-        origin_eq = origin_eq.subs(l, length)
-        origin_eq = origin_eq.subs(R0, r0)
-        origin_eq = origin_eq.subs(RA, ra)
-        origin_eq = origin_eq.subs(x, location)
-        origin_eq = origin_eq.subs(f, force)
-        origin_eq = origin_eq.subs(a, np.log(relative_permeability))
-        result = solve(origin_eq, v)
-
-    elif length is None:
-        origin_eq = origin_eq.subs(v, volts)
-        origin_eq = origin_eq.subs(R0, r0)
-        origin_eq = origin_eq.subs(RA, ra)
-        origin_eq = origin_eq.subs(x, location)
-        origin_eq = origin_eq.subs(f, force)
-        origin_eq = origin_eq.subs(a, np.log(relative_permeability))
-        result = solve(origin_eq, l)
-
-    elif r0 is None:
-        origin_eq = origin_eq.subs(v, volts)
-        origin_eq = origin_eq.subs(RA, ra)
-        origin_eq = origin_eq.subs(l, length)
-        origin_eq = origin_eq.subs(x, location)
-        origin_eq = origin_eq.subs(f, force)
-        origin_eq = origin_eq.subs(a, np.log(relative_permeability))
-        result = solve(origin_eq, R0)
-
-    elif ra is None:
-        origin_eq = origin_eq.subs(v, volts)
-        origin_eq = origin_eq.subs(R0, r0)
-        origin_eq = origin_eq.subs(l, length)
-        origin_eq = origin_eq.subs(x, location)
-        origin_eq = origin_eq.subs(f, force)
-        origin_eq = origin_eq.subs(a, np.log(relative_permeability))
-        result = solve(origin_eq, RA)
-
-    elif location is None:
-        # TODO: handle with error (here or at frontend)
-        origin_eq = origin_eq.subs(v, volts)
-        origin_eq = origin_eq.subs(R0, r0)
-        origin_eq = origin_eq.subs(RA, ra)
-        origin_eq = origin_eq.subs(l, length)
-        origin_eq = origin_eq.subs(f, force)
-        origin_eq = origin_eq.subs(a, np.log(relative_permeability))
-        # result = solve(origin_eq, x)
-        result = -1
-
-    elif force is None:
-        origin_eq = origin_eq.subs(v, volts)
-        origin_eq = origin_eq.subs(R0, r0)
-        origin_eq = origin_eq.subs(RA, ra)
-        origin_eq = origin_eq.subs(x, location)
-        origin_eq = origin_eq.subs(l, length)
-        origin_eq = origin_eq.subs(a, np.log(relative_permeability))
-        result = solve(origin_eq, f)
-
-    elif relative_permeability is None:
-        return solenoid_performance(volts, length, r0, ra, gauge, location, force, relative_permeability)
-
-    # Return the correctly signed value due to solving squares in function
-    if len(result) == 2:
-        return np.e**(float(result[1])) if relative_permeability is None else float(result[1])
-    else:
-        return np.e**(float(result[0])) if relative_permeability is None else float(result[0])
-
 
 """
 Solves directly for a single missing variable within the solenoid force equation.
@@ -228,7 +114,6 @@ def solenoid_performance(volts, length, r0, ra, gauge, location, force, relative
                 raise NoSolution
 
         else:
-            # THIS IS NOT THE SOLUTION, TEMPORARY PLACE HOLDER UNTIL WE DISCOVER THE CORRECT WAY OF SOLVING THIS!!!
             try:
                 x = symbols('x')
                 func = (((volts ** 2) * PERM_FREE * relative_permeability) / (
@@ -427,8 +312,7 @@ def solenoid_range(volts, length, r0, ra, gauge, location, force, relative_perme
 Wrapper for solenoid_performance. This function takes in values of differing units, converts them to base SI units, then
 solves for the specified parameter. When a solution is found, it is converted back to the expected output units.
 
-The variable being solved for is inputted as a None value. All other
-arguments are then required and cannot be None
+The variable being solved for is inputted as a None value. All other arguments are then required and cannot be None
 
 Parameters:
     volts (float | None): Voltage applied to the solenoid - Volts
@@ -444,9 +328,11 @@ Returns:
     result (float): The solved value of specified variable
 """
 def solenoid_convert(volts, length, r0, ra, gauge, location, force, relative_permeability, output_unit):
+    # convert all units to base units
     base_units, to_solve = conversion(
         {"volts": volts, "length": length, "r0": r0, "ra": ra, "location": location, "force": force, "relative_permeability": relative_permeability})
 
+    # solve for value
     result = solenoid_performance(base_units["volts"], base_units["length"], base_units["r0"], base_units["ra"], gauge,
                                   base_units["location"], base_units["force"], relative_permeability)
 
@@ -455,7 +341,9 @@ def solenoid_convert(volts, length, r0, ra, gauge, location, force, relative_per
         result = result * ureg.meters
         result.ito(ureg(output_unit))
         result = float(result.magnitude)
-        if result < 0 and floor(abs(result)) != 0:
+
+        # catch cases where margin of error makes calculation go negative. E.g. -0.00000675 instead of 0.0
+        if result < -0.0009:
             raise NoSolution
         return abs(result)
 
@@ -463,19 +351,21 @@ def solenoid_convert(volts, length, r0, ra, gauge, location, force, relative_per
         result = result * ureg.newtons
         result.ito(ureg(output_unit))
         result = float(result.magnitude)
-        if result < 0 and floor(abs(result)) != 0:
+
+        if result < -0.0009:
             raise NoSolution
         return abs(result)
 
     elif to_solve == "volts" or to_solve == "relative_permeability":
         result = float(result)
-        if result < 0 and floor(abs(result)) != 0:
+
+        if result < -0.0009:
             raise NoSolution
         return abs(result)
 
 
 """ 
-Helper function for Solenoid Convert
+Helper function for Solenoid Convert. Converts all units to base units.
 
 Parameters: 
     values (Dict): A dictionary containing all input variables to the solver function
@@ -491,6 +381,7 @@ def conversion(values):
         if values[key] is None:
             to_solve = key
         elif type(values[key]) == int or type(values[key]) == float or type(values[key]) == np.float64:
+            # don't convert for unitless numbers
             pass
         else:
             values[key] = values[key].to_base_units().magnitude
