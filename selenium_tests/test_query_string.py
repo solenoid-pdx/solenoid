@@ -88,4 +88,3 @@ class TestUI(SeleniumTestBase):
         self.assertEqual(x_input.first_selected_option.text, x_value)
         self.assertEqual(y_input.first_selected_option.text, y_value)
         self.assertEqual(self.driver.find_element_by_id('step-input').get_attribute('value'), step)
-        self.assertEqual(self.driver.find_element_by_id('x-value-range').get_attribute('value'), x_start + ' - ' + x_end)

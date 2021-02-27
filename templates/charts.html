@@ -1,3 +1,7 @@
+{% load static %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+
 <div id="graph-select" style="margin-bottom: 5">
   <p>
     <label id="x-value-range-label" for="x-value-range">X-Value range:</label>
@@ -34,6 +38,8 @@
     <input
       type="number"
       id="step-input"
+      class="form-control"
+      style="width: 25.2%"
       name="step-input"
       min="0.001"
       max="1000"
@@ -63,5 +69,7 @@
 </div>
 <div id="graph-container" style="width: 100%; display: none">
   <h3>Graph</h3>
-  <div>{% include 'voltageChart.html' %}</div>
+  <div id="container" style="width: 75%;">
+    <canvas id="chart-element" data-url="{% url 'chartHandle' %}"></canvas>
+  </div>
 </div>
