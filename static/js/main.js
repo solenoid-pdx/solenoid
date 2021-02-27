@@ -31,6 +31,8 @@ const mountInputs = () => {
   form.insertAdjacentHTML('beforeend', submit_button);
 };
 
+// Create a context object to hold data to populate input elements with.
+// Input object retrieve values from query string if exists.
 const createInputContextObj = () => {
   const urlParams = new URLSearchParams(window.location.search);
   let inputs = [
@@ -52,7 +54,7 @@ const createInputContextObj = () => {
     },
     {
       name: SolenoidParameters.R0,
-      symbol: 'r sub not',
+      symbol: 'r0',
       value: urlParams.get('r0') || '',
       unit: urlParams.get(`${SolenoidParameters.R0}_unit`) || 'mm',
       description: 'Inner Coil Radius',
@@ -60,7 +62,7 @@ const createInputContextObj = () => {
     },
     {
       name: SolenoidParameters.RA,
-      symbol: 'r sub a',
+      symbol: 'ra',
       value: urlParams.get('ra') || '',
       unit: urlParams.get(`${SolenoidParameters.RA}_unit`) || 'mm',
       description: 'Outer Coil Radius',
@@ -128,6 +130,7 @@ const createInputs = () => {
 const formatInputs = (element) => {
   let name = element.name;
 
+  // for text type inputs
   let default_input = `
     <input type="text"
       id="input-text-${element.name}"
@@ -138,6 +141,7 @@ const formatInputs = (element) => {
     ${formatVariableUnits(element)}
   `;
 
+  // for select type inputs
   let datalist_input = `
     <input id = "input-text-${element.name}"
       class = "form-control"
@@ -158,6 +162,7 @@ const formatInputs = (element) => {
   return (name === SolenoidParameters.AWG || name === SolenoidParameters.PERMEABILITY) ? datalist_input : default_input;
 };
 
+// formatting for selectable unit values
 const formatVariableUnits = (element) => {
   if (element.name === SolenoidParameters.VOLTAGE) {
      let voltage_units = `           
@@ -197,6 +202,12 @@ const formatVariableUnits = (element) => {
     `;
     return force_units;
   }
+};
+
+const formatR = (unit) => {
+  if (unit == 'r0') return 'r<sub>0</sub>';
+  if (unit == 'ra') return 'r<sub>a</sub>';
+  return unit;
 };
 
 const createDropDown = () => {
@@ -252,6 +263,7 @@ const createDropDown = () => {
   }
 };
 
+// Populates sample values when sample inputs button is selected
 const populateDefaults = () => {
   document.getElementById(
     `input-text-${SolenoidParameters.PERMEABILITY}`
@@ -276,12 +288,7 @@ const populateDefaults = () => {
   graphRange(0);
 };
 
-const formatR = (unit) => {
-  if (unit == 'r sub not') return 'r<sub>0</sub>';
-  if (unit == 'r sub a') return 'r<sub>a</sub>';
-  return unit;
-};
-
+// updates the query string when new calculation is submitted
 const updateQueryString = (inputs) => {
   const newUrl = new URL(window.location);
   inputs.forEach( input => {
