@@ -10,9 +10,6 @@ const SolenoidParameters = {
 };
 
 // TODO: Look at this later lol
-let previousX;
-let previousY;
-
 const renderPage = () => {
   mountInputs();
   createDropDown();
@@ -190,58 +187,6 @@ const formatVariableUnits = (element) => {
   }
 };
 
-const createDropDown = () => {
-  const urlParams = new URLSearchParams(window.location.search);
-  let select_X = document.getElementById('x-values-input');
-  let select_Y = document.getElementById('y-values-input');
-  let inputs = [
-    'Voltage',
-    'Length',
-    SolenoidParameters.R0,
-    SolenoidParameters.RA,
-    SolenoidParameters.X,
-    'Force',
-    SolenoidParameters.AWG.toUpperCase(),
-    SolenoidParameters.PERMEABILITY,
-  ];
-  inputs.forEach((element) => {
-    let option = document.createElement('option');
-    option.text = `${element}`;
-    if (element === SolenoidParameters.PERMEABILITY) {
-      option.text = 'Relative Permeability';
-    }
-    option.value = `${element}`;
-    option.id = `option-x-${element}`;
-    select_X.add(option);
-    if (urlParams.get('x_graph') === element.toLowerCase()) {
-      select_X.value = element
-      previousX = $('#x-values-input')[0].value;
-      $(`#option-y-${previousX}`).hide();
-      $('#x-value-range-label')[0].textContent = `${element} range`;
-      graphRange($('select[name=x-values-input')[0].selectedIndex - 1);
-    }
-    if (element !== 'AWG') {
-      let option1 = document.createElement('option');
-      option1.text = `${element}`;
-      if (element === SolenoidParameters.PERMEABILITY) {
-        option1.text = 'Relative Permeability';
-      }
-      option1.value = `${element}`;
-      option1.id = `option-y-${element}`;
-      select_Y.add(option1);
-      if (urlParams.get('y_graph') === element.toLowerCase()) {
-        select_Y.value = element
-        previousY = $('#y-values-input')[0].value;
-        $(`#option-x-${previousY}`).hide();
-      }
-    }
-  });
-
-  const stepInput = urlParams.get('step')
-  if (stepInput) {
-    document.getElementById('step-input').value = stepInput
-  }
-};
 
 //This sets all the values to values gathered from the research paper, which allows for quick initial use
 const populateDefaults = () => {
@@ -340,19 +285,3 @@ const dropDownPermeability = () => {
   });
 };
 
-
-(() => {
-  $('select[name=x-values-input]').change(() => {
-    $(`#option-y-${previousX}`).show();
-    previousX = $('select[name=x-values-input]')[0].value;
-    $('#x-value-range-label')[0].textContent =`${previousX} range:` ;
-    graphRange($('select[name=x-values-input')[0].selectedIndex - 1);
-    $(`#option-y-${previousX}`).hide();
-  });
-
-  $('select[name=y-values-input]').change(() => {
-    $(`#option-x-${previousY}`).show();
-    previousY = $('select[name=y-values-input')[0].value;
-    $(`#option-x-${previousY}`).hide();
-  });
-})();
