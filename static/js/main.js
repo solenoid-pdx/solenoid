@@ -29,6 +29,8 @@ const mountInputs = () => {
   form.insertAdjacentHTML('beforeend', submit_button);
 };
 
+// Create a context object to hold data to populate input elements with.
+// Input object retrieve values from query string if exists.
 const createInputContextObj = () => {
   const urlParams = new URLSearchParams(window.location.search);
   let inputs = [
@@ -48,14 +50,14 @@ const createInputContextObj = () => {
     },
     {
       name: SolenoidParameters.R0,
-      symbol: 'r sub not',
+      symbol: 'r0',
       unit: 'mm',
       description: 'Inner Coil Radius',
       html: '',
     },
     {
       name: SolenoidParameters.RA,
-      symbol: 'r sub a',
+      symbol: 'ra',
       unit: 'mm',
       description: 'Outer Coil Radius',
       html: '',
@@ -92,6 +94,7 @@ const createInputContextObj = () => {
   return inputs;
 };
 
+// begin create/format inputs to display
 const createInputs = () => {
   let inputs = createInputContextObj();
   inputs.forEach((element) => {
@@ -118,6 +121,7 @@ const createInputs = () => {
 const formatInputs = (element) => {
   let name = element.name;
 
+  // for text type inputs
   let default_input = `
     <input type="text"
       id="input-text-${element.name}"
@@ -127,6 +131,7 @@ const formatInputs = (element) => {
     ${formatVariableUnits(element)}
   `;
 
+  // for select type inputs
   let datalist_input = `
     <input id = "input-text-${element.name}"
       class = "form-control"
@@ -146,6 +151,7 @@ const formatInputs = (element) => {
   return (name === SolenoidParameters.AWG || name === SolenoidParameters.PERMEABILITY) ? datalist_input : default_input;
 };
 
+// formatting for selectable unit values
 const formatVariableUnits = (element) => {
   if (element.name === SolenoidParameters.VOLTAGE) {
      let voltage_units = `           
@@ -187,6 +193,11 @@ const formatVariableUnits = (element) => {
   }
 };
 
+const formatR = (unit) => {
+  if (unit == 'r0') return 'r<sub>0</sub>';
+  if (unit == 'ra') return 'r<sub>a</sub>';
+  return unit;
+};
 
 //This sets all the values to values gathered from the research paper, which allows for quick initial use
 const populateDefaults = () => {
@@ -209,13 +220,7 @@ const populateDefaults = () => {
   graphRange(0);
 };
 
-const formatR = (unit) => {
-  if (unit == 'r sub not') return 'r<sub>0</sub>';
-  if (unit == 'r sub a') return 'r<sub>a</sub>';
-  return unit;
-};
-
-// Updates the query string from 'onClick()' functions in 'Graph' and 'Calculate'
+// updates the query string when new calculation/graph is submitted
 const updateQueryString = (inputs) => {
   const newUrl = new URL(window.location);
   inputs.forEach( input => {
