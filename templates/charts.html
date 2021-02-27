@@ -14,13 +14,13 @@
   </p>
   <div
     id="slider-range"
-    style="width: 35%; margin-bottom: 5%; margin-top: 2%"
+    style="width: 50%; margin-bottom: 5%; margin-top: 2%"
   ></div>
   <select
     name="x-values-input"
     id="x-values-input"
     class="custom-select"
-    style="width: 15%"
+    style="width: 25%"
   >
     <option id="x_active" value="" disabled selected>Select X Value</option>
   </select>
@@ -28,18 +28,20 @@
     name="y-values-input"
     id="y-values-input"
     class="custom-select"
-    style="width: 15%"
+    style="width: 25%"
   >
     <option id="y_active" value="" disabled selected>Select Y Value</option>
   </select>
-  <!-- <label for="step-input">Step between 0.001 and 50</label> -->
-  <div class="input-group-prepend">
+
+  <div 
+    class="input-group-prepend"
+    style=" margin-top: 3%; margin-bottom: 3%;">
     <span class="input-group-text">Step</span>
     <input
       type="number"
       id="step-input"
       class="form-control"
-      style="width: 25.2%"
+      style="width: 25.2%;"
       name="step-input"
       min="0.001"
       max="1000"
@@ -59,7 +61,7 @@
 
   <button
     class="btn btn-outline-primary"
-    style="display: none; margin-bottom: 0%; float: right"
+    style="display: none; margin-bottom: 0%; margin-left: 1.5%; "
     id="chart-download-button"
     type="button"
     onclick="chartDownload()"
@@ -67,9 +69,8 @@
     Download
   </button>
 </div>
-<div id="graph-container" style="width: 100%; display: none">
-  <h3>Graph</h3>
-  <div id="container" style="width: 75%;">
+<div id="graph-container" style="width: 100%; display: none; ">
+  <div id="container" style="width: 100%; margin-top: 5.1%;">
     <canvas id="chart-element" data-url="{% url 'chartHandle' %}"></canvas>
   </div>
 </div>
