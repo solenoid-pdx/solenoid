@@ -61,13 +61,13 @@
 
     <div
       id="calc-graph-container"
-      class="container d-flex justify-content-between border-bottom flex-column"
+      class="container d-flex justify-content-between border-bottom"
       style="margin-bottom: 5%; padding-bottom: 7%"
     >
       <div
         id="calc-container"
         class="d-flex flex-column justify-content-center"
-        style="width: 60%; margin-bottom: 5%"
+        style="width: 25%; margin-bottom: 5%"
       >
         <!--begin data set form-->
         <button
@@ -92,7 +92,8 @@
           style="width: 100%; margin-top: 2%"
         ></div>
       </div>
-      <div id="charts-container">{% include 'charts.html' %}</div>
+      <div id="charts-container"
+          style="width: 65%;">{% include 'charts.html' %}</div>
     </div>
     {%include 'awg.html' %}
   </body>
