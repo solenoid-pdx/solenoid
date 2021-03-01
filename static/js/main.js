@@ -257,6 +257,7 @@ const setQueryStringValues = () => {
   }
 };
 
+//Set the AWG drop down option values
 const addAwgSelectOptions = () => {
   $('#dropdown-text-awg').append('<option>' + '0000' + '</option>');
   $('#dropdown-text-awg').append('<option>' + '000' + '</option>');
@@ -266,7 +267,7 @@ const addAwgSelectOptions = () => {
   }
 };
 
-
+//Set the Permeability drop down option values
 const dropDownPermeability = () => {
   let items = [
     { name: 'carbon steel', value: '100' },
@@ -281,7 +282,6 @@ const dropDownPermeability = () => {
       value: '200000',
     },
   ];
-
   items.forEach((item) => {
     let option = document.createElement('option');
     option.text = item.name;
