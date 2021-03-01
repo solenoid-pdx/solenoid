@@ -37,6 +37,8 @@ class TestUI(SeleniumTestBase):
 
         testValue = "6"
         queryString = "?"
+        parameterToCalculate = "force"
+        calculatedForceResult = "53353.77135"
         data = [
             {'name': 'voltage', 'value': testValue},
             {'name': 'length', 'value': testValue, 'unit': 'mm'},
@@ -53,13 +55,20 @@ class TestUI(SeleniumTestBase):
             value = d.get('value')
             unit = d.get('unit')
             self.driver.find_element_by_id('input-text-' + name).send_keys(value)
-            queryString += name + "=" + (value if name != 'force' else '0') + "&"
+            if name != parameterToCalculate:
+                queryString += name + "=" + value + "&"
             if unit:
                 self.driver.find_element_by_id('input-unit-' + name).send_keys(unit)
                 queryString += name + "_unit=" + unit + "&"
         self.driver.find_element_by_xpath('//*[@id="input-submit-form"]/input[2]').click()
         
-        queryString = queryString[:-1]
+        # Add what will be the calculated result to the query string
+        queryString += parameterToCalculate + "=" + calculatedForceResult
+
+        # Wait for the calculation to complete, so that query string is updated
+        while(self.driver.find_element_by_id("input-text-force").get_attribute('value') == ''):
+            continue
+
         self.assertEqual(self.driver.current_url, URL + queryString)
     
     def test_query_string_not_updated_invalid_calculate(self):
@@ -88,4 +97,3 @@ class TestUI(SeleniumTestBase):
         self.assertEqual(x_input.first_selected_option.text, x_value)
         self.assertEqual(y_input.first_selected_option.text, y_value)
         self.assertEqual(self.driver.find_element_by_id('step-input').get_attribute('value'), step)
-        self.assertEqual(self.driver.find_element_by_id('x-value-range').get_attribute('value'), x_start + ' - ' + x_end)

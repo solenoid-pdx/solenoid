@@ -16,7 +16,7 @@ class TestChart(SeleniumTestBase):
         
         self.driver.find_element_by_xpath("//*[@id='calc-container']/button").click()
         self.driver.find_element_by_xpath("//*[@id='graph-select']/button").click()
-        self.assertTrue(self.driver.find_element_by_id("voltage-Chart").is_enabled())
+        self.assertTrue(self.driver.find_element_by_id("chart-element").is_enabled())
 
     def test_x_input_resricts_y(self):
         """ Test that selecting a value for x to graph restricts the user from selecting that value for y. """

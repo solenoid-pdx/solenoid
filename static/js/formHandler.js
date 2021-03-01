@@ -53,6 +53,7 @@ const formSubmitHandler = () => {
     success: (res) => {
       let result = res[res.compute];
       document.getElementById(`input-text-${res.compute}`).value = result;
+      updateQueryString([{"name": res.compute, "value": result}])
     },
   });
 };
