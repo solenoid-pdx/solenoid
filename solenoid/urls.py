@@ -13,20 +13,19 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from solenoid_app.views import indexView, voltageChart, formHandle
+from solenoid_app.views import indexView, chartHandle, formHandle
 # from django.contrib import admin
 from django.urls import path, include
-#from .views import line_chart, line_chart_json
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 INDEX_URL_NAME = 'indexUrl'
 FORM_HANDLE_URL_NAME = 'formHandle'
-VOLTAGE_CHART_URL_NAME = 'voltageChart'
+CHART_HANDLE_URL_NAME = 'chartHandle'
 
 urlpatterns = [
     # path('admin/', admin.site.urls, name='adminUrl'),
     path('', indexView, name=INDEX_URL_NAME),
-    path('voltageChart', voltageChart, name=VOLTAGE_CHART_URL_NAME),
+    path('chartHandle', chartHandle, name=CHART_HANDLE_URL_NAME),
     path('formHandle', formHandle, name=FORM_HANDLE_URL_NAME)
 ]
 
