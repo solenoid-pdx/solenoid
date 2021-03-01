@@ -1,25 +1,40 @@
 <div id="storage-manage-container" style="margin-top: 5%">
-  <button
-    id="saving-data"
-    class="btn btn-light"
-    data-toggle="tooltip"
-    data-placement="bottom"
-    title="Export to Json Object"
-    onclick="saveParametersToJson()"
-  >
-    <i class="fa fa-file"></i>
-  </button>
+    <button
+            id="saving-data"
+            class="btn btn-outline-info"
+            data-toggle="tooltip"
+            data-placement="bottom"
+            title="Export to Json Object"
+            onclick="saveParametersToJson()"
+    >
+        <i class="fa fa-file"></i>
+    </button>
 
-  <button
-    id="copy-link"
-    class="btn btn-light"
-    data-toggle="tooltip"
-    data-placement="bottom"
-    title="Copy current Link"
-    onclick="copyLink()"
-  >
-    <i class="fa fa-link"></i>
-  </button>
+    <button
+            id="copy-link"
+            class="btn btn-outline-info"
+            data-toggle="tooltip"
+            data-placement="bottom"
+            title="Copy current Link"
+            onclick="copyLink()"
+            style="margin:3%"
+    >
+        <i class="fa fa-link"></i>
+    </button>
 
-  <input id="upload-data" type="file" accept=".json" onchange="upload(this)" />
+    <div class="input-group mb-3">
+        <div class="input-group-prepend">
+            <span class="input-group-text"><i class="fa fa-upload"></i></span>
+        </div>
+        <div class="custom-file">
+            <input id='upload-data'
+                   type="file"
+                   class="custom-file-input"
+                   accept=".json"
+                   onchange="upload(this)"
+            />
+            <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+        </div>
+    </div>
+
 </div>
