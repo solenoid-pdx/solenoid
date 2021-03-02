@@ -105,6 +105,8 @@ def solenoid_performance(volts, length, r0, ra, gauge, location, force, relative
 
     elif length is None:
         a = np.log(relative_permeability)
+
+        # Direct solve when X = 0
         if location == 0:
             try:
                 result = (np.sqrt(a) * r0 * np.sqrt(PERM_FREE) * np.sqrt(relative_permeability) * volts) / (
@@ -158,6 +160,7 @@ def solenoid_performance(volts, length, r0, ra, gauge, location, force, relative
             result = (r0 * np.sqrt(relative_permeability) * np.sqrt(PERM_FREE)) * volts * np.sqrt(a) * np.e ** -(
                         (location * a) / (2 * length)) / (2 * np.sqrt(2 * np.pi) * np.sqrt(force) * (
                         AWG_DATA[gauge]["resistance"] / 1000) * length)
+
             # verify outer radius is not smaller than inner radius
             if result < r0:
                 raise NoSolution
@@ -180,6 +183,7 @@ def solenoid_performance(volts, length, r0, ra, gauge, location, force, relative
             funcPrime = func.diff(x)            
             fder = lambdify(x, funcPrime, modules=["numpy", "scipy"])
             result = (optimize.newton(f, 0, fprime=fder, maxiter=1000))     # Instead of Halley's method, this uses the basic Newton's method
+
         except OverflowError:
             raise NoSolution
         except RuntimeError:
@@ -193,6 +197,7 @@ def solenoid_performance(volts, length, r0, ra, gauge, location, force, relative
             result = ((volts ** 2) * relative_permeability * PERM_FREE) / (
                         8 * np.pi * ((AWG_DATA[gauge]["resistance"] / 1000) ** 2) * (length ** 2)) * (
                                  r0 ** 2 / ra ** 2) * np.e ** (-(a / length) * location) * a
+
         except RuntimeError:
             raise NoSolution
         except RuntimeWarning:
@@ -204,8 +209,8 @@ def solenoid_performance(volts, length, r0, ra, gauge, location, force, relative
                 Utilizing Sympy for the convenient of symbolic solving """
             x = symbols('x')
             func = (((volts ** 2) * PERM_FREE * (np.e ** x)) / (
-                        8 * np.pi * ((AWG_DATA[gauge]["resistance"] / 1000) ** 2) * ((length) ** 2))) * (
-                               ((r0) / (ra)) ** 2) * x * np.e ** (-1 * (x / (length)) * (location)) - force
+                        8 * np.pi * ((AWG_DATA[gauge]["resistance"] / 1000) ** 2) * (length ** 2))) * (
+                               (r0 / ra) ** 2) * x * np.e ** (-1 * (x / length) * location) - force
 
             f = lambdify(x, func, modules=['numpy', 'scipy'])
             funcPrime = func.diff(x)                                                    # First Derivative
@@ -405,9 +410,13 @@ def conversion(values):
     for key in values.keys():
         if values[key] is None:
             to_solve = key
+
+        # don't convert for unitless numbers
         elif type(values[key]) == int or type(values[key]) == float or type(values[key]) == np.float64:
-            # don't convert for unitless numbers
+
             pass
+
+        # convert to base units using Pint then take the magnitude to get unitless numbers for solver
         else:
             values[key] = values[key].to_base_units().magnitude
 
