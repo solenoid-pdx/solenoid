@@ -271,7 +271,7 @@ const format = input => {
   $('select[name=x-values-input]').change(() => {
     $(`#option-y-${previousX}`).show();
     previousX = $('select[name=x-values-input]')[0].value;
-    $('#x-value-range-label')[0].textContent =`${previousX} range:` ;
+    $('#x-value-range-label')[0].textContent = (previousX === SolenoidParameters.PERMEABILITY) ? `Relative Permeability range` : `${previousX} range:` ;
     graphRange($('select[name=x-values-input')[0].selectedIndex - 1);
     $(`#option-y-${previousX}`).hide();
   });

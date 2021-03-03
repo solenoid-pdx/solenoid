@@ -3,6 +3,8 @@ const formSubmitHandler = () => {
 
   let ra = inputs.inputs[3].value;
   let r0 = inputs.inputs[2].value;
+  let ra_units = inputs.inputs[3].unit;
+  let r0_units = inputs.inputs[2].unit;
 
   if (inputs.blanks.length > 1) {
     flashHandler('PLEASE FILL OUT ALL THE FIELDS', 'missing-input-flash-err');
@@ -25,6 +27,12 @@ const formSubmitHandler = () => {
       'r0 cannot be greater than ra',
       'r0-greater-than-ra-flash-err'
     );
+  }
+  if(ra_units !== r0_units){
+     flashHandler(
+      'r0 and ra must be same units',
+      'r0-ra-different-flash-err'
+    );   
   }
 
   updateQueryString(inputs.inputs);
