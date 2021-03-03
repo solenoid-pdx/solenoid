@@ -27,12 +27,14 @@ const formSubmitHandler = () => {
       'r0 cannot be greater than ra',
       'r0-greater-than-ra-flash-err'
     );
+    return;
   }
   if(ra_units !== r0_units){
      flashHandler(
       'r0 and ra must be same units',
       'r0-ra-different-flash-err'
     );   
+    return;
   }
 
   updateQueryString(inputs.inputs);
