@@ -101,7 +101,6 @@ const graphRange = (x_value) => {
     ranges[4].max = not_loaded ? urlParams.get('length') : $('#input-text-length')[0].value;
     ranges[4].default_max = not_loaded ? urlParams.get('length') : $('#input-text-length')[0].value;
   }
-
   //Jquery slider, for information can be found here:  https://jqueryui.com/slider/#range
   $('#slider-range').slider({
     range: true,
@@ -156,6 +155,24 @@ const chartHandler = () => {
     flashHandler(`UNABLE TO GRAPH X VS LENGTH, PLEASE CHOOSE OTHER VALUES `, 'x-vs-length-input-flash-err');
     return;
   }
+
+  //Ra r0 error handling
+  let ra = values.inputs[3].value;
+  let r0 = values.inputs[2].value;
+  let ra_units = values.inputs[3].unit;
+  let r0_units = values.inputs[2].unit;
+  if (ra < r0) {
+    flashHandler('r0 cannot be greater than ra', 'r0-greater-than-ra-flash-err');
+    return;
+  }
+  if(ra_units !== r0_units){
+     flashHandler(
+      'r0 and ra must be same units',
+      'r0-ra-different-flash-err'
+    );   
+    return;
+  }
+
 
   const graphInputs = [
     {'name': 'x_graph', 'value': x_graph},
@@ -271,7 +288,7 @@ const format = input => {
   $('select[name=x-values-input]').change(() => {
     $(`#option-y-${previousX}`).show();
     previousX = $('select[name=x-values-input]')[0].value;
-    $('#x-value-range-label')[0].textContent =`${previousX} range:` ;
+    $('#x-value-range-label')[0].textContent = (previousX === SolenoidParameters.PERMEABILITY) ? `Relative Permeability range` : `${previousX} range:` ;
     graphRange($('select[name=x-values-input')[0].selectedIndex - 1);
     $(`#option-y-${previousX}`).hide();
   });

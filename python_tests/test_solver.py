@@ -17,7 +17,8 @@ class TestSolver(SimpleTestCase):
 
     def tearDown(self) -> None:
         pass
-
+    
+    """ Testing Pint's accuracy of conversion from imperial unit to SI unit """
     def test_convert_from_imperial_to_SI(self):
         r0 = 4.3        #inch
         ra = 4.5        #inch
